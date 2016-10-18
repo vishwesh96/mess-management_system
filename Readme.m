@@ -10,7 +10,18 @@ sudo pip install virtualenv
 git clone http://github.com/vishwesh96/mess-management_system
 cd mess-management_system
 source newenv/bin/activate
-sudo pip-install django --upgrade  
+sudo pip install django --upgrade
+
+
+LDAP Authentication Dependenices 
+
+* python-dev
+* libldap2-dev
+* libsasl2-dev
+* python-ldap
+
+sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
+sudo apt-get install python-ldap
 
 
 To install postgresql
