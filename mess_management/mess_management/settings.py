@@ -80,15 +80,18 @@ WSGI_APPLICATION = 'mess_management.wsgi.application'
 #     }
 # }
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
         'NAME': 'postgres',
         'USER': 'bsrinivas',
         'HOST': '192.168.1.103',
         'PORT': '5640',
     }
 }
+        
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -127,3 +130,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

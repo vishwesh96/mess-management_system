@@ -12,6 +12,23 @@ cd mess-management_system
 source newenv/bin/activate
 sudo pip-install django --upgrade  
 
+
+To install postgresql
+---------------------
+sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib
+sudo pip install psycopg2
+
+
+To connect to postgresql remotely on server
+-------------------------------------------
+listen_address = '*' in postgresql.conf
+add host    <dbname> 	all 	0.0.0.0/0 	trust    in pg_hba.conf
+CREATE ROLE <name>;
+GRANT ALL PRIVILEGES ON DATABASE <dbname> TO <role>;
+alter role <role> with login;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO <role>;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO <role>;
+
 Version
 -------
 Using django version 1.10.2
