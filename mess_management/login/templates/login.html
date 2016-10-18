@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Mess Management System{% endblock %}
+{% block head %}Login{% endblock %}
+{% block content %}
+    <form method="post" action="">{% csrf_token %}
+	  	<input type="text" name="ldapid"/>
+	    <input type="password" name="ldappass"/>  
+	    <button type="submit">Sign In</button>
+    </form>
+{% endblock %}
