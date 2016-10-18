@@ -1,0 +1,6 @@
+mess_management/mess_management/settings.py
+*.pyc
+__pycache__
+newenv
+/static
+.DS_Store
