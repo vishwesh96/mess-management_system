@@ -23,6 +23,21 @@ LDAP Authentication Dependenices
 sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
 sudo apt-get install python-ldap
 
+Running
+-------
+python manage.py runserver
+python manage.py startapp <appname>
+python manage.py makemigrations <appname>
+python manage.py migrate <appname>
+
+
+Starting Database server
+------------------------
+/usr/lib/postgresql/9.4/bin/pg_ctl -D ~/postgresql/dbis -l logfile start 
+
+Stoppint Database server
+------------------------
+/usr/lib/postgresql/9.4/bin/pg_ctl -D ~/postgresql/dbis stop
 
 To install postgresql
 ---------------------
