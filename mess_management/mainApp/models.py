@@ -8,7 +8,7 @@ from django.db import models
 class Student(models.Model):
 	rollNo = models.CharField(max_length = 20, primary_key = True)
 	name = models.CharField(max_length = 50)
-	ldap = models.CharField(max_length = 50)
+	ldap = models.CharField(max_length = 50, unique=True)
 	roomNo = models.IntegerField()
 	phoneNo = models.CharField(max_length = 12)
 
@@ -22,6 +22,13 @@ class Hostel(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
 	name = models.CharField(max_length = 50)
 	costPerDay = models.IntegerField()
+
+#added new relation
+class MessAuthority(models.Model):
+	ID = models.CharField(max_length = 20, primary_key = True)
+	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
+	name = models.CharField(max_length = 50)
+	phoneNo = models.CharField(max_length = 12)
 
 class FoodItem(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)

@@ -6,6 +6,12 @@ from django.http import HttpResponseRedirect
 
 
 def login(request):
+
+	loggedIn = validate(request)
+	if loggedIn:
+		return HttpResponseRedirect("/home/")
+
+
 	if request.method == 'GET':
 	    
 	    return render(request, "login.html")			##lol
@@ -18,13 +24,11 @@ def login(request):
 	    # if userLDAP == "" or userPASS == "":
 	    # 	return render(request,"bcapp/login.html", {"ldapid":userLDAP,"error":"Both fields must be filled!"})
 
-	    (auth,rollno) = doLogin(userLDAP, userPASS)
-
+	    # (auth,rollno) = doLogin(userLDAP, userPASS)				#comment to turn off ldap login
+	    auth = True													#comment to turn on ldap login
 	    if auth:
 	    	request.session['id'] = userLDAP
     		return HttpResponseRedirect("/home/")
-    		
-
 	    else:
 	    	return render(request,"result.html", {"result": "login failed"})
 
@@ -51,3 +55,9 @@ def doLogin(userName, passWord):
 
 	except ldap.INVALID_CREDENTIALS:
 		return (False, "")
+
+def validate(request):
+	if request.session.get('id') is None:
+		return False
+	else:
+		return True
