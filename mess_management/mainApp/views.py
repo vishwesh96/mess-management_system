@@ -22,6 +22,8 @@ def profile(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	return render(request,"profile.html")
+
 	# if request.method == 'GET':
 	# 	if request.GET.type == "student" :
 	# 		record = Student.objects.get(ldap=request.session['id'])
@@ -82,3 +84,13 @@ def dispStats(request):
 		print "hi"
 		# get hostel id
 		# Display wastage stats in the same html
+
+
+def viewMenu(request):
+
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+
+	return render(request,"showMenu.html")
