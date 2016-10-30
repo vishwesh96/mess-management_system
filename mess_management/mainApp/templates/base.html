@@ -51,8 +51,8 @@
               <div id="top-menu">
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                   <ul class="nav navbar-nav"> 
-                    <li><a class="menu" href="profile.html">Profile</a></li>
-                    <li><a class="menu" href="#_service_page">Menu</a></li>
+                    <li><a class="menu" href="{% url "profileStudent" %}" >Profile</a></li>
+                    <li><a class="menu" href="{% url "viewMenu" %}">Menu</a></li>
                     <li><a class="menu" href="#_work_page">Projects</a></li>
                     <li><a class="menu" href="CS251/resume.pdf">Resume</a></li>
                   <li><a class="menu" href="#_contact_page">Logout</a></li>
@@ -69,22 +69,22 @@
       </div>
     </div>
 
-    </div>class="templatemo_headerimage">
+    </div>
+    <div class="templatemo_headerimage">
       <div class="flexslider">
         <ul class="slides">
             {% block body_background %}{% endblock %}
         </ul>
       
-    </div>
+      </div>
     </div>
 
 
        <div class="slider-caption">
           <div class="templatemo_homewrapper">
-            <div class="templatemo_hometitle">{% block body_title %}{% endblock %}</div>
-            {% block body %}{% endblock %}
-            <div class="templatemo_hometext"></div>
+            <div class="templatemo_hometitle" style="color:#00ff00">{% block body_title %}{% endblock %}</div>
+            <div class="templatemo_hometext" style="color:#ff0000">{% block body %}{% endblock %}</div>
           </div>
         </div>  
-        </body>
+  </body>
  </html>

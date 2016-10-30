@@ -43,7 +43,6 @@ def profile(request):
 			message = "wrong type (student or mess) "
 			return render(request,"error.html",{"message": message})
 
-
 	elif request.method == 'POST':
 		if request.POST.type == "student" :
 			record = Student.objects.get(ldap=request.session['id'])
@@ -81,3 +80,13 @@ def dispStats(request):
 	# elif request.method == 'POST':
 		# get hostel id
 		# Display wastage stats in the same html
+
+
+def viewMenu(request):
+
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+
+	return render(request,"showMenu.html")
