@@ -81,7 +81,7 @@ class Reviewed(models.Model):
 
 #endDate is fixed by startDate
 class Catering(models.Model):
-	caterer = models.ForeignKey(Caterers, on_delete=models.CASCADE) 
+	caterer = models.ForeignKey(Caterer, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
 	startDateTime = models.DateTimeField() 
 	endDateTime = models.DateTimeField()
@@ -113,14 +113,14 @@ class Extras(models.Model):
 		unique_together = (("hostel", "food"),)	
 
 class Holidays(models.Model):
-	daySlot = models.ForeignKey(Dayslot, on_delete=models.CASCADE) 
+	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
 	date = models.DateTimeField()
 	class Meta:
 		unique_together = (("hostel", "daySlot", "date"),)
 
 class TimeCost(models.Model):
-	daySlot = models.ForeignKey(Dayslot, on_delete=models.CASCADE) 
+	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
 	originalCost = models.IntegerField()
 	subsidisedCost = models.IntegerField()
@@ -130,15 +130,15 @@ class TimeCost(models.Model):
 		unique_together = (("hostel", "daySlot"),)
 
 class Quantity(models.Model):
-	daySlot = models.ForeignKey(Dayslot, on_delete=models.CASCADE) 
+	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
 	quantityRequired = models.IntegerField()
-	wasted = models.DecimalField(max_digits=4,decimal_places)
+	wasted = models.DecimalField(max_digits=4,decimal_places=2)
 	class Meta:
 		unique_together = (("hostel", "daySlot"),)
 
 class Menu(models.Model):
-	daySlot = models.ForeignKey(Dayslot, on_delete=models.CASCADE) 
+	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
 	food = models.ForeignKey(FoodItem, on_delete=models.SET_NULL, blank=True, null=True) #ask??????????????? both foreign and primary how??
 	class Meta:
