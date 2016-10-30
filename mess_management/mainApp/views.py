@@ -78,6 +78,6 @@ def dispStats(request):
 			isEmpty = True
 			return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
 
-	else if request.method == 'POST':
+	# elif request.method == 'POST':
 		# get hostel id
 		# Display wastage stats in the same html
