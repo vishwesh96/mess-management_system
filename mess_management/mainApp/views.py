@@ -20,8 +20,14 @@ def home(request):
 		return render(request,"profile.html")
 
 
-
 def validate(request):
+	if request.session.get('id') is None:
+		return False
+	else:
+		return True
+
+
+def new(request):
 	if request.session.get('id') is None:
 		return False
 	else:
