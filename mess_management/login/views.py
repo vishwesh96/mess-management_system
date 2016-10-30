@@ -1,5 +1,7 @@
 from django.shortcuts import render
 import ldap
+from django.http import HttpResponseRedirect
+
 # Create your views here.
 
 
@@ -19,9 +21,19 @@ def login(request):
 	    (auth,rollno) = doLogin(userLDAP, userPASS)
 
 	    if auth:
-    		return render(request,"result.html", {"result": "login successful"})
+	    	request.session['id'] = userLDAP
+    		return HttpResponseRedirect("/home/")
+    		
+
 	    else:
 	    	return render(request,"result.html", {"result": "login failed"})
+
+def logout(request):
+    try:
+        del request.session['id']
+    except KeyError:
+        pass
+    return HttpResponseRedirect("/login/")
 
 
 def doLogin(userName, passWord):
