@@ -29,6 +29,7 @@ python manage.py runserver
 python manage.py startapp <appname>
 python manage.py makemigrations <appname>
 python manage.py migrate <appname>
+python manage.py shell 
 
 
 Starting Database server
