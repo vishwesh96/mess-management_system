@@ -103,18 +103,33 @@ def viewMenu(request):
 
 
 	elif request.method == 'POST':
+		hostel_food = dict()
 		if 'today' in request.POST:
 
 			today = DAYS[datetime.datetime.today().weekday()]
 			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
 			allHostels = Menu.objects.filter(daySlot = daySlot)
-			print allHostels
+			
 
-		elif 'week' in request.POST:
-			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('mealType'))
-			print weeklyMenu
+			for entry in allHostels:
+			    if entry.hostel.ID in hostel_food:
+			        hostel_food[entry.hostel.ID].append(entry.food.name)
+			    else:
+			        hostel_food[entry.hostel.ID] = [entry.food.name]
 
-		return render(request,"showMenu.html")
+	        return render(request,"showDaysMenu.html",hostel_food)
+
+        elif 'week' in request.POST:
+			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
+
+			for entry in weeklyMenu:
+			    if entry.daySlot.ID in hostel_food:
+			        hostel_food[entry.daySlot.ID].append(entry.food.name)
+			    else:
+			        hostel_food[entry.daySlot.ID] = [entry.food.name]
+
+			return render(request,"showWeeksMenu.html",hostel_food)
+
 
 
 
