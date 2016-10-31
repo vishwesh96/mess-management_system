@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 import login.views 
 from mainApp.models import *
+import datetime
 
 # Create your views here.
 
+DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
 
 def home(request):
 	loggedIn = login.views.validate(request)
@@ -13,7 +15,7 @@ def home(request):
 
 	# if request.method == 'GET':
 	    
-	return render(request, "home.html")		##lol
+	return render(request, "home.html")	
 
 	# if request.method == 'POST':
 
@@ -92,5 +94,23 @@ def viewMenu(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	if request.method == 'GET':
+		return render(request,"showMenu.html")
 
-	return render(request,"showMenu.html")
+
+	elif request.method == 'POST':
+		if 'today' in request.POST:
+
+			today = DAYS[datetime.datetime.today().weekday()]
+			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
+			allHostels = Menu.objects.filter(daySlot = daySlot)
+			print allHostels
+
+		elif 'week' in request.POST:
+			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('mealType'))
+			print weeklyMenu
+
+		return render(request,"showMenu.html")
+
+
+
