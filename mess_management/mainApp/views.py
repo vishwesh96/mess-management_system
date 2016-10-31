@@ -88,6 +88,8 @@ def dispStats(request):
 		# Display wastage stats in the same html
 
 
+
+
 def viewMenu(request):
 
 	loggedIn = login.views.validate(request)
@@ -114,3 +116,46 @@ def viewMenu(request):
 
 
 
+# 	if request.method == 'POST':
+# 		form = MenuForm(data=request.POST)
+# 		result_list = Menu.objects.get(hostel = equest.hostel)
+# 		return render(request, 'menu.html',{'form':form,'result_list': result_list})		
+
+
+# def branchpred(request):
+# 	if request.method == 'POST':
+# 		form = PredictionForm(data=request.POST)
+# 		data=request.POST
+# 		rank = data['rank']
+# 		institute = data['institute']
+# 		category = data['category']
+# 		result = []
+
+# 		for j in range(0,len(pata)):
+# 			if database_[j][0].find(institute)>=0 or institute.find(database_[j][0])>=0 :
+# 				if int(pata[j][2*int(category)]) > int(rank) :
+# 					result.append(database[j])
+# 		return render(request, 'chutzpah/branchpred.html',{'form':form,'result': result})
+# 	else:
+# 		form = PredictionForm()
+# 	return render(request, 'chutzpah/branchpred.html',{'form': form})	
+# def modifyBranch(request):
+#     context = RequestContext(request)
+#     if request.method == 'POST':
+#         form = UserBranchModifyForm(data=request.POST)
+#         data=request.POST
+#         if form.is_valid():
+#             branch = request.POST['currentBranch']
+#             currentUser = UserProfile.objects.get(user=request.user)
+#             currentUser.currentBranch = branch
+#             currentUser.save()
+#             return HttpResponseRedirect('/slider/')
+#     else:
+#         form = UserBranchModifyForm() 
+#     return render_to_response(
+#             'slider/modifyBranch.html',
+#             {'form':form, 'create':True},
+#             context)
+
+
+# 	return render(request,"showMenu.html")
