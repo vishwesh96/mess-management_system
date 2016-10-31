@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<br>
+<br>
+<div class="container">
+	<div id="Week's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th> Week Day </th>
+						<th> Breakfast </th>
+						<th> Lunch </th>
+						<th> Tiffin </th>
+						<th> Dinner </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for item in query_results %}
+					<tr> 
+					    <td>{{ item.field1 }}</td>
+					    <td>{{ item.field2 }}</td>
+					    <td>{{ item.field3 }}</td>
+					    <td>{{ item.field4 }}</td>
+					    <td>{{ item.field5 }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+	</div>
+</div>
+{% endblock %}
