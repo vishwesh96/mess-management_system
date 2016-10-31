@@ -17,6 +17,9 @@ http://www.templatemo.com/preview/templatemo_426_conquer
 <link rel="stylesheet" href="css/templatemo_misc.css">
 <link rel="stylesheet" href="css/templatemo_style.css">
 <link rel="stylesheet" href="css/styles.css">
+
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+
 <!-- JavaScripts -->
 <script src="js/jquery-1.11.1.min.js"></script>
 <script src="js/bootstrap-dropdown.js"></script>
@@ -69,7 +72,7 @@ http://www.templatemo.com/preview/templatemo_426_conquer
     </div>
   </div>>
   </div>
-  <div class="templatemo_headerimage">
+<!--   <div class="templatemo_headerimage">
     <div class="flexslider">
       <ul class="slides">
         <li><img src="images/slider/1.jpg" alt="Slide 1"></li>
@@ -83,16 +86,18 @@ http://www.templatemo.com/preview/templatemo_426_conquer
   </div>
   <div class="slider-caption">
     <div class="templatemo_homewrapper">
-       <!--<div class="templatemo_hometext">You just arrived at the homepage of</div> -->
+       <div class="templatemo_hometext">You just arrived at the homepage of</div> 
       <div class="templatemo_hometitle">B Srinivas Naik</div>
       <div class="templatemo_hometext">The name’s Srinivas. I hail from the city of Hyderabad in South India. I'm a tireless seeker of knowledge, occassional purveyor of wisdom and also, coincidentally, a good programmer. I'm pursuing Computer Science and Engineering at IIT Bombay, since 2014. Please feel free to browse the page to know more about me</div>
       <div class="templatemo_homebutton"><a href="CS251/resume.pdf">Resume</a></div>
     </div>
-  </div> 	
-</div>
+  </div>  -->	
+
 <!-- header end -->
 <div class="clear"></div>
 <!-- service start -->
+<br>
+<br>
 <div class="templatemo_servicewrapper" id="_service_page">
   <div class="container">
     <div class="row">
@@ -145,7 +150,53 @@ http://www.templatemo.com/preview/templatemo_426_conquer
   </div>
 </div>
 <!-- service end -->
-<div class="clear"></div>
+<!-- <div class="clear"></div>
+<div class="container">
+  <ul class="w3-navbar">
+    <li><a href="javascript:void(0)" onclick="openCity('London')">London</a></li>
+    <li><a href="javascript:void(0)" onclick="openCity('Paris')">Paris</a></li>
+  </ul> -->
+<div class="container">
+  <div id="top-menu">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav" style="background-color: #696969;color:#FFFFFF">
+       <li><a class="menu" href="javascript:void(0)" onclick="openCity('Today\'s Menu')" style="width:200px">Today's Menu</a></li>
+       <li><a href="javascript:void(0)" onclick="openCity('Week\'s Menu')" style="width:200px">Week's Menu</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="Today's Menu" class="w3-container city">
+    <form action="" method="post" accept-charset="utf-8">
+    <h1>Login1</h1>
+    <input type="text" value="" placeholder="Username" id="username" name="ldapid" required="" />
+    <input type="password" value="" placeholder="Password" id="password" name="ldappass" required="" />
+    <button type="submit">Login</button>{% csrf_token %}
+    </form>
+  </div>
+
+  <div id="Week's Menu" class="w3-container city">
+    <form action="" method="post" accept-charset="utf-8">
+    <h1>Login2</h1>
+    <input type="text" value="" placeholder="Username" id="username" name="ldapid" required="" />
+    <button type="submit">Login</button>{% csrf_token %}
+    </form>
+  </div>
+</div>
+<script>
+openCity("Today's Menu")
+function openCity(cityName) {
+    var i;
+    var x = document.getElementsByClassName("city");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";
+    }
+    document.getElementById(cityName).style.display = "block";
+}
+</script>
+
+
+
 <!-- work start -->
 <div class="templatemo_workwrapper" id="_work_page">
   <div class="container">
@@ -245,15 +296,15 @@ http://www.templatemo.com/preview/templatemo_426_conquer
         </div>
       </div>
     </div>
-  </div> -->
-</div>
+  </div> 
+</div> -->
 <!--work end--> 
 
 <!-- 
 
 <div class="clear"></div>
-<!-- team start -->
-<!-- <div class="templatemo_team_wrapper" id="_team_page">
+ team start 
+ <div class="templatemo_team_wrapper" id="_team_page">
   <div class="container">
     <div class="row">
       <h1>Our Team</h1>
