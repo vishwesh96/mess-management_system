@@ -4,30 +4,51 @@
 {% block body %}
 <br>
 <br>
+<script>
+// $( document ).ready(function() {
+// 	var text = "{% for v in hostel_food.";
+// 	function index(i,j){
+// 		text = text + string(10*i + j + 1) + " %}";
+// 	}
+// 	document.getElementById("index_calculate").innerHTML = text;
+// 
+// });
+</script>
 <div class="container">
+{% if hostel_food %}
 	<div id="Week's Table" class="w3-container table">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th> Week Day </th>
-						<th> Breakfast </th>
-						<th> Lunch </th>
-						<th> Tiffin </th>
-						<th> Dinner </th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for item in query_results %}
-					<tr> 
-					    <td>{{ item.field1 }}</td>
-					    <td>{{ item.field2 }}</td>
-					    <td>{{ item.field3 }}</td>
-					    <td>{{ item.field4 }}</td>
-					    <td>{{ item.field5 }}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th> Monday </th>
+					<th> Tuesday </th>
+					<th> Wednesday </th>
+					<th> Thursday </th>
+					<th> Friday </th>
+					<th> Saturday </th>
+					<th> Sunday </th>
+				</tr>
+			</thead>	
+			<tbody>
+
+
+			{% for i in range_index %}
+				<tr>
+					{% for j in range_index.items.i %}
+					    <td style="text-align:left;border: 1px solid #dddddd">
+					    	<!-- <input type="hidden" id="index_calculate" index(i,j)/> -->
+					    	{% for v in hostel_food %}
+	        					{{v}}<br>
+	        				{% endfor %}
+	        			</td>
+	        		{% endfor %}
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
 	</div>
+{% else %}
+   There are no records in this week's menu.
+{% endif %}
 </div>
 {% endblock %}
