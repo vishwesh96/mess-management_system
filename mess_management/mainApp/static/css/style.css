@@ -4,7 +4,8 @@
   box-sizing: border-box;
 }
 
-body {
+.student-profile-details {
+  display: block;
   font-family: 'Nunito', sans-serif;
   color: #384047;
 }
@@ -85,7 +86,9 @@ legend {
 }
 
 label {
-  display: block;
+  float: left;
+  display: inline;
+  margin-left: 4px;
   margin-bottom: 8px;
 }
 

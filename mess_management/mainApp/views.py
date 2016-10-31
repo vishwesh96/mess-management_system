@@ -24,45 +24,48 @@ def profile(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	return render(request,"profile.html")
+	if request.method == 'GET':	
+		print request.GET.get('type')
+		if request.GET.get('type') == "student" :
+			record = Student.objects.filter(ldap=request.session['id'])
+			if record : 
+				isEmpty = False
+				edit = request.GET.get('edit',False)				
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit  })
+			else:
+				isEmpty = True
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id']})
 
-	# if request.method == 'GET':
-	# 	if request.GET.type == "student" :
-	# 		record = Student.objects.get(ldap=request.session['id'])
-	# 		if record : 
-	# 			isEmpty = False
-	# 		else:
-	# 			isEmpty = True
-	# 		return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record, "ldap": request.session['id']})
+		elif request.GET.get('type') == "mess" :
+			record = MessAuthority.objects.filter(ID=request.session['id'])
+			if record : 
+				isEmpty = False
+				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id']})
+			else:
+				isEmpty = True
+				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty, "ID": request.session['id']})
 
-	# 	elif request.GET.type == "mess" :
-	# 		record = MessAuthority.objects.get(ID=request.session['id'])
-	# 		if record : 
-	# 			isEmpty = False
-	# 		else:
-	# 			isEmpty = True
-	# 		return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty,"record": record, "ID": request.session['id']})
+		else :
+			message = "wrong type (student or mess) "
+			return render(request,"error.html",{"message": message})
 
-	# 	else :
-	# 		message = "wrong type (student or mess) "
-	# 		return render(request,"error.html",{"message": message})
-
-
-	# elif request.method == 'POST':
-	# 	if request.POST.type == "student" :
-	# 		record = Student.objects.get(ldap=request.session['id'])
-	# 		if record :
-	# 			record.delete()
-	# 		s = Student(rollNo = request.POST.rollNo, name = request.POST.name, ldap = request.POST.ldap, roomNo = request.POST.roomNo, phoneNo = request.POST.phoneNo)
-	# 		s.save()
-
-	# 	elif request.POST.type == "mess" :
-	# 		record = MessAuthority.objects.get(ID=request.session['id'])
-	# 		if record :
-	# 			record.delete()
-	# 		h  =  Hostel.objects.get(ID=request.POST.hostelID)
-	# 		m = MessAuthority(ID = request.session['id'], name = request.POST.name, hostel= h , phoneNo = request.POST.phoneNo)
-	# 		m.save()
+	elif request.method == 'POST':
+		if request.POST.get('type') == "student" :
+			record = Student.objects.filter(ldap=request.session['id'])
+			if record :
+				record.delete()
+			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
+			s.save()
+			return HttpResponseRedirect("/profile/?type=student")
+		
+		elif request.POST.get('type') == "mess" :
+			record = MessAuthority.objects.filter(ID=request.session['id'])
+			if record :
+				record.delete()
+			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
+			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
+			m.save()
+			return HttpResponseRedirect("/home/")
 
 
 # Function to display stats
@@ -82,8 +85,7 @@ def dispStats(request):
 			isEmpty = True
 			return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
 
-	elif request.method == 'POST':
-		print "hi"
+	# elif request.method == 'POST':
 		# get hostel id
 		# Display wastage stats in the same html
 
@@ -101,18 +103,33 @@ def viewMenu(request):
 
 
 	elif request.method == 'POST':
+		hostel_food = dict()
 		if 'today' in request.POST:
 
 			today = DAYS[datetime.datetime.today().weekday()]
 			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
 			allHostels = Menu.objects.filter(daySlot = daySlot)
-			print allHostels
+			
 
-		elif 'week' in request.POST:
-			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('mealType'))
-			print weeklyMenu
+			for entry in allHostels:
+			    if entry.hostel.ID in hostel_food:
+			        hostel_food[entry.hostel.ID].append(entry.food.name)
+			    else:
+			        hostel_food[entry.hostel.ID] = [entry.food.name]
 
-		return render(request,"showMenu.html")
+	        return render(request,"showDaysMenu.html",hostel_food)
+
+        elif 'week' in request.POST:
+			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
+
+			for entry in weeklyMenu:
+			    if entry.daySlot.ID in hostel_food:
+			        hostel_food[entry.daySlot.ID].append(entry.food.name)
+			    else:
+			        hostel_food[entry.daySlot.ID] = [entry.food.name]
+
+			return render(request,"showWeeksMenu.html",hostel_food)
+
 
 
 

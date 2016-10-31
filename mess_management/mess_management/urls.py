@@ -23,6 +23,6 @@ urlpatterns = [
     url(r'^login/', include('login.urls')),
     url(r'^logout/', login.views.logout, name='logout'),
     url(r'^home/', mainApp.views.home, name='home'),
-    url(r'^profile/', mainApp.views.profile, name='profileStudent'),
+    url(r'^profile/', mainApp.views.profile, name='profile'),
     url(r'^menu/', mainApp.views.viewMenu, name='viewMenu'),
 ]

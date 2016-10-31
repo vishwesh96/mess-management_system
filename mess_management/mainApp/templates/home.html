@@ -9,17 +9,6 @@
 	<li><img src="../static/images/slider/6.jpg" alt="Slide 6"></li>
 {% endblock %}
 
-
 {% block body %}
 
- <div class="login-block">
-    <form method="get" action="/profile/">
-	    <button type="submit" name="messAuthority">Profile</button>
-    </form>
-
-    <form method="post" action="/logout/">{% csrf_token %}
-	    <button type="submit">LogOut</button>
-    </form>
-
-</div>
 {% endblock %}

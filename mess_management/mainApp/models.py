@@ -14,7 +14,6 @@ class Student(models.Model):
 
 class Caterer(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
-	password = models.CharField(max_length = 50)
 	name = models.CharField(max_length = 50)
 	phoneno = models.CharField(max_length = 12)
 
@@ -29,7 +28,7 @@ class MessAuthority(models.Model):
 	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
 	name = models.CharField(max_length = 50)
 	phoneNo = models.CharField(max_length = 12)
-
+	
 class FoodItem(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
 	name = models.CharField(max_length = 50)
