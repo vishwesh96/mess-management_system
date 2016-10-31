@@ -1,13 +1,93 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% load staticfiles %}
+{% block title %}Profile{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link href='http://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
 
 {% block body %}
-	<div class="login-block">
-    <form action="" method="post" accept-charset="utf-8">
-    <h1>Login</h1>
-    <input type="text" value="" placeholder="Username" id="username" name="ldapid" required="" />
-    <input type="password" value="" placeholder="Password" id="password" name="ldappass" required="" />
-    <button type="submit">Login</button>{% csrf_token %}
-    </form>
-</div>
+	{% if isEmpty %}
+		<div class="student-profile-details">
+		    <form action="/profile/" method="post" accept-charset="utf-8">
+			    <h1>Fill your Details</h1><br>
+
+			    <label for="rollNo">Roll Number</label>
+			    <input type="text" value="" id="rollNo" name="rollNo" required="true" />
+
+			    <label for="name">Name</label>
+			    <input type="text" value="" id="name" name="name"/>
+
+			    <label for="ldap">LDAP ID</label>
+			    <input type="text" value={{ldap}} id="ldap" name="ldap" readonly/>
+
+			    <label for="roomNo">Room Number</label>
+			    <input type="number" value="" id="roomNo" name="roomNo" required="" />
+
+			    <label for="phoneNo">Contact Number</label>
+			    <input type="text" value="" id="phoneNo" name="phoneNo" required="" />
+
+			    <input type="hidden" name="type" value="student">
+			    <button type="submit">Submit</button>{% csrf_token %}
+		    </form>
+		</div>
+	{% else %}
+		{% if edit %}
+			<div class="student-profile-details">
+			    <form action="/profile/" method="post" accept-charset="utf-8">
+				    <h1>Your Details</h1><br>
+
+				    <label for="rollNo">Roll Number</label>
+				    <input type="text" value={{record.rollNo}} id="rollNo" name="rollNo" required="true"/>
+
+				    <label for="name">Name</label>
+				    <input type="text" value={{record.name}} id="name" name="name"/>
+
+				    <label for="ldap">LDAP ID</label>
+				    <input type="text" value={{record.ldap}} id="ldap" name="ldap" readonly/>
+
+				    <label for="roomNo">Room Number</label>
+				    <input type="number" value={{record.roomNo}} id="roomNo" name="roomNo"/>
+
+				    <label for="phoneNo">Contact Number</label>
+				    <input type="text" value={{record.phoneNo}} id="phoneNo" name="phoneNo"/>
+
+			    <input type="hidden" name="type" value="student">
+			    <button type="submit">Submit</button>{% csrf_token %}
+			    </form>
+			</div>
+		{% else %}
+			<div class="student-profile-details">
+			    <form action="/profile/" method="get" accept-charset="utf-8">
+				    <h1>Your Details</h1><br>
+
+				    <label for="rollNo">Roll Number</label>
+				    <input type="text" value={{record.rollNo}} id="rollNo" name="rollNo" readonly/>
+
+				    <label for="name">Name</label>
+				    <input type="text" value={{record.name}} id="name" name="name" readonly/>
+
+				    <label for="ldap">LDAP ID</label>
+				    <input type="text" value={{record.ldap}} id="ldap" name="ldap" readonly/>
+
+				    <label for="roomNo">Room Number</label>
+				    <input type="number" value={{record.roomNo}} id="roomNo" name="roomNo" readonly />
+
+				    <label for="phoneNo">Contact Number</label>
+				    <input type="text" value={{record.phoneNo}} id="phoneNo" name="phoneNo" readonly />
+
+				    <input type="hidden" name="type" value="student">
+				    <input type="hidden" name="edit" value="True">
+				    <button type="submit">Edit Details</button>{% csrf_token %}
+			    </form>
+			</div>	
+		{% endif%}
+
+	{% endif%}
 {% endblock %}
