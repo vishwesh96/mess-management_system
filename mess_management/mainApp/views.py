@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 import login.views 
 from mainApp.models import *
+import datetime
 
 # Create your views here.
 
+DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
 
 def home(request):
 	loggedIn = login.views.validate(request)
@@ -13,7 +15,7 @@ def home(request):
 
 	# if request.method == 'GET':
 	    
-	return render(request, "home.html")		##lol
+	return render(request, "home.html")	
 
 	# if request.method == 'POST':
 
@@ -88,11 +90,74 @@ def dispStats(request):
 		# Display wastage stats in the same html
 
 
+
+
 def viewMenu(request):
 
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	if request.method == 'GET':
+		return render(request,"showMenu.html")
 
-	return render(request,"showMenu.html")
+
+	elif request.method == 'POST':
+		if 'today' in request.POST:
+
+			today = DAYS[datetime.datetime.today().weekday()]
+			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
+			allHostels = Menu.objects.filter(daySlot = daySlot)
+			print allHostels
+
+		elif 'week' in request.POST:
+			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('mealType'))
+			print weeklyMenu
+
+		return render(request,"showMenu.html")
+
+
+
+# 	if request.method == 'POST':
+# 		form = MenuForm(data=request.POST)
+# 		result_list = Menu.objects.get(hostel = equest.hostel)
+# 		return render(request, 'menu.html',{'form':form,'result_list': result_list})		
+
+
+# def branchpred(request):
+# 	if request.method == 'POST':
+# 		form = PredictionForm(data=request.POST)
+# 		data=request.POST
+# 		rank = data['rank']
+# 		institute = data['institute']
+# 		category = data['category']
+# 		result = []
+
+# 		for j in range(0,len(pata)):
+# 			if database_[j][0].find(institute)>=0 or institute.find(database_[j][0])>=0 :
+# 				if int(pata[j][2*int(category)]) > int(rank) :
+# 					result.append(database[j])
+# 		return render(request, 'chutzpah/branchpred.html',{'form':form,'result': result})
+# 	else:
+# 		form = PredictionForm()
+# 	return render(request, 'chutzpah/branchpred.html',{'form': form})	
+# def modifyBranch(request):
+#     context = RequestContext(request)
+#     if request.method == 'POST':
+#         form = UserBranchModifyForm(data=request.POST)
+#         data=request.POST
+#         if form.is_valid():
+#             branch = request.POST['currentBranch']
+#             currentUser = UserProfile.objects.get(user=request.user)
+#             currentUser.currentBranch = branch
+#             currentUser.save()
+#             return HttpResponseRedirect('/slider/')
+#     else:
+#         form = UserBranchModifyForm() 
+#     return render_to_response(
+#             'slider/modifyBranch.html',
+#             {'form':form, 'create':True},
+#             context)
+
+
+# 	return render(request,"showMenu.html")

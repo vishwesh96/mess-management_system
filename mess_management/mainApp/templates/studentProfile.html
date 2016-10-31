@@ -5,7 +5,6 @@
 {% block link %}
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link href='http://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 {% endblock %}
 
 {% block script %}
@@ -13,8 +12,8 @@
 {% endblock %}
 
 {% block body %}
+		<div class="student-profile-details" style="float: left ; margin-left: 4px;">
 	{% if isEmpty %}
-		<div class="student-profile-details">
 		    <form action="/profile/" method="post" accept-charset="utf-8">
 			    <h1>Fill your Details</h1><br>
 
@@ -36,10 +35,8 @@
 			    <input type="hidden" name="type" value="student">
 			    <button type="submit">Submit</button>{% csrf_token %}
 		    </form>
-		</div>
 	{% else %}
 		{% if edit %}
-			<div class="student-profile-details">
 			    <form action="/profile/" method="post" accept-charset="utf-8">
 				    <h1>Your Details</h1><br>
 
@@ -61,9 +58,7 @@
 			    <input type="hidden" name="type" value="student">
 			    <button type="submit">Submit</button>{% csrf_token %}
 			    </form>
-			</div>
 		{% else %}
-			<div class="student-profile-details">
 			    <form action="/profile/" method="get" accept-charset="utf-8">
 				    <h1>Your Details</h1><br>
 
@@ -86,8 +81,7 @@
 				    <input type="hidden" name="edit" value="True">
 				    <button type="submit">Edit Details</button>{% csrf_token %}
 			    </form>
-			</div>	
 		{% endif%}
-
+		</div>	
 	{% endif%}
 {% endblock %}
