@@ -5,12 +5,90 @@
     <title>
         {% block title %}{% endblock %}
     </title>
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
+    <!-- Style Sheets -->
+    <link rel="stylesheet" href="../static/css/animate.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/css/templatemo_misc.css">
+    <link rel="stylesheet" href="../static/css/templatemo_style.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    
+    <!-- JavaScripts -->
+    <script src="../static/js/jquery-1.11.1.min.js"></script>
+    <script src="../static/js/bootstrap-dropdown.js"></script>
+    <script src="../static/js/bootstrap-collapse.js"></script>
+    <script src="../static/js/bootstrap-tab.js"></script>
+    <script src="../static/js/jquery.singlePageNav.js"></script>
+    <script src="../static/js/jquery.flexslider.js"></script>
+    <script src="../static/js/custom.js"></script>
+    <script src="../static/js/jquery.lightbox.js"></script>
+    <script src="../static/js/templatemo_custom.js"></script>
+    <script src="../static/js/responsiveCarousel.min.js"></script>
+
   </head>
-  <body>
-        <h2>{% block head %}{% endblock %}</h2>
-    <div class="container">
-    	{% block content %}{% endblock %}
-    </div> 
-    {% block script %}{% endblock %}
+        <body>
+          <div id="_home_page">
+    <div class="templatemo_topbar">
+      <div class="container">
+        <div class="row">
+          <div class="templatemo_titlewrapper"><img src="../static/images/templatemo_logobg.png" alt="logo background">
+            <div class="templatemo_title"><span>Student Home</span></div>
+         </div>
+          <div class="clear"></div>
+          <div class="templatemo_titlewrappersmall">Conquer</div>
+          <nav class="navbar navbar-default templatemo_menu" role="navigation">
+            <div class="container-fluid"> 
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button>
+              </div>
+              <!-- Collect the nav links, forms, and other content for toggling -->
+              <div id="top-menu">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav"> 
+                    <li><a class="menu" href="{% url "profileStudent" %}" >Profile</a></li>
+                    <li><a class="menu" href="{% url "viewMenu" %}">Menu</a></li>
+                    <li><a class="menu" href="#_work_page">Projects</a></li>
+                    <li><a class="menu" href="CS251/resume.pdf">Resume</a></li>
+                  <li><a class="menu" href="#_contact_page">Logout</a></li>
+                   <!-- <li><a class="menu" href="#templatemo_contact_page">Contact</a></li> -->
+                  </ul>
+                </div>
+              </div>
+              <!-- /.navbar-collapse --> 
+            </div>
+            <!-- /.container-fluid --> 
+          </nav>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    <div class="templatemo_headerimage">
+      <div class="flexslider">
+        <ul class="slides">
+            {% block body_background %}{% endblock %}
+        </ul>
+      
+      </div>
+    </div>
+
+
+       <div class="slider-caption">
+          <div class="templatemo_homewrapper">
+            <div class="templatemo_hometitle" style="color:#00ff00">{% block body_title %}{% endblock %}</div>
+            <div class="templatemo_hometext" style="color:#ff0000">{% block body %}{% endblock %}</div>
+          </div>
+        </div>  
   </body>
-</html>
+ </html>
