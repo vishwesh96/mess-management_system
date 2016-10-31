@@ -116,8 +116,9 @@ def viewMenu(request):
 			        hostel_food[entry.hostel.ID].append(entry.food.name)
 			    else:
 			        hostel_food[entry.hostel.ID] = [entry.food.name]
-
-	        return render(request,"showDaysMenu.html",hostel_food)
+			keys = hostel_food.keys()
+			keys.sort()
+	        return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "keys":keys})
 
         elif 'week' in request.POST:
 			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
@@ -127,8 +128,10 @@ def viewMenu(request):
 			        hostel_food[entry.daySlot.ID].append(entry.food.name)
 			    else:
 			        hostel_food[entry.daySlot.ID] = [entry.food.name]
+			keys = hostel_food.keys()
+			keys.sort()
 
-			return render(request,"showWeeksMenu.html",hostel_food)
+			return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food, "keys":keys})
 
 
 
