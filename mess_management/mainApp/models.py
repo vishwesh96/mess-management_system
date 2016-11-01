@@ -97,13 +97,14 @@ class Catering(models.Model):
 
 class TempOpt(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE) 
-	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
+	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE, null =True) 
 	startDate = models.DateField()
 	endDate = models.DateField()
 	startMealType = models.CharField(max_length = 20)
 	endMealType = models.CharField(max_length = 20)
 	class Meta: #might have overlapping intervals, but check this constraint oin application
-		unique_together = (("student","startDate","startMealType"),)
+		#hostel value can be null and unique togther added hostel as holiday 
+		unique_together = (("student","hostel","startDate","startMealType"),)
 
 class Voter(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.SET_NULL, blank=True, null=True)

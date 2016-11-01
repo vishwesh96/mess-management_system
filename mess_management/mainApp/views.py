@@ -247,7 +247,8 @@ def tempOpt(request):
 
 
 
-
+#compare only overlapping between holidays
+#hostel is null means holiday
 def holiday(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
@@ -259,17 +260,15 @@ def holiday(request):
 
 	else : 
 		if request.method == 'GET':	
-			records = Hostel.objects.all()
-			return render(request,"tempOpt.html",{"records" : records})
+			return render(request,"holiday.html")
 
 		elif request.method == 'POST':
-			hostelID= request.POST.get('hostelID')
 			startDate= parse_date(request.POST.get('startDate')).date()
 			startMealType= request.POST.get('startMealType')
 			endDate= parse_date(request.POST.get('endDate')).date()
 			endMealType= request.POST.get('endMealType')
 
-			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord.rollNo)
+			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord.rollNo, hostel__isnull = True)
 
 			for tempOptRecord in tempOpts :
 				tstartDate = tempOptRecord.startDate
@@ -285,11 +284,7 @@ def holiday(request):
 					message = 'Overlapping entry already present'
 					return render(request,"error.html", {'message' : message})
 
-			hostel = Hostel.objects.get(ID = hostelID)
-			if not hostel : 
-				message = 'Hostel not Present'
-				return render(request,"error.html", {'message' : message})
-			t = TempOpt(student = studentRecord, hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
+			t = TempOpt(student = studentRecord, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
 			return render(request,"responseRecorded.html")
 
