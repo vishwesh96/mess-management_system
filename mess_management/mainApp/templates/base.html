@@ -14,6 +14,7 @@
     <link href='http://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
+
     <!-- Style Sheets -->
     <link rel="stylesheet" href="{% static 'css/animate.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -24,6 +25,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     {% block link %}{% endblock %}
+    {% block style %}{% endblock %}
 
     <!-- JavaScripts -->
     <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
@@ -68,10 +70,11 @@
               <div id="top-menu">
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                   <ul class="nav navbar-nav"> 
-                    <li><a class="menu" href="{% url "profile" %}?type=student">Profile</a></li>
+                    <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>
+                    <li><a class="menu" href="{% url "profile" %}?type=student">Profile</a></li>                  
+                    <li><a class="menu" href="{% url "tempOpt" %}?type=student">Temp Opt</a></li>    
                     <li><a class="menu" href="{% url "viewMenu" %}?type=student">Menu</a></li>
-                    <li><a class="menu" href="#_work_page">Projects</a></li>
-                    <li><a class="menu" href="CS251/resume.pdf">Resume</a></li>
+                    <li><a class="menu" href="{% url "holiday" %}?type=student">Holiday</a></li>
                   <li><a class="menu" href="{% url "logout" %}?type=student">Logout</a></li>
                    <!-- <li><a class="menu" href="#templatemo_contact_page">Contact</a></li> -->
                   </ul>
@@ -99,7 +102,7 @@
 
        <div class="slider-caption">
           <div class="templatemo_homewrapper">
-            <div class="templatemo_hometext" style="color:#ff0000">{% block body %}{% endblock %}</div>
+            <div class="templatemo_hometext" style="color:#000000">{% block body %}{% endblock %}</div>
           </div>
         </div>  
   </body>

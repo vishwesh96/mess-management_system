@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 import login.views 
 from mainApp.models import *
 import datetime
+from dateutil.parser import parse as parse_date
 
 # Create your views here.
 
@@ -161,3 +162,109 @@ def viewMenu(request):
 
 
 # 	return render(request,"showMenu.html")
+
+
+def compare(s,sm,e,em):
+	mealTypes = ["breakfast","lunch","tiffin","dinner"] 
+	i = mealTypes.index(sm)
+	j = mealTypes.index(em)
+	if s > e :
+		return 1
+	if s < e :
+		return -1
+
+	return (i > j) - (i < j)
+
+def tempOpt(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	studentRecord = Student.objects.get(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	else : 
+		if request.method == 'GET':	
+			records = Hostel.objects.all()
+			return render(request,"tempOpt.html",{"records" : records})
+
+		elif request.method == 'POST':
+			hostelID= request.POST.get('hostelID')
+			startDate= parse_date(request.POST.get('startDate')).date()
+			startMealType= request.POST.get('startMealType')
+			endDate= parse_date(request.POST.get('endDate')).date()
+			endMealType= request.POST.get('endMealType')
+
+			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord.rollNo)
+
+			for tempOptRecord in tempOpts :
+				tstartDate = tempOptRecord.startDate
+				tstartMealType = tempOptRecord.startMealType
+				tendDate = tempOptRecord.endDate
+				tendMealType =tempOptRecord.endMealType
+
+				if compare(startDate,startMealType,endDate,endMealType) == 1 :
+					message = 'Enter correct date/meal type'
+					return render(request,"error.html", {'message' : message})
+
+				if ( compare(startDate,startMealType,tendDate,tendMealType) <=0  and compare(endDate,endMealType,tendDate,tendMealType) >=0 ) or ( compare(tstartDate,tstartMealType,endDate,endMealType) <=0 and compare(tendDate,tendMealType,endDate,endMealType) >=0 ) :
+					message = 'Overlapping entry already present'
+					return render(request,"error.html", {'message' : message})
+
+			hostel = Hostel.objects.get(ID = hostelID)
+			if not hostel : 
+				message = 'Hostel not Present'
+				return render(request,"error.html", {'message' : message})
+			t = TempOpt(student = studentRecord, hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
+			t.save()
+			return render(request,"responseRecorded.html")
+
+
+
+
+def holiday(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	studentRecord = Student.objects.get(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	else : 
+		if request.method == 'GET':	
+			records = Hostel.objects.all()
+			return render(request,"tempOpt.html",{"records" : records})
+
+		elif request.method == 'POST':
+			hostelID= request.POST.get('hostelID')
+			startDate= parse_date(request.POST.get('startDate')).date()
+			startMealType= request.POST.get('startMealType')
+			endDate= parse_date(request.POST.get('endDate')).date()
+			endMealType= request.POST.get('endMealType')
+
+			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord.rollNo)
+
+			for tempOptRecord in tempOpts :
+				tstartDate = tempOptRecord.startDate
+				tstartMealType = tempOptRecord.startMealType
+				tendDate = tempOptRecord.endDate
+				tendMealType =tempOptRecord.endMealType
+
+				if compare(startDate,startMealType,endDate,endMealType) == 1 :
+					message = 'Enter correct date/meal type'
+					return render(request,"error.html", {'message' : message})
+
+				if ( compare(startDate,startMealType,tendDate,tendMealType) <=0  and compare(endDate,endMealType,tendDate,tendMealType) >=0 ) or ( compare(tstartDate,tstartMealType,endDate,endMealType) <=0 and compare(tendDate,tendMealType,endDate,endMealType) >=0 ) :
+					message = 'Overlapping entry already present'
+					return render(request,"error.html", {'message' : message})
+
+			hostel = Hostel.objects.get(ID = hostelID)
+			if not hostel : 
+				message = 'Hostel not Present'
+				return render(request,"error.html", {'message' : message})
+			t = TempOpt(student = studentRecord, hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
+			t.save()
+			return render(request,"responseRecorded.html")
+
