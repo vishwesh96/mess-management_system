@@ -99,6 +99,10 @@ def viewMenu(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	studentRecord = Student.objects.get(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
 	if request.method == 'GET':
 		return render(request,"showMenu.html")
 
