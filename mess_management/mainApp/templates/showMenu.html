@@ -2,25 +2,9 @@
 {% block title %}Home{% endblock %}
 
 
-{% block script %}
-<script>
-$(document).ready( function() {
-openCity("TodayMenu")
-function openCity(cityName) {
-    var i;
-    var x = document.getElementsByClassName("city");
-    for (i = 0; i < x.length; i++) {
-       x[i].style.display = "none";
-    }
-    document.getElementById(cityName).style.display = "block";
-}
-});
-</script>
-{% endblock %}
-
 
 {% block body %}
-
+<br><br><br>
 <div class="container">
   <div id="top-menu">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -34,7 +18,7 @@ function openCity(cityName) {
 
 <div class="container">
 
-  <div id="TodayMenu" class="w3-container city">
+  <div id="TodayMenu" class="city">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
         <h1>Today's Menu</h1>      
 	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
@@ -48,7 +32,7 @@ function openCity(cityName) {
 	</form>
   </div>
 
-  <div id="WeekMenu" class="w3-container city">
+  <div id="WeekMenu" class="city">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
         <h1>Week's Menu</h1>      
 	        <label for="job" style="float:left;color:#000000">Hostel:</label>
@@ -75,4 +59,16 @@ function openCity(cityName) {
   </div>
 
 </div>
+<script>
+openCity("TodayMenu")
+function openCity(cityName) {
+    var i;
+    var x = document.getElementsByClassName("city");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";
+    }
+    document.getElementById(cityName).style.display = "block";
+}
+
+</script>
 {% endblock %}
