@@ -294,15 +294,15 @@ def holiday(request):
 
 
 
-def viewStudent(request):
+# def viewStudent(request): #not required
 
-	loggedIn = login.views.validate(request)
-	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+# 	loggedIn = login.views.validate(request)
+# 	if not loggedIn:
+# 		return HttpResponseRedirect("/login/")
 
-	studentRecord = Student.objects.get(ldap=request.session['id'])
-	if not studentRecord : 
-		return HttpResponseRedirect("/profile/?type=student")
+# 	studentRecord = Student.objects.get(ldap=request.session['id'])
+# 	if not studentRecord : 
+# 		return HttpResponseRedirect("/profile/?type=student")
 
-	if request.method == 'GET':
-		return render(request,"viewStudent.html")
+# 	if request.method == 'GET':
+# 		return render(request,"viewStudent.html")
