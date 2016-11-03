@@ -292,3 +292,17 @@ def holiday(request):
 			t.save()
 			return render(request,"responseRecorded.html")
 
+
+
+def viewStudent(request):
+
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	studentRecord = Student.objects.get(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	if request.method == 'GET':
+		return render(request,"viewStudent.html")
