@@ -75,6 +75,7 @@
                   <ul class="nav navbar-nav"> 
                     <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>            
                     <li><a class="menu" href="{% url "viewMenu" %}?type=student">Menu</a></li>
+                    <li><a class="menu" href="{% url "account" %}?type=student">Account Details</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">User Forms<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
@@ -85,6 +86,8 @@
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
                       </ul>
                     </li>
+                    <li><a class="menu" href="{% url "stats" %}?type=student">Statistics</a></li>
+
                     <li><a class="menu" href="{% url "logout" %}?type=student">Logout</a></li>
                   </ul>
                 </div>

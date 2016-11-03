@@ -5,6 +5,7 @@ from mainApp.models import *
 import datetime
 from dateutil.parser import parse as parse_date
 
+
 # Create your views here.
 
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
@@ -81,15 +82,18 @@ def dispStats(request):
 	if request.method == 'GET':
 		record = Student.objects.filter(ldap=request.session['id'])
 		if record :
-			return render(request,"dispStats.html",{"record": record})
+			return render(request,"dispStats.html")
 
 		else:
 			isEmpty = True
 			return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
 
-	# elif request.method == 'POST':
+	elif request.method == 'POST':
 		# get hostel id
 		# Display wastage stats in the same html
+		return render(request,"dispStats.html")		
+
+
 
 
 
@@ -114,7 +118,6 @@ def viewMenu(request):
 		if (request.POST['action'] == 'today'):
 			hostel_food={}
 			# print "screwed", 'week' in request.POST
-
 			today = DAYS[datetime.datetime.today().weekday()]
 			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
 			allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
@@ -127,21 +130,23 @@ def viewMenu(request):
 			# print "screwed 2", hostel_food
 			return render(request,"showDaysMenu.html",{"hostel_food":sorted(hostel_food.items())})
 
-        if (request.POST['action'] == 'week'):
-        	hostel_food=[]
-        	# print "in week",request.POST
-        	weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
-        	for j in range(4):
-			l = []
-			for i in range(7*j,7*(j+1)):
-				l1 = []
-				for entry in weeklyMenu:
-					if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
-						l1.append(entry.food.name)
-						# print "l1    ",l1
-				l.append(l1)
-			hostel_food.append((MEAL_TYPE[j],l))
-		return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
+
+		if (request.POST['action'] == 'week'):
+	        	hostel_food=[]
+	        	# print "in week",request.POST
+	        	weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
+	        	for j in range(4):
+				l = []
+				for i in range(7*j,7*(j+1)):
+					l1 = []
+					for entry in weeklyMenu:
+						if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
+							l1.append(entry.food.name)
+							# print "l1    ",l1
+					l.append(l1)
+				hostel_food.append((MEAL_TYPE[j],l))
+			return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
+
 
 
 
@@ -292,16 +297,28 @@ def holiday(request):
 
 
 
-# def viewStudent(request): #not required
-
-# 	loggedIn = login.views.validate(request)
-# 	if not loggedIn:
-# 		return HttpResponseRedirect("/login/")
-
-#	studentRecord = Student.objects.filter(ldap=request.session['id'])
-#	if not studentRecord : 
-#		return HttpResponseRedirect("/profile/?type=student")
 
 
-# 	if request.method == 'GET':
-# 		return render(request,"viewStudent.html")
+
+def account(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+	ldapID = request.session['id']
+	studentRecord = Student.objects.filter(ldap = ldapID)
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	else : 
+		if request.method == 'GET':
+			ldap = request.session['id']
+			account = MessAccounts.objects.get(student_id = Student.objects.get(ldap = ldapID).rollNo)
+			print account.balance
+
+			return render(request,"accountDetails.html",{"record": studentRecord[0], "ldap": ldapID , "accNo":account.accountNo,"balance": account.balance })
+
+		# This will never happen
+		elif request.method == 'POST':
+			return render(request,"accountDetails.html",{"record": studentRecord[0], "ldap": request.session['id']  })
+
+
