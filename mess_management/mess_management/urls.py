@@ -27,4 +27,6 @@ urlpatterns = [
     url(r'^tempOpt/', mainApp.views.tempOpt, name='tempOpt'),
     url(r'^holiday/', mainApp.views.holiday, name='holiday'),
     url(r'^menu/', mainApp.views.viewMenu, name='viewMenu'),
+    url(r'^account/', mainApp.views.account, name='account'),
+    url(r'^stats/', mainApp.views.dispStats, name='stats'),
 ]
