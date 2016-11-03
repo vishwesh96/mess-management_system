@@ -72,7 +72,7 @@ class Rated(models.Model):
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
 	taste = models.IntegerField() 
 	costEffective = models.IntegerField()
-	sanity = models.IntegerField()
+	cleanliness = models.IntegerField()
 	overall = models.DecimalField(max_digits=4,decimal_places=2)
 	class Meta:
 		unique_together = (("student","hostel"),)

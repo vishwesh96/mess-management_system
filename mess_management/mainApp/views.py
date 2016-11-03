@@ -8,6 +8,7 @@ from dateutil.parser import parse as parse_date
 # Create your views here.
 
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
+MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
 def home(request):
 	loggedIn = login.views.validate(request)
@@ -108,11 +109,11 @@ def viewMenu(request):
 
 
 	elif request.method == 'POST':
-		print request.POST['action']
-		hostel_food = dict()
-		print "yoooooo",'week' in request.POST
+		# print request.POST['action']
+		# print "yoooooo",'week' in request.POST
 		if (request.POST['action'] == 'today'):
-			print "screwed", 'week' in request.POST
+			hostel_food={}
+			# print "screwed", 'week' in request.POST
 
 			today = DAYS[datetime.datetime.today().weekday()]
 			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
@@ -123,29 +124,24 @@ def viewMenu(request):
 				else:
 					hostel_food[entry.myhostel] = [entry.food.name]
 
-			print "screwed 2", hostel_food
+			# print "screwed 2", hostel_food
 			return render(request,"showDaysMenu.html",{"hostel_food":sorted(hostel_food.items())})
 
         if (request.POST['action'] == 'week'):
-			print "in week",request.POST
-			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
-			for entry in weeklyMenu:
-				if entry.daySlot.ID in hostel_food:
-					hostel_food[entry.daySlot.ID].append(entry.food.name)
-				else:
-					hostel_food[entry.daySlot.ID] = [entry.food.name]
-			print hostel_food
-			range_index = dict()
-			for i in range(1,5,1):
-				for j in range (1,8,1):
-					if i in range_index:
-						range_index[i].append(7*(i-1)+j)
-					else:
-						range_index[i] = [7*(i-1)+j]
-
-			hostel_food=[('Breakfast', [['a1', 'a121'], ['idly'], [], ['d1'], ['e1'], ['f1'], ['g1']]), ('Lunch', [['a2'], ['b2'], ['c2'], ['d2'], ['e2'], ['f2'], ['g2']]), ('Tiffin', [['a3'], ['b3'], ['c3'], ['d3'], ['e3'], ['f3'], ['g3']]), ('Dinner', [['a4'], ['b4'], ['c4'], ['d4'], ['e4'], ['f4'], ['g4']])]
-			print hostel_food
-			return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
+        	hostel_food=[]
+        	# print "in week",request.POST
+        	weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
+        	for j in range(4):
+			l = []
+			for i in range(7*j,7*(j+1)):
+				l1 = []
+				for entry in weeklyMenu:
+					if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
+						l1.append(entry.food.name)
+						# print "l1    ",l1
+				l.append(l1)
+			hostel_food.append((MEAL_TYPE[j],l))
+		return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
 
 
 
