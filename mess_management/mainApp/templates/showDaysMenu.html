@@ -5,6 +5,7 @@
 <br>
 <br>
 <div class="container">
+{% if hostel_food %}
   	<div id="Today's Table" class="w3-container table">
 		<table class="table table-striped">
 			<thead>
@@ -14,18 +15,23 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for key,values in hostel_food %}
+			{% for key, values in hostel_food %}
 				<tr> 
-				    <td style="text-align:left">{{ key }}</td>
-				    <td style="text-align:left">
-				    {% for value in values %}
-				    {{value}}<br>
-				    {% endfor %}
+				    <td style="text-align:left;border: 1px solid #dddddd">{{ key }}</td>
+				    <td style="text-align:left;border: 1px solid #dddddd">
+				    {% for v in values %}
+        			{{v}}<br>
+        			{% endfor %}
         			</td>
 				</tr>
 			{% endfor %}
 			</tbody>
 		</table>
 	</div>
+{% else %}
+   There are no records in today's menu.
+{% endif %}
 </div>
+
 {% endblock %}
+

@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^logout/', login.views.logout, name='logout'),
     url(r'^home/', mainApp.views.home, name='home'),
     url(r'^profile/', mainApp.views.profile, name='profile'),
+    url(r'^tempOpt/', mainApp.views.tempOpt, name='tempOpt'),
+    url(r'^holiday/', mainApp.views.holiday, name='holiday'),
     url(r'^menu/', mainApp.views.viewMenu, name='viewMenu'),
 ]

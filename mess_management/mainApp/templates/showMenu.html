@@ -1,24 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
+
+
 {% block body %}
 
 <div class="container">
   <div id="top-menu">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav" style="background-color: #696969">
-       <li><a class="menu" href="javascript:void(0)" onclick="openCity('Today\'s Menu')" style="width:200px;color:#FFFFFF">Today's Menu</a></li>
-       <li><a href="javascript:void(0)" onclick="openCity('Week\'s Menu')" style="width:200px;color:#FFFFFF">Week's Menu</a></li>
+       <li><a class = "menu" href="javascript:void(0)" onclick="openCity('TodayMenu')" style="width:200px;color:#FFFFFF">Today's Menu</a></li>
+       <li><a class = "menu" href="javascript:void(0)" onclick="openCity('WeekMenu')" style="width:200px;color:#FFFFFF">Week's Menu</a></li>
       </ul>
     </div>
   </div>
 </div>
+
 <div class="container">
 
-  <div id="Today's Menu" class="w3-container city">
+  <div id="TodayMenu" class="city">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
         <h1>Today's Menu</h1>      
-        <fieldset>
 	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
 	        <select id="job" name="mealType">
 				<option value="breakfast">Breakfast</option>
@@ -26,15 +28,13 @@
 				<option value="tiffin">Evening Snacks</option>
 				<option value="dinner">Dinner</option>
 	        </select> 
-        </fieldset>
         <button type="submit" name="today" style="background-color:#DE4700">Check</button>
 	</form>
   </div>
 
-  <div id="Week's Menu" class="w3-container city">
+  <div id="WeekMenu" class="city">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
         <h1>Week's Menu</h1>      
-        <fieldset>
 	        <label for="job" style="float:left;color:#000000">Hostel:</label>
 	        <select id="job" name="hostelID">
 				<option value="1">Hostel-1</option>
@@ -54,15 +54,13 @@
 				<option value="15">Hostel-15</option>
 				<option value="16">Hostel-16</option>
 	        </select> 
-        </fieldset>
         <button type="submit" name="week" style="background-color:#DE4700">Check</button>
 	</form>
   </div>
+
 </div>
-
 <script>
-
-openCity("Today's Menu")
+openCity("TodayMenu")
 function openCity(cityName) {
     var i;
     var x = document.getElementsByClassName("city");
@@ -71,5 +69,6 @@ function openCity(cityName) {
     }
     document.getElementById(cityName).style.display = "block";
 }
+
 </script>
 {% endblock %}
