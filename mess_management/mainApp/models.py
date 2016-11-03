@@ -50,7 +50,7 @@ class Announcement(models.Model):
 #changed fromER diagram:Roll number if primary key and the relation in one-to-one with student
 class MessAccounts(models.Model):
 	accountNo  = models.CharField(max_length = 30)
-	balance = models.IntegerField
+	balance = models.IntegerField(default=0)
 	student = models.OneToOneField( 
 					Student,
 					on_delete=models.CASCADE,

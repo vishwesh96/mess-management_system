@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
+{% block style %}
+<style>
+	th,td{
+		text-align:left;
+		border: 1px solid #dddddd;
+	}
+</style>
+{% endblock %}
+
 {% block body %}
 <br>
 <br>
@@ -10,15 +19,15 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th> Hostel </th>
-					<th> Dish </th>
+					<th style="border: 1px solid #dddddd"> Hostel </th>
+					<th style="border: 1px solid #dddddd"> Dish </th>
 				</tr>
 			</thead>
 			<tbody>
 			{% for key, values in hostel_food %}
 				<tr> 
-				    <td style="text-align:left;border: 1px solid #dddddd">{{ key }}</td>
-				    <td style="text-align:left;border: 1px solid #dddddd">
+				    <td>{{ key }}</td>
+				    <td>
 				    {% for v in values %}
         			{{v}}<br>
         			{% endfor %}
@@ -29,7 +38,7 @@
 		</table>
 	</div>
 {% else %}
-   There are no records in today's menu.
+   There are no records yet in menu.
 {% endif %}
 </div>
 

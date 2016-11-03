@@ -41,7 +41,7 @@
 			    <input type="text" value="" id="phoneNo" name="phoneNo" required="" />
 
 			    <input type="hidden" name="type" value="student">
-			    <button type="submit">Submit</button>{% csrf_token %}
+			    <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
 		    </form>
 	{% else %}
 		{% if edit %}
@@ -64,7 +64,7 @@
 				    <input type="text" value={{record.phoneNo}} id="phoneNo" name="phoneNo"/>
 
 			    <input type="hidden" name="type" value="student">
-			    <button type="submit">Submit</button>{% csrf_token %}
+			    <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
 			    </form>
 		{% else %}
 			    <form action="/profile/" method="get" accept-charset="utf-8">
@@ -87,7 +87,7 @@
 
 				    <input type="hidden" name="type" value="student">
 				    <input type="hidden" name="edit" value="True">
-				    <button type="submit">Edit Details</button>{% csrf_token %}
+				    <button type="submit" style="background-color:#DE4700">Edit Details</button>{% csrf_token %}
 			    </form>
 		{% endif%}
 		</div>	
