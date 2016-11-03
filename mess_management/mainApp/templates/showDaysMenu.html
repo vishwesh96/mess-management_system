@@ -14,10 +14,14 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for item in result %}
+			{% for key,values in hostel_food %}
 				<tr> 
-				    <td>{{ item[0] }}</td>
-				    <td>{{ item[1] }}</td>
+				    <td style="text-align:left">{{ key }}</td>
+				    <td style="text-align:left">
+				    {% for value in values %}
+				    {{value}}<br>
+				    {% endfor %}
+        			</td>
 				</tr>
 			{% endfor %}
 			</tbody>
