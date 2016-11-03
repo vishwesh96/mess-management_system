@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^menu/', mainApp.views.viewMenu, name='viewMenu'),
     url(r'^account/', mainApp.views.account, name='account'),
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
+    url(r'^', login.views.login),
 ]

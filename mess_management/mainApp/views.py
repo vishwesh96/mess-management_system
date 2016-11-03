@@ -228,7 +228,7 @@ def tempOpt(request):
 			endDate= parse_date(request.POST.get('endDate')).date()
 			endMealType= request.POST.get('endMealType')
 
-			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord.rollNo)
+			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo)
 
 			for tempOptRecord in tempOpts :
 				tstartDate = tempOptRecord.startDate
@@ -248,7 +248,7 @@ def tempOpt(request):
 			if not hostel : 
 				message = 'Hostel not Present'
 				return render(request,"error.html", {'message' : message})
-			t = TempOpt(student = studentRecord, hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
+			t = TempOpt(student = studentRecord[0], hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
 			return render(request,"responseRecorded.html")
 
@@ -275,7 +275,7 @@ def holiday(request):
 			endDate= parse_date(request.POST.get('endDate')).date()
 			endMealType= request.POST.get('endMealType')
 
-			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord.rollNo, hostel__isnull = True)
+			tempOpts = TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo, hostel__isnull = True)
 
 			for tempOptRecord in tempOpts :
 				tstartDate = tempOptRecord.startDate
@@ -291,7 +291,7 @@ def holiday(request):
 					message = 'Overlapping entry already present'
 					return render(request,"error.html", {'message' : message})
 
-			t = TempOpt(student = studentRecord, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
+			t = TempOpt(student = studentRecord[0], startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
 			return render(request,"responseRecorded.html")
 
@@ -312,8 +312,8 @@ def account(request):
 	else : 
 		if request.method == 'GET':
 			ldap = request.session['id']
-			account = MessAccounts.objects.get(student_id = Student.objects.get(ldap = ldapID).rollNo)
-			print account.balance
+			account = MessAccounts.objects.get(student__rollNo = studentRecord[0].rollNo)
+			# print account.balance
 
 			return render(request,"accountDetails.html",{"record": studentRecord[0], "ldap": ldapID , "accNo":account.accountNo,"balance": account.balance })
 
