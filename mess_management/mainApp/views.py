@@ -108,7 +108,7 @@ def viewMenu(request):
 
 
 	elif request.method == 'POST':
-		# print request.POST
+		print request.POST
 		hostel_food = dict()
 		# if 'today' in request.POST:
 		# 	print "screwed\n"
