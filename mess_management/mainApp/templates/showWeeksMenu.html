@@ -1,54 +1,54 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
+{% block style %}
+<style>
+	th,td{
+		text-align:left;
+		border: 1px solid #dddddd;
+	}
+</style>
+{% endblock %}
+
 {% block body %}
 <br>
 <br>
-<script>
-$( document ).ready(function() {
-	var text = "{% for v in hostel_food.";
-	function index(i,j){
-		text = text + string(10*i + j + 1) + " %}";
-	}
-	document.getElementById("index_calculate").innerHTML = text;
-
-});
-</script>
 <div class="container">
 {% if hostel_food %}
-	<div id="Week's Table" class="w3-container table">
+  	<div id="Today's Table" class="w3-container table">
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th> Monday </th>
-					<th> Tuesday </th>
-					<th> Wednesday </th>
-					<th> Thursday </th>
-					<th> Friday </th>
-					<th> Saturday </th>
-					<th> Sunday </th>
+					<th style="border: 1px solid #dddddd"> Meal Type </th>
+					<th style="border: 1px solid #dddddd"> Monday </th>
+					<th style="border: 1px solid #dddddd"> Tuesday </th>
+					<th style="border: 1px solid #dddddd"> Wednesday </th>
+					<th style="border: 1px solid #dddddd"> Thursday </th>
+					<th style="border: 1px solid #dddddd"> Friday </th>
+					<th style="border: 1px solid #dddddd"> Saturday </th>
+					<th style="border: 1px solid #dddddd"> Sunday </th>
 				</tr>
-			</thead>	
+			</thead>
 			<tbody>
-
-
-			{% for i in range_index %}
-				<tr>
-					{% for j in range_index.items.i %}
-					    <td style="text-align:left;border: 1px solid #dddddd">
-					    	<input type="hidden" id="index_calculate" index(i,j)/>
-					    	{% for v in hostel_food %}
-	        					{{v}}<br>
-	        				{% endfor %}
-	        			</td>
-	        		{% endfor %}
+			{% for key, values in hostel_food %}
+				<tr> 
+				    <td >{{ key }}</td>
+				    {% for list in values %}
+				    	<td >
+				    	{% for v in list %}
+        					{{v}}<br>
+        					{% endfor %}
+        				</td>
+        			{% endfor %}
 				</tr>
 			{% endfor %}
 			</tbody>
 		</table>
 	</div>
 {% else %}
-   There are no records in this week's menu.
+   There are no records yet in Weeks's menu.
 {% endif %}
 </div>
+
 {% endblock %}
+

@@ -9,6 +9,7 @@ from dateutil.parser import parse as parse_date
 # Create your views here.
 
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
+MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
 def home(request):
 	loggedIn = login.views.validate(request)
@@ -112,43 +113,96 @@ def viewMenu(request):
 
 
 	elif request.method == 'POST':
-		print request.POST
-		hostel_food = dict()
-		print request.POST.keys()
+		print request.POST['action']
+		
+		print "yoooooo",'week' in request.POST
+		if (request.POST['action'] == 'today'):
+			hostel_food = dict()
+			print "screwed", 'week' in request.POST
 
-
-		if 'today' in request.POST.keys():
-			print "if"
 			today = DAYS[datetime.datetime.today().weekday()]
 			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
-			allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')
-			
+			allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
 			for entry in allHostels:
-			    if entry.myhostel in hostel_food:
-			        hostel_food[entry.myhostel].append(entry.food.name)
-			    else:
-			        hostel_food[entry.myhostel] = [entry.food.name]
+				if entry.myhostel in hostel_food:
+					hostel_food[entry.myhostel].append(entry.food.name)
+				else:
+					hostel_food[entry.myhostel] = [entry.food.name]
 
-	        return render(request,"showDaysMenu.html",{"hostel_food":hostel_food.items()})
+			print "screwed 2", hostel_food
+			return render(request,"showDaysMenu.html",{"hostel_food":sorted(hostel_food.items())})
+
+        elif (request.POST['action'] == 'week'):
+			print "in week",request.POST
+			weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID')).order_by('hostel_id')
+
+			print weeklyMenu
+
+			for j in range(4):
+				l1 = []
+				l = []
+				for i in range(7*j,7*(j+1)):
+					for entry in weeklyMenu:
+						if int(entry.daySlot.ID) == i:
+							l1.append(entry.food.name)
+
+					l.append(l1)
+
+				hostel_food.append((MEAL_TYPE[j],l))
+
+			print hostel_food
+
+
+			hostel_food=[('Breakfast', [['a1', 'a121'], ['idly'], [], ['d1'], ['e1'], ['f1'], ['g1']]), ('Lunch', [['a2'], ['b2'], ['c2'], ['d2'], ['e2'], ['f2'], ['g2']]), ('Tiffin', [['a3'], ['b3'], ['c3'], ['d3'], ['e3'], ['f3'], ['g3']]), ('Dinner', [['a4'], ['b4'], ['c4'], ['d4'], ['e4'], ['f4'], ['g4']])]
+			print hostel_food
+			return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
 
 
 
-        if 'week' in request.POST.keys():
-        	print "else"
-        	print Menu._meta.get_fields()
-        	
+
+# 	if request.method == 'POST':
+# 		form = MenuForm(data=request.POST)
+# 		result_list = Menu.objects.get(hostel = equest.hostel)
+# 		return render(request, 'menu.html',{'form':form,'result_list': result_list})		
 
 
-        	weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID')).extra(select={'mydaySlot': 'CAST(hostel_id AS INTEGER)'}).order_by('mydaySlot')
-        	
+# def branchpred(request):
+# 	if request.method == 'POST':
+# 		form = PredictionForm(data=request.POST)
+# 		data=request.POST
+# 		rank = data['rank']
+# 		institute = data['institute']
+# 		category = data['category']
+# 		result = []
 
-        	for entry in weeklyMenu:
-        		if entry.mydaySlot in hostel_food:
-			        hostel_food[entry.mydaySlot].append(entry.food.name)
-		     	else:
-		     		hostel_food[entry.mydaySlot] = [entry.food.name]
+# 		for j in range(0,len(pata)):
+# 			if database_[j][0].find(institute)>=0 or institute.find(database_[j][0])>=0 :
+# 				if int(pata[j][2*int(category)]) > int(rank) :
+# 					result.append(database[j])
+# 		return render(request, 'chutzpah/branchpred.html',{'form':form,'result': result})
+# 	else:
+# 		form = PredictionForm()
+# 	return render(request, 'chutzpah/branchpred.html',{'form': form})	
+# def modifyBranch(request):
+#     context = RequestContext(request)
+#     if request.method == 'POST':
+#         form = UserBranchModifyForm(data=request.POST)
+#         data=request.POST
+#         if form.is_valid():
+#             branch = request.POST['currentBranch']
+#             currentUser = UserProfile.objects.get(user=request.user)
+#             currentUser.currentBranch = branch
+#             currentUser.save()
+#             return HttpResponseRedirect('/slider/')
+#     else:
+#         form = UserBranchModifyForm() 
+#     return render_to_response(
+#             'slider/modifyBranch.html',
+#             {'form':form, 'create':True},
+#             context)
 
 
+# 	return render(request,"showMenu.html")
 
 
 def compare(s,sm,e,em):

@@ -5,7 +5,7 @@
 
 {% block body %}
 
-<div class="container">
+<div div class="container student-profile-details">
   <div id="top-menu">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav" style="background-color: #696969">
@@ -16,9 +16,9 @@
   </div>
 </div>
 
-<div class="container">
+<div class="container student-profile-details" >
 
-  <div id="TodayMenu" class="city">
+  <div id="TodayMenu" class="w3-container city">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
         <h1>Today's Menu</h1>      
 	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
@@ -28,11 +28,11 @@
 				<option value="tiffin">Evening Snacks</option>
 				<option value="dinner">Dinner</option>
 	        </select> 
-        <button type="submit" name="today" style="background-color:#DE4700">Check</button>
+        <button type="submit" name="action" value = "today" style="background-color:#DE4700">Check</button>
 	</form>
   </div>
 
-  <div id="WeekMenu" class="city">
+  <div id="WeekMenu" class="w3-container city">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
         <h1>Week's Menu</h1>      
 	        <label for="job" style="float:left;color:#000000">Hostel:</label>
@@ -54,7 +54,7 @@
 				<option value="15">Hostel-15</option>
 				<option value="16">Hostel-16</option>
 	        </select> 
-        <button type="submit" name="week" style="background-color:#DE4700">Check</button>
+        <button type="submit" name="action" value = "week" style="background-color:#DE4700">Check</button>
 	</form>
   </div>
 
