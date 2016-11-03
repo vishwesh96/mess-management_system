@@ -78,7 +78,7 @@ def dispStats(request):
 		return HttpResponseRedirect("/login/")
 
 	if request.method == 'GET':
-		record = Student.objects.get(ldap=request.session['id'])
+		record = Student.objects.filter(ldap=request.session['id'])
 		if record :
 			return render(request,"dispStats.html",{"record": record})
 
@@ -99,7 +99,7 @@ def viewMenu(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	studentRecord = Student.objects.get(ldap=request.session['id'])
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
@@ -209,7 +209,7 @@ def tempOpt(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	studentRecord = Student.objects.get(ldap=request.session['id'])
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
@@ -258,7 +258,7 @@ def holiday(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	studentRecord = Student.objects.get(ldap=request.session['id'])
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
@@ -300,7 +300,7 @@ def viewStudent(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	studentRecord = Student.objects.get(ldap=request.session['id'])
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
