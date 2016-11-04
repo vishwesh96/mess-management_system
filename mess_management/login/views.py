@@ -24,8 +24,8 @@ def login(request):
 	    # if userLDAP == "" or userPASS == "":
 	    # 	return render(request,"bcapp/login.html", {"ldapid":userLDAP,"error":"Both fields must be filled!"})
 
-	    # (auth,rollno) = doLogin(userLDAP, userPASS)				
-	    auth = True													#comment to turn on ldap login
+	    (auth,rollno) = doLogin(userLDAP, userPASS)				
+	    # auth = True													#comment to turn on ldap login
 	    if auth:
 	    	request.session['id'] = userLDAP
     		return HttpResponseRedirect("/home/")

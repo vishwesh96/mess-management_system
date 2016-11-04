@@ -79,19 +79,27 @@ def dispStats(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	if request.method == 'GET':
-		record = Student.objects.filter(ldap=request.session['id'])
-		if record :
-			return render(request,"dispStats.html")
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
 
-		else:
-			isEmpty = True
-			return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
+	message = 'Under Maintenance'
+	return render(request,"error.html", {'message' : message})
 
-	elif request.method == 'POST':
-		# get hostel id
-		# Display wastage stats in the same html
-		return render(request,"dispStats.html")		
+
+	# if request.method == 'GET':
+	# 	record = Student.objects.filter(ldap=request.session['id'])
+	# 	if record :
+	# 		return render(request,"dispStats.html")
+
+	# 	else:
+	# 		isEmpty = True
+	# 		return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
+
+	# elif request.method == 'POST':
+	# 	# get hostel id
+	# 	# Display wastage stats in the same html
+	# 	return render(request,"dispStats.html")		
 
 
 
@@ -322,3 +330,15 @@ def account(request):
 			return render(request,"accountDetails.html",{"record": studentRecord[0], "ldap": request.session['id']  })
 
 
+
+def reg(request):
+
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	

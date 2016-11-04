@@ -30,4 +30,6 @@ urlpatterns = [
     url(r'^account/', mainApp.views.account, name='account'),
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
     url(r'^', login.views.login),
+    url(r'^reg/', mainApp.views.reg, name='reg'),
+
 ]
