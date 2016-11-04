@@ -32,7 +32,7 @@
 			    <input type="text" value="" id="name" name="name"/>
 
 			    <label for="ldap">LDAP ID</label>
-			    <input type="text" value={{ldap}} id="ldap" name="ldap" readonly/>
+			    <input type="text" value="{{ldap}}" id="ldap" name="ldap" readonly/>
 
 			    <label for="roomNo">Room Number</label>
 			    <input type="number" value="" id="roomNo" name="roomNo" required="" />
@@ -49,19 +49,19 @@
 				    <h1>Your Details</h1><br>
 
 				    <label for="rollNo">Roll Number</label>
-				    <input type="text" value={{record.rollNo}} id="rollNo" name="rollNo" required="true"/>
+				    <input type="text" value="{{record.rollNo}}" id="rollNo" name="rollNo" required="true"/>
 
 				    <label for="name">Name</label>
-				    <input type="text" value={{record.name}} id="name" name="name"/>
+				    <input type="text" value="{{record.name}}" id="name" name="name"/>
 
 				    <label for="ldap">LDAP ID</label>
-				    <input type="text" value={{record.ldap}} id="ldap" name="ldap" readonly/>
+				    <input type="text" value="{{record.ldap}}" id="ldap" name="ldap" readonly/>
 
 				    <label for="roomNo">Room Number</label>
-				    <input type="number" value={{record.roomNo}} id="roomNo" name="roomNo"/>
+				    <input type="number" value="{{record.roomNo}}" id="roomNo" name="roomNo"/>
 
 				    <label for="phoneNo">Contact Number</label>
-				    <input type="text" value={{record.phoneNo}} id="phoneNo" name="phoneNo"/>
+				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo"/>
 
 			    <input type="hidden" name="type" value="student">
 			    <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
@@ -71,19 +71,19 @@
 				    <h1>Your Details</h1><br>
 
 				    <label for="rollNo">Roll Number</label>
-				    <input type="text" value={{record.rollNo}} id="rollNo" name="rollNo" readonly/>
+				    <input type="text" value="{{record.rollNo}}" id="rollNo" name="rollNo" readonly/>
 
 				    <label for="name">Name</label>
-				    <input type="text" value={{record.name}} id="name" name="name" readonly/>
+				    <input type="text" value="{{record.name}}" id="name" name="name" readonly/>
 
 				    <label for="ldap">LDAP ID</label>
-				    <input type="text" value={{record.ldap}} id="ldap" name="ldap" readonly/>
+				    <input type="text" value="{{record.ldap}}" id="ldap" name="ldap" readonly/>
 
 				    <label for="roomNo">Room Number</label>
-				    <input type="number" value={{record.roomNo}} id="roomNo" name="roomNo" readonly />
+				    <input type="number" value="{{record.roomNo}}" id="roomNo" name="roomNo" readonly />
 
 				    <label for="phoneNo">Contact Number</label>
-				    <input type="text" value={{record.phoneNo}} id="phoneNo" name="phoneNo" readonly />
+				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo" readonly />
 
 				    <input type="hidden" name="type" value="student">
 				    <input type="hidden" name="edit" value="True">

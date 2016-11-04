@@ -56,7 +56,15 @@ def profile(request):
 		if request.POST.get('type') == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record :
+				tempRecord  = record[0]
 				record.delete()
+			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
+			
+			if record : 
+				message = "Roll No already present"
+				tempRecord.save()
+				return render(request,"error.html",{"message": message})
+
 			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
 			s.save()
 			return HttpResponseRedirect("/profile/?type=student")
