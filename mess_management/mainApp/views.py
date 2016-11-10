@@ -103,57 +103,112 @@ def dispStats(request):
 
 
 
-
-
-
-def viewMenu(request):
-
+def showDaysMenu(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
-
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
-
-	if request.method == 'GET':
-		return render(request,"showMenu.html")
-
-
-	elif request.method == 'POST':
-		# print request.POST['action']
-		# print "yoooooo",'week' in request.POST
-		if (request.POST['action'] == 'today'):
-			hostel_food={}
-			# print "screwed", 'week' in request.POST
-			today = DAYS[datetime.datetime.today().weekday()]
-			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
-			allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
-			for entry in allHostels:
-				if entry.myhostel in hostel_food:
-					hostel_food[entry.myhostel].append(entry.food.name)
-				else:
-					hostel_food[entry.myhostel] = [entry.food.name]
-
+	# if request.method == 'GET':
+	    
+	#return render(request, "showDaysMenu.html")
+	hostel_food = None
+	chosen_mealType = None
+	if (request.GET.get('action')):
+		hostel_food={}
+		chosen_mealType = request.GET.get('mealType')
+		# print "screwed", 'week' in request.POST
+		today = DAYS[datetime.datetime.today().weekday()]
+		daySlot = DaySlot.objects.get(mealType__iexact=request.GET.get('mealType'), day__iexact = today)
+		allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
+		for entry in allHostels:
+			if entry.myhostel in hostel_food:
+				hostel_food[entry.myhostel].append(entry.food.name)
+			else:
+				hostel_food[entry.myhostel] = [entry.food.name]
 			# print "screwed 2", hostel_food
-			return render(request,"showDaysMenu.html",{"hostel_food":sorted(hostel_food.items())})
+		hostel_food = sorted(hostel_food.items())
+	return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType})	
+
+def showWeeksMenu(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+	# if request.method == 'GET':
+	    
+	#return render(request, "showWeeksMenu.html")
+	hostel_food = None
+	chosen_hostel = None	
+	if (request.GET.get('action')):
+		hostel_food=[]
+		chosen_hostel = request.GET.get('hostelID')
+	        # print "in week",request.POST
+	        weeklyMenu = Menu.objects.filter(hostel_id=request.GET.get('hostelID'))
+	        for j in range(4):
+			l = []
+			for i in range(7*j,7*(j+1)):
+				l1 = []
+				for entry in weeklyMenu:
+					if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
+						l1.append(entry.food.name)
+						# print "l1    ",l1
+				l.append(l1)
+			hostel_food.append((MEAL_TYPE[j],l))
+	return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food,"chosen_hostel":chosen_hostel})
+	# if request.method == 'POST':
+
+# def viewMenu(request):
+
+# 	loggedIn = login.views.validate(request)
+# 	if not loggedIn:
+# 		return HttpResponseRedirect("/login/")
+
+# 	studentRecord = Student.objects.filter(ldap=request.session['id'])
+# 	if not studentRecord : 
+# 		return HttpResponseRedirect("/profile/?type=student")
+
+# 	if request.method == 'GET':
+# 		return render(request,"showMenu.html")
 
 
-		if (request.POST['action'] == 'week'):
-	        	hostel_food=[]
-	        	# print "in week",request.POST
-	        	weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
-	        	for j in range(4):
-				l = []
-				for i in range(7*j,7*(j+1)):
-					l1 = []
-					for entry in weeklyMenu:
-						if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
-							l1.append(entry.food.name)
-							# print "l1    ",l1
-					l.append(l1)
-				hostel_food.append((MEAL_TYPE[j],l))
-			return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
+# 	elif request.method == 'POST':
+# 		# print request.POST['action']
+# 		# print "yoooooo",'week' in request.POST
+# 		if (request.POST['action'] == 'today'):
+# 			hostel_food={}
+# 			# print "screwed", 'week' in request.POST
+# 			today = DAYS[datetime.datetime.today().weekday()]
+# 			daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
+# 			allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
+# 			for entry in allHostels:
+# 				if entry.myhostel in hostel_food:
+# 					hostel_food[entry.myhostel].append(entry.food.name)
+# 				else:
+# 					hostel_food[entry.myhostel] = [entry.food.name]
+
+# 			# print "screwed 2", hostel_food
+# 			return render(request,"showDaysMenu.html",{"hostel_food":sorted(hostel_food.items())})
+
+
+# 		if (request.POST['action'] == 'week'):
+# 	        	hostel_food=[]
+# 	        	# print "in week",request.POST
+# 	        	weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
+# 	        	for j in range(4):
+# 				l = []
+# 				for i in range(7*j,7*(j+1)):
+# 					l1 = []
+# 					for entry in weeklyMenu:
+# 						if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
+# 							l1.append(entry.food.name)
+# 							# print "l1    ",l1
+# 					l.append(l1)
+# 				hostel_food.append((MEAL_TYPE[j],l))
+# 			return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food})
 
 
 
