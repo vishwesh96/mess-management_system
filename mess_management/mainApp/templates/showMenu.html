@@ -19,24 +19,26 @@
 <div class="container student-profile-details" >
 
   <div id="TodayMenu" class="w3-container city">
-	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
+	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}
+		<input type="hidden" name="action" value = "today" />     
         <h1>Today's Menu</h1>      
 	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
-	        <select id="job" name="mealType">
+	        <select onchange="this.form.submit()" id="job" name="mealType">
 				<option value="breakfast">Breakfast</option>
 				<option value="lunch">Lunch</option>
 				<option value="tiffin">Evening Snacks</option>
 				<option value="dinner">Dinner</option>
 	        </select> 
-        <button type="submit" name="action" value = "today" style="background-color:#DE4700">Check</button>
+        <!-- <button type="submit" name="action" value = "today" style="background-color:#DE4700">Check</button> -->
 	</form>
   </div>
 
   <div id="WeekMenu" class="w3-container city">
-	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}    
+	<form action=""  method="post" accept-charset="utf-8" style="float:left">{% csrf_token %} 
+		<input type="hidden" name="action" value = "week" />   
         <h1>Week's Menu</h1>      
 	        <label for="job" style="float:left;color:#000000">Hostel:</label>
-	        <select id="job" name="hostelID">
+	        <select onchange="this.form.submit()" id="job" name="hostelID">
 				<option value="1">Hostel-1</option>
 				<option value="2">Hostel-2</option>
 				<option value="3">Hostel-3</option>
@@ -54,7 +56,7 @@
 				<option value="15">Hostel-15</option>
 				<option value="16">Hostel-16</option>
 	        </select> 
-        <button type="submit" name="action" value = "week" style="background-color:#DE4700">Check</button>
+        <!-- <button type="submit" name="action" value = "week" style="background-color:#DE4700">Check</button> -->
 	</form>
   </div>
 

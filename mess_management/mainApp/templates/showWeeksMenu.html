@@ -11,42 +11,73 @@
 {% endblock %}
 
 {% block body %}
-<br>
-<br>
 <div class="container">
-{% if hostel_food %}
-  	<div id="Today's Table" class="w3-container table">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th style="border: 1px solid #dddddd"> Meal Type </th>
-					<th style="border: 1px solid #dddddd"> Monday </th>
-					<th style="border: 1px solid #dddddd"> Tuesday </th>
-					<th style="border: 1px solid #dddddd"> Wednesday </th>
-					<th style="border: 1px solid #dddddd"> Thursday </th>
-					<th style="border: 1px solid #dddddd"> Friday </th>
-					<th style="border: 1px solid #dddddd"> Saturday </th>
-					<th style="border: 1px solid #dddddd"> Sunday </th>
-				</tr>
-			</thead>
-			<tbody>
-			{% for key, values in hostel_food %}
-				<tr> 
-				    <td >{{ key }}</td>
-				    {% for list in values %}
-				    	<td >
-				    	{% for v in list %}
-        					{{v}}<br>
-        					{% endfor %}
-        				</td>
-        			{% endfor %}
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	</div>
+  <div id="WeekMenu" class="w3-container">
+	<form action=""  method="get" accept-charset="utf-8" style="float:left">{% csrf_token %} 
+		<input type="hidden" name="action" value = "week" />       
+	        <label for="job" style="float:left;color:#000000">Hostel:</label>
+	        <select onchange="this.form.submit()" id="job" name="hostelID">
+	        	<option> Choose a Hostel </option>	
+				<option value="1">Hostel-1</option>
+				<option value="2">Hostel-2</option>
+				<option value="3">Hostel-3</option>
+				<option value="4">Hostel-4</option>
+				<option value="5">Hostel-5</option>
+				<option value="6">Hostel-6</option>
+				<option value="7">Hostel-7</option>
+				<option value="8">Hostel-6</option>
+				<option value="9">Hostel-9</option>
+				<option value="10">Hostel-10</option>
+				<option value="11">Hostel-11</option>
+				<option value="12">Hostel-12</option>
+				<option value="13">Hostel-13</option>
+				<option value="14">Hostel-14</option>
+				<option value="15">Hostel-15</option>
+				<option value="16">Hostel-16</option>
+	        </select> 
+        <!-- <button type="submit" name="action" value = "week" style="background-color:#DE4700">Check</button> -->
+	</form>
+  </div>
+</div>
+<div class="container">
+{% if chosen_hostel %}
+	<h1>Menu For Hostel: {{ chosen_hostel }}</h1>
+	{% if hostel_food %}
+	  	<div id="Today's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="border: 1px solid #dddddd"> Meal Type </th>
+						<th style="border: 1px solid #dddddd"> Monday </th>
+						<th style="border: 1px solid #dddddd"> Tuesday </th>
+						<th style="border: 1px solid #dddddd"> Wednesday </th>
+						<th style="border: 1px solid #dddddd"> Thursday </th>
+						<th style="border: 1px solid #dddddd"> Friday </th>
+						<th style="border: 1px solid #dddddd"> Saturday </th>
+						<th style="border: 1px solid #dddddd"> Sunday </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key, values in hostel_food %}
+					<tr> 
+					    <td >{{ key }}</td>
+					    {% for list in values %}
+					    	<td >
+					    	{% for v in list %}
+	        					{{v}}<br>
+	        					{% endfor %}
+	        				</td>
+	        			{% endfor %}
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+	   There are no records yet in Weeks's menu
+	{% endif %}
 {% else %}
-   There are no records yet in Weeks's menu.
+	Please choose a Hostel
 {% endif %}
 </div>
 

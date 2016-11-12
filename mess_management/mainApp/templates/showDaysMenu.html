@@ -11,35 +11,54 @@
 {% endblock %}
 
 {% block body %}
-<br>
-<br>
 <div class="container">
-{% if hostel_food %}
-  	<div id="Today's Table" class="w3-container table">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th style="border: 1px solid #dddddd"> Hostel </th>
-					<th style="border: 1px solid #dddddd"> Dish </th>
-				</tr>
-			</thead>
-			<tbody>
-			{% for key, values in hostel_food %}
-				<tr> 
-				    <td>{{ key }}</td>
-				    <td>
-				    {% for v in values %}
-        			{{v}}<br>
-        			{% endfor %}
-        			</td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	</div>
+  <div id="TodayMenu" class="w3-container">
+	<form action="" method="get" accept-charset="utf-8" style="float:left">{% csrf_token %}
+		<input type="hidden" name="action" value = "today" />
+	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
+	        <select onchange="this.form.submit()" id="job" name="mealType">
+	        	<option> Choose a Meal Type </option>
+				<option value="breakfast">Breakfast</option>
+				<option value="lunch">Lunch</option>
+				<option value="tiffin">Evening Snacks</option>
+				<option value="dinner">Dinner</option>
+	        </select> 
+        <!-- <button type="submit" name="action" value = "today" style="background-color:#DE4700">Check</button> -->
+	</form>
+  </div>
+</div>
+<div class="container">
+{% if chosen_mealType %}
+	<h1>Menu For Today's {{ chosen_mealType }}</h1>
+	{% if hostel_food %}
+	  	<div id="Today's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="border: 1px solid #dddddd"> Hostel </th>
+						<th style="border: 1px solid #dddddd"> Dish </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key, values in hostel_food %}
+					<tr> 
+					    <td>{{ key }}</td>
+					    <td>
+					    {% for v in values %}
+	        			{{v}}<br>
+	        			{% endfor %}
+	        			</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+	   There are no records yet in menu
+	{% endif %}
 {% else %}
-   There are no records yet in menu.
-{% endif %}
+   Please Choose a Meal Type
+{% endif %}	
 </div>
 
 {% endblock %}
