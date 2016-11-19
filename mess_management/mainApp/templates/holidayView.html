@@ -18,17 +18,15 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th style="border: 1px solid #dddddd">Hostel</th>
 					<th style="border: 1px solid #dddddd">Start Date </th>
 					<th style="border: 1px solid #dddddd">Start Meal Type  </th>
 					<th style="border: 1px solid #dddddd">End Date  </th>
-					<th style="border: 1px solid #dddddd">End Meal Type  </th>
+					<th style="border: 1px solid #dddddd">End Meal Type </th>
 				</tr>
 			</thead>
 			<tbody>
 			{% for record in records %}
 				<tr> 
-				    <td>{{record.hostel.ID}}</td>
 				    <td>{{record.startDate}}</td>
 				    <td>{{record.startMealType}}</td>
 				    <td>{{record.endDate}}</td>

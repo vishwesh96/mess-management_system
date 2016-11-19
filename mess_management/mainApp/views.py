@@ -266,7 +266,10 @@ def tempOpt(request):
 				return render(request,"error.html", {'message' : message})
 			t = TempOpt(student = studentRecord[0], hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
-			return render(request,"responseRecorded.html")
+
+			records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo)
+
+			return render(request,"responseRecorded.html",{"records": records})
 
 
 
@@ -309,7 +312,8 @@ def holiday(request):
 
 			t = TempOpt(student = studentRecord[0], startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
-			return render(request,"responseRecorded.html")
+			records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo, hostel__isnull = False)
+			return render(request,"holidayView.html",{"records": records})
 
 
 
