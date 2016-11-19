@@ -73,8 +73,14 @@
               <div id="top-menu">
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                   <ul class="nav navbar-nav"> 
-                    <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>            
-                    <li><a class="menu" href="{% url "viewMenu" %}?type=student">Menu</a></li>
+                    <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>
+                    <li>
+                      <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showDaysMenu" %}?type=student">Today's Menu</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showWeeksMenu" %}?type=student">Week's Menu</a></li>
+                      </ul>
+                    </li>
                     <li><a class="menu" href="{% url "account" %}?type=student">Account Details</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">User Forms<b class="caret"></b></a>
