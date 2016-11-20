@@ -76,7 +76,7 @@
 
                   {% if loginType == "Student" %}
 
-                    <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>
+                    <li><a class="menu" href="{% url "home" %}?type=student">Student</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
@@ -99,10 +99,10 @@
 
                     <li><a class="menu" href="{% url "logout" %}?type=student">Logout</a></li>
 
-<!-- caterer home -->
+<!-- mess authority home -->
 
                   {% else %}
-                    <li><a class="menu" href="{% url "home" %}?type=caterer">Caterer</a></li>
+                    <li><a class="menu" href="{% url "home" %}?type=messAuthority">Mess Authority</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
@@ -110,21 +110,22 @@
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showWeeksMenu" %}?type=student">Week's Menu</a></li>
                       </ul>
                     </li>
-                    <li><a class="menu" href="{% url "account" %}?type=caterer">Account Details</a></li>
+                    <li><a class="menu" href="{% url "account" %}?type=messAuthority">Account Details</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">User Forms<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile" %}?type=caterer">Profile</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "tempOpt" %}?type=caterer">Temporarily Opt</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "holiday" %}?type=caterer">Opt Holiday</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile" %}?type=messAuthority">Profile</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "tempOpt" %}?type=messAuthority">Temporarily Opt</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "holiday" %}?type=messAuthority">Opt Holiday</a></li>
                         <li role="presentation" class="divider"></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
                       </ul>
                     </li>
-                    <li><a class="menu" href="{% url "stats" %}?type=caterer">Statistics</a></li>
+                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Statistics</a></li>
 
-                    <li><a class="menu" href="{% url "logout" %}?type=caterer">Logout</a></li>
+                    <li><a class="menu" href="{% url "logout" %}?type=messAuthority">Logout</a></li>
 
+                    {% endif %}
 
                   </ul>
                 </div>

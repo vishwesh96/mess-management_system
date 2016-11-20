@@ -15,8 +15,8 @@ def welcome(request):
 		#check if student or caterer and redirect to them appropirately
 		if 'studentLogin' in request.POST:
 			return HttpResponseRedirect("/loginStudent/")
-		elif 'catererLogin' in request.POST:
-			return HttpResponseRedirect("/loginCaterer/")
+		elif 'messAuthorityLogin' in request.POST:
+			return HttpResponseRedirect("/loginMessAuthority/")
 
 
 
@@ -24,7 +24,6 @@ def welcome(request):
 def loginStudent(request):
 	loggedIn = validate(request)
 	if loggedIn:
-		request.session['loginType'] = "Student"
 		return HttpResponseRedirect("/home/")
 
 
@@ -85,31 +84,26 @@ def validate(request): #this is common to both student and caterer as this is ch
 
 #caterer login and registration
 
-def loginCaterer(request):
+def loginMessAuthority(request):
 
-	loggedInCaterer = validate(request)
-	if loggedInCaterer:
-		request.session['loginType'] = "Caterer"
+	loggedInMessAuthority = validate(request)
+	if loggedInMessAuthority:
 		return HttpResponseRedirect("/home/")
 
 
 	if request.method == 'GET':
 	    
-	    return render(request, "loginCaterer.html")			##lol
+	    return render(request, "loginMessAuthority.html")			##lol
 
 	if request.method == 'POST':
 	    
-	    userLDAP = request.POST.get("catererid")
-	    userPASS = request.POST.get("catererpass")
+	    userLDAP = request.POST.get("messAuthorityid")
+	    userPASS = request.POST.get("messAuthoritypass")
 
-						    # # if userLDAP == "" or userPASS == "":
-						    # # 	return render(request,"bcapp/login.html", {"ldapid":userLDAP,"error":"Both fields must be filled!"})
-
-						    # (auth,rollno) = doLogin(userLDAP, userPASS)				
-						    # # auth = True													#comment to turn on ldap login
+	    auth = True
 	    if auth:
-					    	# request.session['id'] = userLDAP #look this
-	    	request.session['loginType'] = "Caterer"
+	    	request.session['id'] = userLDAP
+	    	request.session['loginType'] = "MessAuthority"
     		return HttpResponseRedirect("/home/")
 	    else:
 	    	return render(request,"result.html", {"result": "login failed"})

@@ -16,6 +16,7 @@ class Caterer(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
 	name = models.CharField(max_length = 50)
 	phoneno = models.CharField(max_length = 12)
+	
 
 class Hostel(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
