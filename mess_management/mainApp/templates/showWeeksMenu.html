@@ -10,14 +10,36 @@
 </style>
 {% endblock %}
 
+{% block script %}
+<script>
+	$(document).ready(function(){
+ 		$("#menuSelect")[0].selectedIndex = {{ chosen_hostel }}-1 ;
+ 		$('#menuSelect').on('change', function() {
+		    $.post("/showWeeksMenu/",
+		    {
+				csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,    	
+		    	hostelID : this.value
+		    },
+		    function(data, status){
+		    	if(status==="success"){
+		    		$('#menuTable').replaceWith(data);		    		
+		    	}
+		    	else{
+		    		alert(status);
+		    	}
+		    });
+		});
+	});	
+</script>
+{% endblock %}
+
 {% block body %}
 <div class="container">
   <div id="WeekMenu" class="w3-container">
 	<form action=""  method="post" accept-charset="utf-8" style="float:left">{% csrf_token %} 
 		<input type="hidden" name="action" value = "week" />       
 	        <label for="job" style="float:left;color:#000000">Hostel:</label>
-	        <select onchange="this.form.submit()" id="job" name="hostelID">
-	        	<option> Choose a Hostel </option>	
+	        <select id="menuSelect" name="hostelID">
 				<option value="1">Hostel-1</option>
 				<option value="2">Hostel-2</option>
 				<option value="3">Hostel-3</option>
@@ -39,7 +61,7 @@
 	</form>
   </div>
 </div>
-<div class="container">
+<div class="container" id="menuTable">
 {% if chosen_hostel %}
 	<h1>Menu For Hostel: {{ chosen_hostel }}</h1>
 	{% if hostel_food %}
