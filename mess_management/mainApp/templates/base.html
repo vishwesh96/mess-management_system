@@ -76,6 +76,8 @@
 
                   {% if loginType == "Student" %}
 
+                    <li><a class="menu" href="{% url "home" %}?type=student">Register</a></li>
+
                     <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>

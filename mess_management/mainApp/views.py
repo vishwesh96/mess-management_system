@@ -105,8 +105,11 @@ def dispStats(request):
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
-	message = 'Under Maintenance'
-	return render(request,"error.html", {'message' : message, "loginType" : request.session['loginType']})
+	# handcraft dictionary
+	wastage = {'Monday': 5, 'Tuesday': 6, 'Wedesday': 0, 'Thursday': 4, 'Friday': 4.5, 'Saturday': 3.4, 'Sunday': 9.6}
+	# wastage = {'Monday': 5, 'Tuesday': 6}
+
+	return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage.items()})
 
 
 	# if request.method == 'GET':
@@ -149,7 +152,7 @@ def showDaysMenu(request):
 				hostel_food[entry.myhostel].append(entry.food.name)
 			else:
 				hostel_food[entry.myhostel] = [entry.food.name]
-			# print "screwed 2", hostel_food
+
 		hostel_food = sorted(hostel_food.items())
 	return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
 

@@ -22,7 +22,7 @@ class Hostel(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
 	name = models.CharField(max_length = 50)
 	costPerDay = models.IntegerField()
-
+	
 #added new relation
 class MessAuthority(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
