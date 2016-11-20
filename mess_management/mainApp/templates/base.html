@@ -78,7 +78,9 @@
 
                   {% if loginType == "Student" %}
 
-                    <li><a class="menu" href="{% url "home" %}?type=student">Student</a></li>
+                    <li><a class="menu" href="{% url "home" %}?type=student">Register</a></li>
+
+                    <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
@@ -105,16 +107,17 @@
 <!-- mess authority home -->
 
                   {% else %}
-                    <li><a class="menu" href="{% url "home" %}?type=messAuthority">Mess Authority</a></li>
-                    <li>
-                      <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>
+                    <li><a class="menu" href="{% url "home" %}?type=messAuthority">Home</a></li>
+<!--                     <li>
+                      <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Edit Menu<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showDaysMenu" %}?type=student">Today's Menu</a></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showWeeksMenu" %}?type=student">Week's Menu</a></li>
                       </ul>
-                    </li>
-                    <li><a class="menu" href="{% url "account" %}?type=messAuthority">Account Details</a></li>
-                    <li>
+                    </li> -->
+
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile"%}?type=messAuthority">Profile</a></li>
+<!--                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">User Forms<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile" %}?type=messAuthority">Profile</a></li>
@@ -123,8 +126,9 @@
                         <li role="presentation" class="divider"></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
                       </ul>
-                    </li>
-                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Statistics</a></li>
+                    </li> -->
+                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Edit Cost</a></li>
+                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Anouncement</a></li>
 
                     <li><a class="menu" href="{% url "logout" %}?type=messAuthority">Logout</a></li>
 

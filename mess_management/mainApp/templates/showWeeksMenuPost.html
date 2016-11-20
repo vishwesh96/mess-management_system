@@ -1,0 +1,41 @@
+<div id="menuTable">
+{% if chosen_hostel %}
+	<h1>Menu For Hostel: {{ chosen_hostel }}</h1>
+	{% if hostel_food %}
+	  	<div id="Today's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="border: 1px solid #dddddd"> Meal Type </th>
+						<th style="border: 1px solid #dddddd"> Monday </th>
+						<th style="border: 1px solid #dddddd"> Tuesday </th>
+						<th style="border: 1px solid #dddddd"> Wednesday </th>
+						<th style="border: 1px solid #dddddd"> Thursday </th>
+						<th style="border: 1px solid #dddddd"> Friday </th>
+						<th style="border: 1px solid #dddddd"> Saturday </th>
+						<th style="border: 1px solid #dddddd"> Sunday </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key, values in hostel_food %}
+					<tr> 
+					    <td >{{ key }}</td>
+					    {% for list in values %}
+					    	<td >
+					    	{% for v in list %}
+	        					{{v}}<br>
+	        					{% endfor %}
+	        				</td>
+	        			{% endfor %}
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+	   There are no records yet in Weeks's menu
+	{% endif %}
+{% else %}
+	Please choose a Hostel
+{% endif %}
+</div>
