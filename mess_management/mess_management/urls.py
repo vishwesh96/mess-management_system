@@ -20,7 +20,9 @@ import login.views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^login/', include('login.urls')),
+    url(r'^welcome/', login.views.welcome, name='welcome'),
+    url(r'^loginStudent/', login.views.loginStudent, name='loginStudent'),
+    url(r'^loginCaterer/', login.views.loginCaterer, name='loginCaterer'),
     url(r'^logout/', login.views.logout, name='logout'),
     url(r'^home/', mainApp.views.home, name='home'),
     url(r'^profile/', mainApp.views.profile, name='profile'),
@@ -30,7 +32,7 @@ urlpatterns = [
     url(r'^showWeeksMenu/', mainApp.views.showWeeksMenu, name='showWeeksMenu'),
     url(r'^account/', mainApp.views.account, name='account'),
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
-    url(r'^', login.views.login),
+    url(r'^', login.views.welcome),
     url(r'^reg/', mainApp.views.reg, name='reg'),
 
 ]

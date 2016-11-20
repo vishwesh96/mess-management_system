@@ -13,12 +13,13 @@ MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
 def home(request):
 	loggedIn = login.views.validate(request)
+	print request.session['loginType']
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
 	# if request.method == 'GET':
 	    
-	return render(request, "home.html")	
+	return render(request, "home.html",{"loginType" : request.session['loginType']})	
 
 	# if request.method == 'POST':
 
@@ -56,7 +57,7 @@ def profile(request):
 		if request.POST.get('type') == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record :
-				tempRecord  = record[0]
+				tempRecord  = record[0] #ask about this initialization.....to 
 				record.delete()
 			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
 			
@@ -123,12 +124,12 @@ def showDaysMenu(request):
 	#return render(request, "showDaysMenu.html")
 	hostel_food = None
 	chosen_mealType = None
-	if (request.GET.get('action')):
+	if (request.POST.get('action')):
 		hostel_food={}
-		chosen_mealType = request.GET.get('mealType')
+		chosen_mealType = request.POST.get('mealType')
 		# print "screwed", 'week' in request.POST
 		today = DAYS[datetime.datetime.today().weekday()]
-		daySlot = DaySlot.objects.get(mealType__iexact=request.GET.get('mealType'), day__iexact = today)
+		daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
 		allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
 		for entry in allHostels:
 			if entry.myhostel in hostel_food:
@@ -151,11 +152,11 @@ def showWeeksMenu(request):
 	#return render(request, "showWeeksMenu.html")
 	hostel_food = None
 	chosen_hostel = None	
-	if (request.GET.get('action')):
+	if (request.POST.get('action')):
 		hostel_food=[]
-		chosen_hostel = request.GET.get('hostelID')
+		chosen_hostel = request.POST.get('hostelID')
 	        # print "in week",request.POST
-	        weeklyMenu = Menu.objects.filter(hostel_id=request.GET.get('hostelID'))
+	        weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
 	        for j in range(4):
 			l = []
 			for i in range(7*j,7*(j+1)):
