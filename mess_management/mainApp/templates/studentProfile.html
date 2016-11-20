@@ -24,6 +24,8 @@
 	{% if isEmpty %}
 		    <form action="/profile/" method="post" accept-charset="utf-8">
 			    <h1>Fill your Details</h1><br>
+			    
+			    {% if loginType == "Student" %}
 
 			    <label for="rollNo">Roll Number</label>
 			    <input type="text" value="" id="rollNo" name="rollNo" required="true" />
@@ -41,12 +43,32 @@
 			    <input type="text" value="" id="phoneNo" name="phoneNo" required="" />
 
 			    <input type="hidden" name="type" value="student">
+
+			    {% elif loginType == "MessAuthority" %}
+
+			    <label for="id">ID</label>
+			    <input type="text" value="{{ID}}" id="id" name="id" readonly />
+
+			    <label for="name">Name</label>
+			    <input type="text" value="" id="name" name="name"/>
+
+			    <label for="hostelID">Hostel</label>
+			    <input type="number" value="" id="hostelID" name="hostelID" required="" />
+
+			    <label for="phoneNo">Contact Number</label>
+			    <input type="text" value="" id="phoneNo" name="phoneNo" required="True" />
+
+			    <input type="hidden" name="type" value="messAuthority">
+			    
+			    {% endif %}
 			    <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
 		    </form>
 	{% else %}
 		{% if edit %}
 			    <form action="/profile/" method="post" accept-charset="utf-8">
 				    <h1>Your Details</h1><br>
+
+				    {% if loginType == "Student" %}
 
 				    <label for="rollNo">Roll Number</label>
 				    <input type="text" value="{{record.rollNo}}" id="rollNo" name="rollNo" required="true"/>
@@ -63,12 +85,36 @@
 				    <label for="phoneNo">Contact Number</label>
 				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo"/>
 
-			    <input type="hidden" name="type" value="student">
+			  		<input type="hidden" name="type" value="student">
+
+
+
+				    {% elif loginType == "MessAuthority" %}
+
+				    <label for="id">ID</label>
+				    <input type="text" value="{{ID}}" id="id" name="id" readonly />
+
+				    <label for="name">Name</label>
+				    <input type="text" value="{{name}}" id="name" name="name"/>
+
+				    <label for="hostelID">Hostel</label>
+				    <input type="number" value="{{hostel}}" id="hostelID" name="hostelID" required="" />
+
+				    <label for="phoneNo">Contact Number</label>
+				    <input type="text" value="{{phoneNo}}" id="phoneNo" name="phoneNo" required="" />
+
+				    <input type="hidden" name="type" value="messAuthority">
+				    
+				    {% endif %}
+
+
 			    <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
 			    </form>
 		{% else %}
 			    <form action="/profile/" method="get" accept-charset="utf-8">
 				    <h1>Your Details</h1><br>
+
+				    {% if loginType == "Student" %}
 
 				    <label for="rollNo">Roll Number</label>
 				    <input type="text" value="{{record.rollNo}}" id="rollNo" name="rollNo" readonly/>
@@ -85,7 +131,26 @@
 				    <label for="phoneNo">Contact Number</label>
 				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo" readonly />
 
-				    <input type="hidden" name="type" value="student">
+				    
+
+				    {% elif loginType == "MessAuthority" %}
+
+				    <label for="id">ID</label>
+				    <input type="text" value="{{record.ID}}" id="id" name="id" readonly />
+
+				    <label for="name">Name</label>
+				    <input type="text" value="{{record.name}}" id="name" name="name" readonly/>
+
+				    <label for="hostelID">Hostel</label>
+				    <input type="number" value="{{record.hostel.ID}}" id="hostelID" name="hostelID" readonly />
+
+				    <label for="phoneNo">Contact Number</label>
+				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo" readonly />
+
+				    <input type="hidden" name="type" value="messAuthority">
+				    
+				    {% endif %}
+
 				    <input type="hidden" name="edit" value="True">
 				    <button type="submit" style="background-color:#DE4700">Edit Details</button>{% csrf_token %}
 			    </form>

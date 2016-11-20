@@ -13,7 +13,6 @@ MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
 def home(request):
 	loggedIn = login.views.validate(request)
-	print request.session['loginType']
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
@@ -28,33 +27,45 @@ def profile(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	loginType = request.GET.get('type')
+
+	# If else is needed when user directly types url corresponding to profile
+	
+	if request.session['loginType'] == "Student":
+		loginType = "student"
+
+	else:
+		loginType = "messAuthority"
+
+
 	if request.method == 'GET':	
-		print request.GET.get('type')
-		if request.GET.get('type') == "student" :
+		if loginType == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record : 
 				isEmpty = False
 				edit = request.GET.get('edit',False)				
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit  })
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit , "loginType" : request.session['loginType'] })
 			else:
 				isEmpty = True
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id']})
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id'], "loginType" : request.session['loginType']})
 
-		elif request.GET.get('type') == "messAuthority" :
+		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
+			print record
 			if record : 
 				isEmpty = False
-				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id']})
+				edit = request.GET.get('edit',False)
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id'], "edit":edit,  "loginType" : request.session['loginType']})
 			else:
 				isEmpty = True
-				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty, "ID": request.session['id']})
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ID": request.session['id'], "loginType" : request.session['loginType'] })
 
 		else :
-			message = "wrong type (student or mess) "
+			message = "wrong type (student or messAuthority) "
 			return render(request,"error.html",{"message": message})
 
 	elif request.method == 'POST':
-		if request.POST.get('type') == "student" :
+		if loginType == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record :
 				tempRecord  = record[0] #ask about this initialization.....to 
@@ -70,10 +81,12 @@ def profile(request):
 			s.save()
 			return HttpResponseRedirect("/profile/?type=student")
 		
-		elif request.POST.get('type') == "messAuthority" :
+		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
+			print record
 			if record :
 				record.delete()
+
 			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
 			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
 			m.save()
