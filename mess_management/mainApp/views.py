@@ -6,6 +6,9 @@ import datetime
 from dateutil.parser import parse as parse_date
 
 
+#global variable decided by Mess authority to allow students to Register towards the begining of every semester
+canRegisterHostelAndAccount = True
+
 # Create your views here.
 
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
@@ -43,8 +46,21 @@ def profile(request):
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record : 
 				isEmpty = False
-				edit = request.GET.get('edit',False)				
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit , "loginType" : request.session['loginType'] })
+				edit = request.GET.get('edit',False)
+
+				belongsToRecord = BelongsTo.objects.filter(student = record)
+				if belongsToRecord:
+					hostelNo = belongsToRecord.hostel.ID
+				else:
+					hostelNo = ""
+
+				messAccountRecord = MessAccounts.objects.filter(student = record)
+				if messAccountRecord:
+					messAccountNo = messAccountRecord.accountNo
+				else:
+					messAccountNo = ""
+				
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit , "loginType" : request.session['loginType'], "canRegisterHostelAndAccount":canRegisterHostelAndAccount, "hostelNo":hostelNo, "messAccountNo":messAccountNo })
 			else:
 				isEmpty = True
 				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id'], "loginType" : request.session['loginType']})
@@ -64,11 +80,11 @@ def profile(request):
 			message = "wrong type (student or messAuthority) "
 			return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
 
-	elif request.method == 'POST':
+	elif request.method == 'POST':  #to do : saving hostelno and messaccountno in db
 		if loginType == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record :
-				tempRecord  = record[0] #ask about this initialization.....to 
+				tempRecord  = record[0]  
 				record.delete()
 			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
 			
@@ -219,62 +235,62 @@ def showWeeksMenu(request):
 		return render(request,"showWeeksMenuPost.html",{"hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
 
 
-def reviewAndRate(request):
-	loggedIn = login.views.validate(request)
-	if not loggedIn:
-		return HttpResponseRedirect("/welcome/")
+# def reviewAndRate(request):
+# 	loggedIn = login.views.validate(request)
+# 	if not loggedIn:
+# 		return HttpResponseRedirect("/welcome/")
 
-	if request.method == 'GET':	
-		print request.GET.get('type')
-		if request.GET.get('type') == "student" :
-			record = Rated.objects.filter(ldap=request.session['id']).rollNo
-			rpint record
-			if record : 
-				isEmpty = False
-				edit = request.GET.get('edit',False)				
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit  })
-			else:
-				isEmpty = True
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id']})
+# 	if request.method == 'GET':	
+# 		print request.GET.get('type')
+# 		if request.GET.get('type') == "student" :
+# 			record = Rated.objects.filter(ldap=request.session['id']).rollNo
+# 			rpint record
+# 			if record : 
+# 				isEmpty = False
+# 				edit = request.GET.get('edit',False)				
+# 				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit  })
+# 			else:
+# 				isEmpty = True
+# 				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id']})
 
-		elif request.GET.get('type') == "messAuthority" :
-			record = MessAuthority.objects.filter(ID=request.session['id'])
-			if record : 
-				isEmpty = False
-				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id']})
-			else:
-				isEmpty = True
-				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty, "ID": request.session['id']})
+# 		elif request.GET.get('type') == "messAuthority" :
+# 			record = MessAuthority.objects.filter(ID=request.session['id'])
+# 			if record : 
+# 				isEmpty = False
+# 				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id']})
+# 			else:
+# 				isEmpty = True
+# 				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty, "ID": request.session['id']})
 
-		else :
-			message = "wrong type (student or mess) "
-			return render(request,"error.html",{"message": message})
+# 		else :
+# 			message = "wrong type (student or mess) "
+# 			return render(request,"error.html",{"message": message})
 
-	elif request.method == 'POST':
-		if request.POST.get('type') == "student" :
-			record = Student.objects.filter(ldap=request.session['id'])
-			if record :
-				tempRecord  = record[0] #ask about this initialization.....to 
-				record.delete()
-			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
+# 	elif request.method == 'POST':
+# 		if request.POST.get('type') == "student" :
+# 			record = Student.objects.filter(ldap=request.session['id'])
+# 			if record :
+# 				tempRecord  = record[0] #ask about this initialization.....to 
+# 				record.delete()
+# 			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
 			
-			if record : 
-				message = "Roll No already present"
-				tempRecord.save()
-				return render(request,"error.html",{"message": message})
+# 			if record : 
+# 				message = "Roll No already present"
+# 				tempRecord.save()
+# 				return render(request,"error.html",{"message": message})
 
-			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
-			s.save()
-			return HttpResponseRedirect("/profile/?type=student")
+# 			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
+# 			s.save()
+# 			return HttpResponseRedirect("/profile/?type=student")
 		
-		elif request.POST.get('type') == "messAuthority" :
-			record = MessAuthority.objects.filter(ID=request.session['id'])
-			if record :
-				record.delete()
-			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
-			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
-			m.save()
-			return HttpResponseRedirect("/profile/?type=messAuthority")
+# 		elif request.POST.get('type') == "messAuthority" :
+# 			record = MessAuthority.objects.filter(ID=request.session['id'])
+# 			if record :
+# 				record.delete()
+# 			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
+# 			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
+# 			m.save()
+# 			return HttpResponseRedirect("/profile/?type=messAuthority")
 
 def compare(s,sm,e,em):
 	mealTypes = ["breakfast","lunch","tiffin","dinner"] 

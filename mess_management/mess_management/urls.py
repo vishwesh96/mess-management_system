@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^holiday/', mainApp.views.holiday, name='holiday'),
     url(r'^showDaysMenu/', mainApp.views.showDaysMenu, name='showDaysMenu'),
     url(r'^showWeeksMenu/', mainApp.views.showWeeksMenu, name='showWeeksMenu'),
-    url(r'^reviewAndRate/', mainApp.views.reviewAndRate, name='reviewAndRate'),
+#    url(r'^reviewAndRate/', mainApp.views.reviewAndRate, name='reviewAndRate'),
     url(r'^account/', mainApp.views.account, name='account'),
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
     url(r'^', login.views.welcome),

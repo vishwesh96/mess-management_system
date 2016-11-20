@@ -50,62 +50,83 @@
 {% block body %}
     <div class="student-profile-details">
   {% if isEmpty %}
-        <form action="/profile/" method="post" accept-charset="utf-8">
-          <h1>Fill your Details</h1><br>
-
-          <label for="rollNo">Roll Number</label>
-          <input type="text" value="" id="rollNo" name="rollNo" required="true" />
-
-          <label for="name">Name</label>
-          <input type="text" value="" id="name" name="name"/>
-
-          <label for="ldap">LDAP ID</label>
-          <input type="text" value="{{ldap}}" id="ldap" name="ldap" readonly/>
-
-          <label for="roomNo">Room Number</label>
-          <input type="number" value="" id="roomNo" name="roomNo" required="" />
-
-          <label for="phoneNo">Contact Number</label>
-          <input type="text" value="" id="phoneNo" name="phoneNo" required="" />
-
-          <input type="hidden" name="type" value="student">
-          <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
-        </form>
-  {% else %}
-    {% if edit %}
           <form action="/reviewAndRate/" method="post" accept-charset="utf-8">
-            <h1>PLease Rate  and Review the hostel</h1><br>
+            <h1>PLease Rate and Review the hostel</h1><br>
 
             <fieldset>
               <legend><span class="number">1</span>Your Rating</legend>
               <span class="rating">
-                      <input type="radio" class="rating-input"
-                  id="rating-input-1-5" name="rating-input-1"/>
+                  <label for="taste">Taste: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="taste" value="5"/>
                       <label for="rating-input-1-5" class="rating-star"></label>
-                      <input type="radio" class="rating-input"
-                              id="rating-input-1-4" name="rating-input-1"/>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="taste" value="4"/>
                       <label for="rating-input-1-4" class="rating-star"></label>
-                      <input type="radio" class="rating-input"
-                              id="rating-input-1-3" name="rating-input-1"/>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="taste" value="3"/>
                       <label for="rating-input-1-3" class="rating-star"></label>
-                      <input type="radio" class="rating-input"
-                              id="rating-input-1-2" name="rating-input-1"/>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="taste" value="2"/>
                       <label for="rating-input-1-2" class="rating-star"></label>
-                      <input type="radio" class="rating-input"
-                              id="rating-input-1-1" name="rating-input-1"/>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="taste" value="1"/>
                       <label for="rating-input-1-1" class="rating-star"></label>
               </span>
-              <label for="taste">Taste</label>
-              <input type="text" value="{{record.taste}}" id="taste" name="taste" required="true"/>
 
-              <label for="costEffective">Cost Effective</label>
-              <input type="text" value="{{record.costEffective}}" id="costEffective" name="costEffective" />
+              <span class="rating">
+                  <label for="costEffective">Cost Effective: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="costEffective" value="5"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
 
-              <label for="cleanliness">Cleanliness</label>
-              <input type="text" value="{{record.cleanliness}}" id="cleanliness" name="cleanliness"/>
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="costEffective" value="4"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
 
-              <label for="overall">Overall</label>
-              <input type="number" value="{{record.overall}}" id="overall" name="overall" />
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="costEffective" value="3"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="costEffective" value="2"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="costEffective" value="1"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
+              <span class="rating">
+                  <label for="cleanliness">Cleanliness: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
+              <span class="rating">
+                  <label for="overall">Overall: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
             </fieldset>
 
             <fieldset>
@@ -116,26 +137,96 @@
 
           <input type="hidden" name="type" value="student">
           <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
-          </form>
-    {% else %}
-          <form action="/reviewAndRate/" method="get" accept-charset="utf-8">
-            <h1>Your Feedback</h1><br>
+        </form>
+  {% else %}
+    {% if edit %}
+          <form action="/reviewAndRate/" method="post" accept-charset="utf-8">
+            <h1>PLease Rate and Review the hostel</h1><br>
 
-            <label for="taste">Taste</label>
-            <input type="text" value="{{record.taste}}" id="taste" name="taste" readonly/>
+            <fieldset>
+              <legend><span class="number">1</span>Your Rating</legend>
+              <span class="rating">
+                  <label for="taste">Taste: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="taste" value="{{record.taste}}"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
 
-            <label for="costEffective">Cost Effective</label>
-            <input type="text" value="{{record.costEffective}}" id="costEffective" name="costEffective" readonly/>
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="taste" value="{{record.taste}}"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
 
-            <label for="cleanliness">Cleanliness</label>
-            <input type="text" value="{{record.cleanliness}}" id="cleanliness" name="cleanliness" readonly/>
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="taste" value="{{record.taste}}"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
 
-            <label for="overall">Overall</label>
-            <input type="number" value="{{record.overall}}" id="overall" name="overall" readonly />
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="taste" value="{{record.taste}}"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
 
-            <input type="hidden" name="type" value="student">
-            <input type="hidden" name="edit" value="True">
-            <button type="submit" style="background-color:#DE4700">Edit RAting and Review</button>{% csrf_token %}
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="taste" value="{{record.taste}}"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
+              <span class="rating">
+                  <label for="costEffective">Cost Effective: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="costEffective" value="{{record.costEffective}}"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="costEffective" value="{{record.costEffective}}"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="costEffective" value="{{record.costEffective}}"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="costEffective" value="{{record.costEffective}}"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="costEffective" value="{{record.costEffective}}"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
+              <span class="rating">
+                  <label for="cleanliness">Cleanliness: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="cleanliness" value="{{record.cleanliness}}"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
+              <span class="rating">
+                  <label for="overall">Overall: </label>
+                      <input type="radio" class="rating-input" id="rating-input-1-5" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-5" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-4" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-4" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-3" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-3" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-2" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-2" class="rating-star"></label>
+
+                      <input type="radio" class="rating-input" id="rating-input-1-1" name="overall" value="{{record.overall}}"/>
+                      <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="number">2</span>Your Review </legend>
+              <label for="bio">Review:</label>
+              <textarea id="bio" name="user_bio"></textarea>
+            </fieldset>
+
+          <input type="hidden" name="type" value="student">
+          <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
           </form>
     {% endif%}
     </div>  
