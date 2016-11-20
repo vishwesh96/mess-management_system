@@ -39,7 +39,7 @@ def profile(request):
 				isEmpty = True
 				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id']})
 
-		elif request.GET.get('type') == "mess" :
+		elif request.GET.get('type') == "caterer" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
 			if record : 
 				isEmpty = False
@@ -69,14 +69,14 @@ def profile(request):
 			s.save()
 			return HttpResponseRedirect("/profile/?type=student")
 		
-		elif request.POST.get('type') == "mess" :
+		elif request.POST.get('type') == "caterer" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
 			if record :
 				record.delete()
 			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
 			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
 			m.save()
-			return HttpResponseRedirect("/home/")
+			return HttpResponseRedirect("/profile/?type=caterer")
 
 
 # Function to display stats
