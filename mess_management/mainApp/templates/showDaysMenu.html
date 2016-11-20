@@ -13,7 +13,7 @@
 {% block body %}
 <div class="container">
   <div id="TodayMenu" class="w3-container">
-	<form action="" method="get" accept-charset="utf-8" style="float:left">{% csrf_token %}
+	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}
 		<input type="hidden" name="action" value = "today" />
 	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
 	        <select onchange="this.form.submit()" id="job" name="mealType">

@@ -18,7 +18,7 @@ def home(request):
 
 	# if request.method == 'GET':
 	    
-	return render(request, "home.html")	
+	return render(request, "home.html",{"loginType" : request.session['loginType']})	
 
 	# if request.method == 'POST':
 
@@ -27,36 +27,48 @@ def profile(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	loginType = request.GET.get('type')
+
+	# If else is needed when user directly types url corresponding to profile
+	
+	if request.session['loginType'] == "Student":
+		loginType = "student"
+
+	else:
+		loginType = "messAuthority"
+
+
 	if request.method == 'GET':	
-		print request.GET.get('type')
-		if request.GET.get('type') == "student" :
+		if loginType == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record : 
 				isEmpty = False
 				edit = request.GET.get('edit',False)				
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit  })
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit , "loginType" : request.session['loginType'] })
 			else:
 				isEmpty = True
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id']})
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id'], "loginType" : request.session['loginType']})
 
-		elif request.GET.get('type') == "mess" :
+		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
+			print record
 			if record : 
 				isEmpty = False
-				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id']})
+				edit = request.GET.get('edit',False)
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id'], "edit":edit,  "loginType" : request.session['loginType']})
 			else:
 				isEmpty = True
-				return render(request,"messAuthorityProfile.html",{"isEmpty": isEmpty, "ID": request.session['id']})
+				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ID": request.session['id'], "loginType" : request.session['loginType'] })
 
 		else :
-			message = "wrong type (student or mess) "
+			message = "wrong type (student or messAuthority) "
 			return render(request,"error.html",{"message": message})
 
 	elif request.method == 'POST':
-		if request.POST.get('type') == "student" :
+		if loginType == "student" :
 			record = Student.objects.filter(ldap=request.session['id'])
 			if record :
-				tempRecord  = record[0]
+				tempRecord  = record[0] #ask about this initialization.....to 
 				record.delete()
 			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
 			
@@ -69,14 +81,16 @@ def profile(request):
 			s.save()
 			return HttpResponseRedirect("/profile/?type=student")
 		
-		elif request.POST.get('type') == "mess" :
+		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
+			print record
 			if record :
 				record.delete()
+
 			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
 			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
 			m.save()
-			return HttpResponseRedirect("/home/")
+			return HttpResponseRedirect("/profile/?type=messAuthority")
 
 
 # Function to display stats
@@ -87,19 +101,27 @@ def dispStats(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	if request.method == 'GET':
-		record = Student.objects.filter(ldap=request.session['id'])
-		if record :
-			return render(request,"dispStats.html")
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
 
-		else:
-			isEmpty = True
-			return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
+	message = 'Under Maintenance'
+	return render(request,"error.html", {'message' : message})
 
-	elif request.method == 'POST':
-		# get hostel id
-		# Display wastage stats in the same html
-		return render(request,"dispStats.html")		
+
+	# if request.method == 'GET':
+	# 	record = Student.objects.filter(ldap=request.session['id'])
+	# 	if record :
+	# 		return render(request,"dispStats.html")
+
+	# 	else:
+	# 		isEmpty = True
+	# 		return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
+
+	# elif request.method == 'POST':
+	# 	# get hostel id
+	# 	# Display wastage stats in the same html
+	# 	return render(request,"dispStats.html")		
 
 
 
@@ -115,12 +137,12 @@ def showDaysMenu(request):
 	#return render(request, "showDaysMenu.html")
 	hostel_food = None
 	chosen_mealType = None
-	if (request.GET.get('action')):
+	if (request.POST.get('action')):
 		hostel_food={}
-		chosen_mealType = request.GET.get('mealType')
+		chosen_mealType = request.POST.get('mealType')
 		# print "screwed", 'week' in request.POST
 		today = DAYS[datetime.datetime.today().weekday()]
-		daySlot = DaySlot.objects.get(mealType__iexact=request.GET.get('mealType'), day__iexact = today)
+		daySlot = DaySlot.objects.get(mealType__iexact=request.POST.get('mealType'), day__iexact = today)
 		allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
 		for entry in allHostels:
 			if entry.myhostel in hostel_food:
@@ -143,11 +165,11 @@ def showWeeksMenu(request):
 	#return render(request, "showWeeksMenu.html")
 	hostel_food = None
 	chosen_hostel = None	
-	if (request.GET.get('action')):
+	if (request.POST.get('action')):
 		hostel_food=[]
-		chosen_hostel = request.GET.get('hostelID')
+		chosen_hostel = request.POST.get('hostelID')
 	        # print "in week",request.POST
-	        weeklyMenu = Menu.objects.filter(hostel_id=request.GET.get('hostelID'))
+	        weeklyMenu = Menu.objects.filter(hostel_id=request.POST.get('hostelID'))
 	        for j in range(4):
 			l = []
 			for i in range(7*j,7*(j+1)):
@@ -313,7 +335,10 @@ def tempOpt(request):
 				return render(request,"error.html", {'message' : message})
 			t = TempOpt(student = studentRecord[0], hostel = hostel, startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
-			return render(request,"responseRecorded.html")
+
+			records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo)
+
+			return render(request,"responseRecorded.html",{"records": records})
 
 
 
@@ -356,7 +381,8 @@ def holiday(request):
 
 			t = TempOpt(student = studentRecord[0], startDate = startDate, endDate = endDate, startMealType = startMealType, endMealType = endMealType )
 			t.save()
-			return render(request,"responseRecorded.html")
+			records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo, hostel__isnull = False)
+			return render(request,"holidayView.html",{"records": records})
 
 
 
@@ -385,3 +411,15 @@ def account(request):
 			return render(request,"accountDetails.html",{"record": studentRecord[0], "ldap": request.session['id']  })
 
 
+
+def reg(request):
+
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	

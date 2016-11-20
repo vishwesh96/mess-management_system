@@ -99,15 +99,15 @@ body {
 
 <body>
 
-<div class="logo"></div>
-<div class="login-block">
-    <form action="" method="post" accept-charset="utf-8">
-    <h1>Login</h1>
-    <input type="text" value="" placeholder="Username" id="username" name="ldapid" required="" />
-    <input type="password" value="" placeholder="Password" id="password" name="ldappass" required="" />
-    <button type="submit">Login</button>{% csrf_token %}
-    </form>
-</div>
+    <div class="logo"></div>
+    <div class="login-block">
+        <form action="" method="post" accept-charset="utf-8">
+        <h1>Mess Authority Login</h1>
+        <input type="text" value="" placeholder="Username" id="username" name="messAuthorityid" required="" />
+        <input type="password" value="" placeholder="Password" id="password" name="messAuthoritypass" required="" />
+        <button type="submit">Login</button>{% csrf_token %}
+        </form>
+    </div>
 </body>
 
 </html>

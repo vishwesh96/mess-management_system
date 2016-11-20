@@ -13,7 +13,7 @@
 {% block body %}
 <div class="container">
   <div id="WeekMenu" class="w3-container">
-	<form action=""  method="get" accept-charset="utf-8" style="float:left">{% csrf_token %} 
+	<form action=""  method="post" accept-charset="utf-8" style="float:left">{% csrf_token %} 
 		<input type="hidden" name="action" value = "week" />       
 	        <label for="job" style="float:left;color:#000000">Hostel:</label>
 	        <select onchange="this.form.submit()" id="job" name="hostelID">

@@ -53,13 +53,13 @@
     // });
   </script>
   </head>
-        <body>
+    <body>
           <div id="_home_page">
     <div class="templatemo_topbar">
       <div class="container">
         <div class="row">
           <div class="templatemo_titlewrapper"><img src="../static/images/templatemo_logobg.png" alt="logo background">
-            <div class="templatemo_title"><span>Student Home</span></div>
+            <div class="templatemo_title"><span>{{loginType}} Home</span></div>
          </div>
           <div class="clear"></div>
           <div class="templatemo_titlewrappersmall">Conquer</div>
@@ -72,8 +72,11 @@
               <!-- Collect the nav links, forms, and other content for toggling -->
               <div id="top-menu">
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                  <ul class="nav navbar-nav"> 
-                    <li><a class="menu" href="{% url "home" %}?type=student">Home</a></li>
+                  <ul class="nav navbar-nav">
+
+                  {% if loginType == "Student" %}
+
+                    <li><a class="menu" href="{% url "home" %}?type=student">Student</a></li>
                     <li>
                       <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Mess Menu<b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu">
@@ -95,6 +98,37 @@
                     <li><a class="menu" href="{% url "stats" %}?type=student">Statistics</a></li>
 
                     <li><a class="menu" href="{% url "logout" %}?type=student">Logout</a></li>
+
+<!-- mess authority home -->
+
+                  {% else %}
+                    <li><a class="menu" href="{% url "home" %}?type=messAuthority">Home</a></li>
+<!--                     <li>
+                      <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">Edit Menu<b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showDaysMenu" %}?type=student">Today's Menu</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showWeeksMenu" %}?type=student">Week's Menu</a></li>
+                      </ul>
+                    </li> -->
+
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile"%}?type=messAuthority">Profile</a></li>
+<!--                     <li>
+                      <a href="#" data-toggle="dropdown" class="menu dropdown-toggle">User Forms<b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile" %}?type=messAuthority">Profile</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "tempOpt" %}?type=messAuthority">Temporarily Opt</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "holiday" %}?type=messAuthority">Opt Holiday</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
+                      </ul>
+                    </li> -->
+                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Edit Cost</a></li>
+                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Anouncement</a></li>
+
+                    <li><a class="menu" href="{% url "logout" %}?type=messAuthority">Logout</a></li>
+
+                    {% endif %}
+
                   </ul>
                 </div>
               </div>

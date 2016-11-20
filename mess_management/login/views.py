@@ -4,9 +4,24 @@ from django.http import HttpResponseRedirect
 
 # Create your views here.
 
+def welcome(request):
+	loggedIn = validate(request)
+	if loggedIn:
+		return HttpResponseRedirect("/home/")	
+	if request.method == 'GET':	    
+	    return render(request, "welcome.html")			##lol
 
-def login(request):
+	if request.method == 'POST':
+		#check if student or caterer and redirect to them appropirately
+		if 'studentLogin' in request.POST:
+			return HttpResponseRedirect("/loginStudent/")
+		elif 'messAuthorityLogin' in request.POST:
+			return HttpResponseRedirect("/loginMessAuthority/")
 
+
+
+
+def loginStudent(request):
 	loggedIn = validate(request)
 	if loggedIn:
 		return HttpResponseRedirect("/home/")
@@ -14,7 +29,7 @@ def login(request):
 
 	if request.method == 'GET':
 	    
-	    return render(request, "login.html")			##lol
+	    return render(request, "loginStudent.html")			##lol
 
 	if request.method == 'POST':
 	    
@@ -28,6 +43,7 @@ def login(request):
 	    # auth = True													#comment to turn on ldap login
 	    if auth:
 	    	request.session['id'] = userLDAP
+	    	request.session['loginType'] = "Student"
     		return HttpResponseRedirect("/home/")
 	    else:
 	    	return render(request,"result.html", {"result": "login failed"})
@@ -56,8 +72,63 @@ def doLogin(userName, passWord):
 	except ldap.INVALID_CREDENTIALS:
 		return (False, "")
 
-def validate(request):
-	if request.session.get('id') is None:
+def validate(request): #this is common to both student and caterer as this is checking for only id.
+	if (request.session.get('id') is None) or  (request.session.get('loginType') is None):
 		return False
 	else:
 		return True
+
+
+
+
+
+#caterer login and registration
+
+def loginMessAuthority(request):
+
+	loggedInMessAuthority = validate(request)
+	if loggedInMessAuthority:
+		return HttpResponseRedirect("/home/")
+
+
+	if request.method == 'GET':
+	    
+	    return render(request, "loginMessAuthority.html")			##lol
+
+	if request.method == 'POST':
+	    
+	    userLDAP = request.POST.get("messAuthorityid")
+	    userPASS = request.POST.get("messAuthoritypass")
+
+	    auth = True
+	    if auth:
+	    	request.session['id'] = userLDAP
+	    	request.session['loginType'] = "MessAuthority"
+    		return HttpResponseRedirect("/home/")
+	    else:
+	    	return render(request,"result.html", {"result": "login failed"})
+
+def logout(request):
+    try:
+        del request.session['id']
+        del request.session['loginType']
+    except KeyError:
+        pass
+    return HttpResponseRedirect("/welcome/")
+
+
+# def doLogin(userName, passWord):
+
+# 	userName = "uid="+userName
+# 	conn = ldap.initialize('ldap://ldap.iitb.ac.in')
+# 	search_result = conn.search_s('dc=iitb,dc=ac,dc=in', ldap.SCOPE_SUBTREE, userName, ['uid','employeeNumber'])
+	
+# 	try:
+# 		if search_result:
+# 			authenticate = conn.bind_s(search_result[0][0],passWord)
+# 			return(True, search_result[0][1]['employeeNumber'][0])
+# 		else:
+# 			return (False, "")
+
+# 	except ldap.INVALID_CREDENTIALS:
+# 		return (False, "")
