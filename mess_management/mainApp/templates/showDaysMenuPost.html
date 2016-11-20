@@ -1,0 +1,33 @@
+<div id="menuTable">
+{% if chosen_mealType %}
+	<h1>Menu For Today's {{ chosen_mealType }}</h1>
+	{% if hostel_food %}
+	  	<div id="Today's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="border: 1px solid #dddddd"> Hostel </th>
+						<th style="border: 1px solid #dddddd"> Dish </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key, values in hostel_food %}
+					<tr> 
+					    <td>{{ key }}</td>
+					    <td>
+					    {% for v in values %}
+	        			{{v}}<br>
+	        			{% endfor %}
+	        			</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+	   There are no records yet in menu
+	{% endif %}
+{% else %}
+   Please Choose a Meal Type
+{% endif %}	
+</div>

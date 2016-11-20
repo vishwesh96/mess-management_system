@@ -10,14 +10,35 @@
 </style>
 {% endblock %}
 
+{% block script %}
+<script>
+	$(document).ready(function(){
+		$('#menuSelect').on('change', function() {
+		    $.post("/showDaysMenu/",
+		    {
+				csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,    	
+		    	mealType : this.value
+		    },
+		    function(data, status){
+		    	if(status==="success"){
+		    		$('#menuTable').replaceWith(data);		    		
+		    	}
+		    	else{
+		    		alert(status);
+		    	}
+		    });
+		});
+	});	
+</script>
+{% endblock %}
+
 {% block body %}
 <div class="container">
   <div id="TodayMenu" class="w3-container">
 	<form action="" method="post" accept-charset="utf-8" style="float:left">{% csrf_token %}
 		<input type="hidden" name="action" value = "today" />
 	        <label for="job" style="float:left;color:#000000">Meal Type:</label>
-	        <select onchange="this.form.submit()" id="job" name="mealType">
-	        	<option> Choose a Meal Type </option>
+	        <select id="menuSelect" name="mealType">
 				<option value="breakfast">Breakfast</option>
 				<option value="lunch">Lunch</option>
 				<option value="tiffin">Evening Snacks</option>
@@ -27,38 +48,38 @@
 	</form>
   </div>
 </div>
-<div class="container">
-{% if chosen_mealType %}
-	<h1>Menu For Today's {{ chosen_mealType }}</h1>
-	{% if hostel_food %}
-	  	<div id="Today's Table" class="w3-container table">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th style="border: 1px solid #dddddd"> Hostel </th>
-						<th style="border: 1px solid #dddddd"> Dish </th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for key, values in hostel_food %}
-					<tr> 
-					    <td>{{ key }}</td>
-					    <td>
-					    {% for v in values %}
-	        			{{v}}<br>
-	        			{% endfor %}
-	        			</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	{% else %}
-	   There are no records yet in menu
-	{% endif %}
-{% else %}
-   Please Choose a Meal Type
-{% endif %}	
+<div class="container" id="menuTable">
+		{% if chosen_mealType %}
+			<h1>Menu For Today's {{ chosen_mealType }}</h1>
+			{% if hostel_food %}
+			  	<div id="Today's Table" class="w3-container table">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th style="border: 1px solid #dddddd"> Hostel </th>
+								<th style="border: 1px solid #dddddd"> Dish </th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for key, values in hostel_food %}
+							<tr> 
+							    <td>{{ key }}</td>
+							    <td>
+							    {% for v in values %}
+			        			{{v}}<br>
+			        			{% endfor %}
+			        			</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% else %}
+			   There are no records yet in menu
+			{% endif %}
+		{% else %}
+		   Please Choose a Meal Type
+		{% endif %}	
 </div>
 
 {% endblock %}
