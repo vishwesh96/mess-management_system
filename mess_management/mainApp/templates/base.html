@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{% static 'css/templatemo_style.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/rating.css' %}">
 
     {% block link %}{% endblock %}
     {% block style %}{% endblock %}
@@ -40,6 +41,7 @@
     <script src="{% static 'js/jquery.lightbox.js' %}"></script>
     <script src="{% static 'js/templatemo_custom.js' %}"></script>
     <script src="{% static 'js/responsiveCarousel.min.js' %}"></script>
+
     {% block script %}{% endblock %}
 
 
@@ -91,6 +93,7 @@
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "profile" %}?type=student">Profile</a></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "tempOpt" %}?type=student">Temporarily Opt</a></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "holiday" %}?type=student">Opt Holiday</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "reviewAndRate" %}?type=student">Review</a></li>
                         <li role="presentation" class="divider"></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
                       </ul>
