@@ -472,3 +472,12 @@ def deleteOpt(request):
 	records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo)
 
 	return render(request,"responseRecorded.html",{"records": records, "loginType" : request.session['loginType']})
+
+def messAuthorityMenu(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	# if request.method == 'GET':
+	    	
+	return render(request, "messAuthorityMenu.html",{"loginType" : request.session['loginType']})	
