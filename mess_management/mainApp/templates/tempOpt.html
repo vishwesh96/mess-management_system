@@ -67,14 +67,44 @@ $(document).ready( function() {
 	});
 });
 </script>-->
+
+<script>
+$(document).ready( function() {
+
+	$('#submitForm').submit(function(event) {
+     	event.preventDefault();
+	    $.post("/tempOpt/",
+			$(this).serialize(),
+	    	function(data, status){
+	    		if(status==="success"){
+					if(data['message']){
+	    				$('#errorMessage').text(data['message']);
+	    				$('#errorMessage').show();
+	    			}
+	    			else{
+	    				$('#studentTempOpt').replaceWith(data);
+	    			}	    				    		
+	    		}
+	    		else{
+    				$('#errorMessage').text("Couldn't add entry");
+    				$('#errorMessage').show();
+	    		}
+	    });
+ 	});
+});
+</script>
+
 {% endblock %}
 
 {% block body %}
 
-		<div class="student-temp-opt">
-		    <form action="/tempOpt/" method="post" accept-charset="utf-8">
-			    <h1>Where do you want to eat?</h1><br>
-				
+		<div class="student-temp-opt" id ="studentTempOpt">
+		    <form action="/tempOpt/" method="post" accept-charset="utf-8" id ="submitForm">
+			<h1>Where do you want to eat?</h1><br>
+			
+			<div class="alert alert-danger" id ="errorMessage" style="display: none">
+			</div>	
+			
 				<!-- <div id="popupContent">
 	            	<span style="text-align:center;color:black;font-size:20px;">Response Recorded</span>
 	    			<br/>
@@ -82,6 +112,7 @@ $(document).ready( function() {
 
 				<label for="hostelID">Hostel Number</label>
 	        	<select id="hostelID" name="hostelID">
+	        		<!-- <option value="">None</option> -->
 	            	{% for record in records %}
 	            		<option value="{{ record.ID }}">{{ record.ID }}</option>
 	            	{% endfor %}

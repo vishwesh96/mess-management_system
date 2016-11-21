@@ -55,26 +55,40 @@
 {% endblock %}
 
 {% block script %}
-<!--<script>
+<script>
 $(document).ready( function() {
-	$('#submitResponse').click(function () {
-	$('#overlay').fadeIn('slow');
-	$('#popupContent').fadeIn('slow');    
-	});
-	$('#overlay').click(function () {
-	$('#overlay').fadeOut('slow');
-	    $('#popupContent').fadeOut('slow');    
-	});
+
+	$('#submitForm').submit(function(event) {
+     	event.preventDefault();
+	    $.post("/holiday/",
+			$(this).serialize(),
+	    	function(data, status){
+	    		if(status==="success"){
+					if(data['message']){
+	    				$('#errorMessage').text(data['message']);
+	    				$('#errorMessage').show();
+	    			}
+	    			else{
+	    				$('#studentTempOpt').replaceWith(data);
+	    			}	    				    		
+	    		}
+	    		else{
+    				$('#errorMessage').text("Couldn't add entry");
+    				$('#errorMessage').show();
+	    		}
+	    });
+ 	});
 });
-</script>-->
+</script>
 {% endblock %}
 
 {% block body %}
 
-		<div class="student-holiday">
-		    <form action="/holiday/" method="post" accept-charset="utf-8">
+		<div class="student-holiday" id="studentTempOpt">
+		    <form action="/holiday/" method="post" accept-charset="utf-8" id ="submitForm">
 			    <h1>When are you not eating?</h1><br>
-				
+			<div class="alert alert-danger" id ="errorMessage" style="display: none">
+			</div>	
 				<!-- <div id="popupContent">
 	            	<span style="text-align:center;color:black;font-size:20px;">Response Recorded</span>
 	    			<br/>

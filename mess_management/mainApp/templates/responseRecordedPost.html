@@ -1,32 +1,31 @@
- {% extends "base.html" %}
-{% block title %}Home{% endblock %}
 
-{% block style %}
+<div class="container" id ="studentTempOpt">
 <style>
 	th,td{
-		text-align:left;
+		text-align:center;
 		border: 1px solid #dddddd;
 	}
 </style>
-{% endblock %}
-
-{% block body %}
-<br>
-<br>
-<div class="container">
   	<div class="w3-container table">
 		<table class="table table-striped">
 			<thead>
 				<tr>
+					<th style="border: 1px solid #dddddd">Hostel</th>
 					<th style="border: 1px solid #dddddd">Start Date </th>
 					<th style="border: 1px solid #dddddd">Start Meal Type  </th>
 					<th style="border: 1px solid #dddddd">End Date  </th>
-					<th style="border: 1px solid #dddddd">End Meal Type </th>
+					<th style="border: 1px solid #dddddd">End Meal Type  </th>
 				</tr>
 			</thead>
 			<tbody>
 			{% for record in records %}
 				<tr> 
+				    <td>{% if record.hostel.ID %}
+				    	{{ record.hostel.ID }}
+				    	{% else %}
+				    	No hostel opted
+				    	{% endif %}
+				    </td>
 				    <td>{{record.startDate}}</td>
 				    <td>{{record.startMealType}}</td>
 				    <td>{{record.endDate}}</td>
@@ -37,6 +36,3 @@
 		</table>
 	</div>
 </div>
-
-{% endblock %}
-
