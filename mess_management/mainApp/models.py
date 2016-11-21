@@ -43,7 +43,7 @@ class DaySlot(models.Model):
 	mealType  = models.CharField(max_length = 20)
 
 class Announcement(models.Model):
-	ID = models.CharField(max_length = 20, primary_key = True)
+	ID = models.IntegerField(primary_key = True)
 	dateTime = models.DateTimeField()
 	text = models.CharField(max_length = 1000)
 	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
