@@ -71,10 +71,10 @@ class BelongsTo(models.Model):
 class Rated(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.SET_NULL, blank=True, null=True) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
-	taste = models.IntegerField() 
-	costEffective = models.IntegerField()
-	cleanliness = models.IntegerField()
-	overall = models.DecimalField(max_digits=4,decimal_places=2)
+	taste = models.IntegerField(null=True) 
+	costEffective = models.IntegerField(null=True)
+	cleanliness = models.IntegerField(null=True)
+	overall = models.IntegerField(null=True)
 	class Meta:
 		unique_together = (("student","hostel"),)
 	
