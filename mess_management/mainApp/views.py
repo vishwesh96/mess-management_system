@@ -4,6 +4,8 @@ import login.views
 from mainApp.models import *
 import datetime
 from dateutil.parser import parse as parse_date
+import time
+from django.db.models import Q
 
 
 #global variable decided by Mess authority to allow students to Register towards the begining of every semester
@@ -48,15 +50,18 @@ def profile(request):
 				isEmpty = False
 				edit = request.GET.get('edit',False)
 
-				belongsToRecord = BelongsTo.objects.filter(student = record)
+				belongsToRecord = BelongsTo.objects.filter(student = record[0], endDate__isnull = True)
+				
+
 				if belongsToRecord:
-					hostelNo = belongsToRecord.hostel.ID
+					hostelNo = belongsToRecord[0].hostel.ID
 				else:
 					hostelNo = ""
 
-				messAccountRecord = MessAccounts.objects.filter(student = record)
+				messAccountRecord = MessAccounts.objects.filter(student = record[0])
+
 				if messAccountRecord:
-					messAccountNo = messAccountRecord.accountNo
+					messAccountNo = messAccountRecord[0].accountNo
 				else:
 					messAccountNo = ""
 				
@@ -67,7 +72,6 @@ def profile(request):
 
 		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
-			print record
 			if record : 
 				isEmpty = False
 				edit = request.GET.get('edit',False)
@@ -82,29 +86,114 @@ def profile(request):
 
 	elif request.method == 'POST':  #to do : saving hostelno and messaccountno in db
 		if loginType == "student" :
-			record = Student.objects.filter(ldap=request.session['id'])
-			if record :
-				tempRecord  = record[0]  
-				record.delete()
-			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
+
+			record = Student.objects.filter(rollNo=request.POST.get('rollNo')).exclude(ldap = request.session['id'])	
 			
 			if record : 
 				message = "Roll No already present"
-				tempRecord.save()
 				return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
 
-			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
+			
+			record = Student.objects.filter(ldap=request.session['id'])
+
+			# print len(s)
+			if record:
+				s = record[0]
+				s.name = request.POST.get('name')
+				s.rollNo = request.POST.get('rollNo')
+				s.roomNo = request.POST.get('roomNo')
+				s.phoneNo = request.POST.get('phoneNo')
+
+			else:
+				s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
+							
 			s.save()
+
+			# retrive hostel record
+			h = Hostel.objects.get(ID = request.POST.get('hostelNo'))
+			startDate = datetime.datetime.now().date()
+
+			# If student already belongs to a hostel then initialise his end date as today's date and add
+			# a new record with the student's new hostel. 
+
+			record = BelongsTo.objects.filter(student = s, endDate__isnull = True)
+
+			
+			if record :
+				if record[0].hostel.ID != request.POST.get('hostelNo'):
+					record[0].endDate = startDate
+					record[0].save()
+					insertBelongsTo = BelongsTo(student = s, hostel = h, startDate = startDate )
+					insertBelongsTo.save()
+				
+
+			else:
+				insertBelongsTo = BelongsTo(student = s, hostel = h, startDate = startDate )
+				# Save record in belongs to
+				insertBelongsTo.save()
+
+			# Assumption: When student pays his fees he is given an account number which has the
+			# balance equal to fee amount paid. This could be transfered to bank. If he creates 
+			# new bank account and links, it is his responsibility to
+			# claim the remaining amount in previous account 
+
+			accNo = request.POST.get('messAccountNo')
+			
+
+			studentAccount = MessAccounts.objects.filter(student = s).exclude(accountNo = accNo)
+			# If the student has other account (previous account) Check for its balance to be 0 before removing it.
+			# If balance not zero warn user
+			if studentAccount:
+				if studentAccount[0].balance == 0:
+					studentAccount[0].delete()
+				else:
+					message = "Previous Account Balance is not zero. Claim it and link with new account"
+					return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
+
+			record = MessAccounts.objects.filter(accountNo = accNo)
+
+			if record:
+				if record[0].student != s:
+					message = "Account Given to another student also. Contact ASC"
+					return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
+
+				else:
+					record[0].balance = 15000
+					record[0].save()
+			else:
+				studentAccount = MessAccounts.objects.filter(student = s)
+				# print studentAccount[0].balance
+				# If the student has other account (previous account) Check for its balance to be 0 before removing it.
+				# If balance not zero warn user
+				if studentAccount:
+					if studentAccount[0].balance == 0:
+						studentAccount[0].delete()
+					else:
+						message = "Previous Account Balance is not zero. Claim it and link with new account"
+						return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
+
+
+				# if record is not present, new record is inserted. Balance should come from the asc where he paid fees
+				# Here it is hardcoded to 15000		
+				record = MessAccounts(student = s, accountNo = accNo, balance = 15000)
+				record.save()					
+
 			return HttpResponseRedirect("/profile/?type=student")
+
 		
 		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
-			print record
-			if record :
-				record.delete()
-
 			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
-			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
+
+			if record :
+				m = record[0]
+				m.name = request.POST.get('name')
+				m.hostel = h
+				m.phoneNo = request.POST.get('phoneNo')
+
+			else:
+				m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
+	
 			m.save()
 			return HttpResponseRedirect("/profile/?type=messAuthority")
 
