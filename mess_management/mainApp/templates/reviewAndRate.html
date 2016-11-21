@@ -10,16 +10,55 @@
 
 {% block style %}
 <style>
+#overlay {
+    display:none;
+    opacity:0.5;
+    background-color:black;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index: 999;
+}
+#popupContent {
+    display:none;  
+    position: relative;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+    width: 600px;
+    height: 500px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+   
+}
+#popupContent {
+    display:none;
+        font-family:Arial, Helvetica, sans-serif;
+    color: #4E93A2;
+    margin-top:30px;
+    margin-left:30px;
+    margin-right:30px;
+}
+
+</style>
+
+<style>
   form{
     width:50%;
   }
-.rating {
+.rating1 {
     overflow: hidden;
     display: inline-block;
     font-size: 0;
     position: relative;
 }
-.rating-input {
+.rating1-input {
     float: right;
     width: 16px;
     height: 16px;
@@ -27,13 +66,13 @@
     margin: 0 0 0 -16px;
     opacity: 0;
 }
-.rating:hover .rating-star:hover,
-.rating:hover .rating-star:hover ~ .rating-star,
-.rating-input:checked ~ .rating-star {
+.rating1:hover .rating1-star:hover,
+.rating1:hover .rating1-star:hover ~ .rating1-star,
+.rating1-input:checked ~ .rating1-star {
     background-position: 0 0;
 }
-.rating-star,
-.rating:hover .rating-star {
+.rating1-star,
+.rating1:hover .rating1-star {
     position: relative;
     float: right;
     display: block;
@@ -41,6 +80,98 @@
     height: 16px;
     background: url('http://kubyshkin.ru/samples/star-rating/star.png') 0 -16px;
 }
+
+
+.rating2 {
+    overflow: hidden;
+    display: inline-block;
+    font-size: 0;
+    position: relative;
+}
+.rating2-input {
+    float: right;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0 0 0 -16px;
+    opacity: 0;
+}
+.rating2:hover .rating2-star:hover,
+.rating2:hover .rating2-star:hover ~ .rating2-star,
+.rating2-input:checked ~ .rating2-star {
+    background-position: 0 0;
+}
+.rating2-star,
+.rating2:hover .rating2-star {
+    position: relative;
+    float: right;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url('http://kubyshkin.ru/samples/star-rating/star.png') 0 -16px;
+}
+
+
+
+.rating3 {
+    overflow: hidden;
+    display: inline-block;
+    font-size: 0;
+    position: relative;
+}
+.rating3-input {
+    float: right;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0 0 0 -16px;
+    opacity: 0;
+}
+.rating3:hover .rating3-star:hover,
+.rating3:hover .rating3-star:hover ~ .rating3-star,
+.rating3-input:checked ~ .rating3-star {
+    background-position: 0 0;
+}
+.rating3-star,
+.rating3:hover .rating3-star {
+    position: relative;
+    float: right;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url('http://kubyshkin.ru/samples/star-rating/star.png') 0 -16px;
+}
+
+
+.rating4 {
+    overflow: hidden;
+    display: inline-block;
+    font-size: 0;
+    position: relative;
+}
+.rating4-input {
+    float: right;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0 0 0 -16px;
+    opacity: 0;
+}
+.rating4:hover .rating4-star:hover,
+.rating4:hover .rating4-star:hover ~ .rating4-star,
+.rating4-input:checked ~ .rating4-star {
+    background-position: 0 0;
+}
+.rating4-star,
+.rating4:hover .rating4-star {
+    position: relative;
+    float: right;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url('http://kubyshkin.ru/samples/star-rating/star.png') 0 -16px;
+}
+
 </style>
 {% endblock %}
 
@@ -49,107 +180,204 @@
 <script type="text/javascript">
 $(document).ready(function(){
 //  Check Radio-box
-    $(".rating input:radio").attr("checked", false);
-    $('.rating input').click(function () {
-        $(".rating span").removeClass('checked');
+    $(".rating1 input:radio").attr("checked", false);
+    $('.rating1 input').click(function () {
+        $(".rating1 span").removeClass('checked');
         $(this).parent().addClass('checked');
     });
 
-    $('input:radio').change(
+    $('.rating1 input:radio').change(
     function(){
         var userRating = this.value;
-        alert(userRating);
+        $.post("/reviewAndRate/",
+        {
+          csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,      
+          type : "taste",
+          data : userRating  
+        });
     }); 
+
+
+    $(".rating2 input:radio").attr("checked", false);
+    $('.rating2 input').click(function () {
+        $(".rating2 span").removeClass('checked');
+        $(this).parent().addClass('checked');
+    });
+
+    $('.rating2 input:radio').change(
+    function(){
+        var userRating = this.value;
+        $.post("/reviewAndRate/",
+        {
+          csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,      
+          type : "costEffective",
+          data : userRating  
+        });
+    }); 
+
+    $(".rating3 input:radio").attr("checked", false);
+    $('.rating3 input').click(function () {
+        $(".rating3 span").removeClass('checked');
+        $(this).parent().addClass('checked');
+    });
+
+    $('.rating3 input:radio').change(
+    function(){
+        var userRating = this.value;
+        $.post("/reviewAndRate/",
+        {
+          csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,      
+          type : "cleanliness",
+          data : userRating  
+        });
+    }); 
+
+
+    $(".rating4 input:radio").attr("checked", false);
+    $('.rating4 input').click(function () {
+        $(".rating4 span").removeClass('checked');
+        $(this).parent().addClass('checked');
+    });
+
+    $('.rating4 input:radio').change(
+    function(){
+        var userRating = this.value;
+        $.post("/reviewAndRate/",
+        {
+          csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,      
+          type : "overall",
+          data : userRating  
+        });
+    }); 
+
+
+    $('#submitForm').submit(function(event) {
+      event.preventDefault();
+      $.post("/reviewAndRate/",
+      {
+        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,              
+        type : "review",
+        data : $('#studentReview').val()
+      },
+      function(data,status){
+          if(status==="success"){
+            $('#doneMessage').replaceWith(data);  
+          }
+          else{
+              $('#errorMessage').text("The review couldn't be submitted");
+              $('#errorMessage').show();
+          }
+      });
+    });
+
+});
+
+</script>
+
+<script>
+$(document).ready( function() {
+  $('#overlay').click(function () {
+      $('#overlay').fadeOut('slow');
+      $('#popupContent').fadeOut('slow');    
+  });
 });
 </script>
+
 {% endblock %}
 
 {% block body %}
-    <div class="student-profile-details">
-          <form action="/reviewAndRate/" method="post" accept-charset="utf-8">
+    <div class="student-profile-details" id ="doneMessage">
+          <form action="/reviewAndRate/" method="post" accept-charset="utf-8" id = "submitForm">
             <h1>Review the hostel</h1><br>
 
+        <div id="popupContent">
+                <span style="text-align:center;color:black;font-size:20px;">Response Recorded</span>
+            <br/>
+        </div>
 
+          <div class="alert alert-danger" id ="errorMessage" style="display: none">
+          </div>  
 
-              <span class="rating" style="float:left">  
+              <span class="rating1" style="float:left">  
                 <h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 10px 0; text-align: center; float:left">Taste: </h4>            
-                      <input type="radio" class="rating-input" id="rating-input-1-5" name="taste" value="5"/>
-                      <label for="rating-input-1-5" class="rating-star"></label>
+                      <input type="radio" class="rating1-input" id="rating1-input-1-5" name="taste" value="5"/>
+                      <label for="rating1-input-1-5" class="rating1-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-4" name="taste" value="4"/>
-                      <label for="rating-input-1-4" class="rating-star"></label>
+                      <input type="radio" class="rating1-input" id="rating1-input-1-4" name="taste" value="4"/>
+                      <label for="rating1-input-1-4" class="rating1-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-3" name="taste" value="3"/>
-                      <label for="rating-input-1-3" class="rating-star"></label>
+                      <input type="radio" class="rating1-input" id="rating1-input-1-3" name="taste" value="3"/>
+                      <label for="rating1-input-1-3" class="rating1-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-2" name="taste" value="2"/>
-                      <label for="rating-input-1-2" class="rating-star"></label>
+                      <input type="radio" class="rating1-input" id="rating1-input-1-2" name="taste" value="2"/>
+                      <label for="rating1-input-1-2" class="rating1-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-1" name="taste" value="1"/>
-                      <label for="rating-input-1-1" class="rating-star"></label>
+                      <input type="radio" class="rating1-input" id="rating1-input-1-1" name="taste" value="1"/>
+                      <label for="rating1-input-1-1" class="rating1-star"></label>
               </span>
 
-              <span class="rating" style="float:left;">
+              <span class="rating2" style="float:left;">
                 <h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 10px 0; text-align: center; float:left">Cost Effective: </h4>                  
-                      <input type="radio" class="rating-input" id="rating-input-1-5" name="costEffective" value="5"/>
-                      <label for="rating-input-1-5" class="rating-star"></label>
+                      <input type="radio" class="rating2-input" id="rating2-input-1-5" name="costEffective" value="5"/>
+                      <label for="rating2-input-1-5" class="rating2-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-4" name="costEffective" value="4"/>
-                      <label for="rating-input-1-4" class="rating-star"></label>
+                      <input type="radio" class="rating2-input" id="rating2-input-1-4" name="costEffective" value="4"/>
+                      <label for="rating2-input-1-4" class="rating2-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-3" name="costEffective" value="3"/>
-                      <label for="rating-input-1-3" class="rating-star"></label>
+                      <input type="radio" class="rating2-input" id="rating2-input-1-3" name="costEffective" value="3"/>
+                      <label for="rating2-input-1-3" class="rating2-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-2" name="costEffective" value="2"/>
-                      <label for="rating-input-1-2" class="rating-star"></label>
+                      <input type="radio" class="rating2-input" id="rating2-input-1-2" name="costEffective" value="2"/>
+                      <label for="rating2-input-1-2" class="rating2-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-1" name="costEffective" value="1"/>
-                      <label for="rating-input-1-1" class="rating-star"></label>
+                      <input type="radio" class="rating2-input" id="rating2-input-1-1" name="costEffective" value="1"/>
+                      <label for="rating2-input-1-1" class="rating2-star"></label>
               </span>
               
-              <span class="rating" style="float:left;">
+              <span class="rating3" style="float:left;">
                 <h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 10px 0; text-align: center; float:left">Cleanliness: </h4>
-                      <input type="radio" class="rating-input" id="rating-input-1-5" name="cleanliness" value="5"/>
-                      <label for="rating-input-1-5" class="rating-star"></label>
+                      <input type="radio" class="rating3-input" id="rating3-input-1-5" name="cleanliness" value="5"/>
+                      <label for="rating3-input-1-5" class="rating3-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-4" name="cleanliness" value="4"/>
-                      <label for="rating-input-1-4" class="rating-star"></label>
+                      <input type="radio" class="rating3-input" id="rating3-input-1-4" name="cleanliness" value="4"/>
+                      <label for="rating3-input-1-4" class="rating3-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-3" name="cleanliness" value="3"/>
-                      <label for="rating-input-1-3" class="rating-star"></label>
+                      <input type="radio" class="rating3-input" id="rating3-input-1-3" name="cleanliness" value="3"/>
+                      <label for="rating3-input-1-3" class="rating3-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-2" name="cleanliness" value="2"/>
-                      <label for="rating-input-1-2" class="rating-star"></label>
+                      <input type="radio" class="rating3-input" id="rating3-input-1-2" name="cleanliness" value="2"/>
+                      <label for="rating3-input-1-2" class="rating3-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-1" name="cleanliness" value="1/>
-                      <label for="rating-input-1-1" class="rating-star"></label>
+                      <input type="radio" class="rating3-input" id="rating3-input-1-1" name="cleanliness" value="1"/>
+                      <label for="rating3-input-1-1" class="rating3-star"></label>
               </span>
 
-              <span class="rating" style="float:left;">
+              <span class="rating4" style="float:left;">
                 <h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 10px 0; text-align: center; float:left">Overall: </h4>
-                      <input type="radio" class="rating-input" id="rating-input-1-5" name="overall" value="5"/>
-                      <label for="rating-input-1-5" class="rating-star"></label>
+                      <input type="radio" class="rating4-input" id="rating4-input-1-5" name="overall" value="5"/>
+                      <label for="rating4-input-1-5" class="rating4-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-4" name="overall" value="4"/>
-                      <label for="rating-input-1-4" class="rating-star"></label>
+                      <input type="radio" class="rating4-input" id="rating4-input-1-4" name="overall" value="4"/>
+                      <label for="rating4-input-1-4" class="rating4-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-3" name="overall" value="3"/>
-                      <label for="rating-input-1-3" class="rating-star"></label>
+                      <input type="radio" class="rating4-input" id="rating4-input-1-3" name="overall" value="3"/>
+                      <label for="rating4-input-1-3" class="rating4-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-2" name="overall" value="2"/>
-                      <label for="rating-input-1-2" class="rating-star"></label>
+                      <input type="radio" class="rating4-input" id="rating4-input-1-2" name="overall" value="2"/>
+                      <label for="rating4-input-1-2" class="rating4-star"></label>
 
-                      <input type="radio" class="rating-input" id="rating-input-1-1" name="overall" value="1"/>
-                      <label for="rating-input-1-1" class="rating-star"></label>
+                      <input type="radio" class="rating4-input" id="rating4-input-1-1" name="overall" value="1"/>
+                      <label for="rating4-input-1-1" class="rating4-star"></label>
               </span>
               <br><br><br>
               <div style="float:left;">
                 <h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 10px 0; text-align: center; float:left">Review: </h4>
-              <textarea id="bio" name="user_bio"></textarea>
+              <textarea id="studentReview" name="user_bio"></textarea>
               </div>
 
           <input type="hidden" name="type" value="student">
-          <button type="submit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
+          <button type="submit" id="reviewSubmit" style="background-color:#DE4700">Submit</button>{% csrf_token %}
         </form>
+        <div id="overlay"></div>
     </div>  
 {% endblock %}

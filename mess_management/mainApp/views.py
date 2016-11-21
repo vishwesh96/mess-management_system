@@ -354,48 +354,45 @@ def reviewAndRate(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/welcome/")
 
-	loginType = request.GET.get('type')
-
-	# If else is needed when user directly types url corresponding to profile
-	
-	if request.session['loginType'] == "Student":
-		loginType = "student"
-
-	else:
-		loginType = "messAuthority"
-
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
 
 	if request.method == 'GET':	
-		if loginType == "student" :
-			return render(request,"reviewAndRate.html",{ "loginType" : request.session['loginType'] })
+		return render(request,"reviewAndRate.html",{ "loginType" : request.session['loginType'] })
 
-	elif request.method == 'POST':  
-		if loginType == "student" :
-			record = Student.objects.filter(ldap=request.session['id'])
-			if record :
-				tempRecord  = record[0]  
-				record.delete()
-			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
-			
-			if record : 
-				message = "Roll No already present"
-				tempRecord.save()
-				return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
-
-			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
-			s.save()
-			return HttpResponseRedirect("/profile/?type=student")
+	elif request.method == 'POST': 
+		rateType = request.POST.get('type')
+		data = request.POST.get('data')
 		
-		elif loginType == "messAuthority" :
-			record = MessAuthority.objects.filter(ID=request.session['id'])
-			print record
-			if record :
-				record.delete()
+		hostel= BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo)[0].hostel
+		rating  = Rated.objects.filter(student__rollNo=studentRecord[0].rollNo,hostel__ID=hostel.ID)
+		if rating : 		
+			record = rating[0]
+		else  :
+			record = Rated(student=studentRecord[0],hostel=hostel)
+		if rateType == "taste" : 
+			record.taste =  data
+			record.save()
+		elif rateType == "costEffective" :
+			record.costEffective = data
+			record.save()
+		elif rateType == "cleanliness" :
+			record.cleanliness = data
+			record.save()
+		elif rateType == "overall" :
+			record.overall = data
+			record.save()
+		elif rateType == "review" :
+			reviewRecord = Reviewed(student=studentRecord[0],hostel=hostel)
+			reviewRecord.review = data
+			reviewRecord.dateTime = datetime.datetime.now()
+			if data :
+				reviewRecord.save()
 
-			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
-			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
-			m.save()
-			return HttpResponseRedirect("/profile/?type=messAuthority")
+		message = "Review Recorded"
+		return render(request,"errorPost.html",{"message": message})
+
 
 def compare(s,sm,e,em):
 	mealTypes = ["breakfast","lunch","tiffin","dinner"] 
@@ -584,3 +581,12 @@ def deleteOpt(request):
 	records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo)
 
 	return render(request,"responseRecorded.html",{"records": records, "loginType" : request.session['loginType']})
+
+def messAuthorityMenu(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	# if request.method == 'GET':
+	    	
+	return render(request, "messAuthorityMenu.html",{"loginType" : request.session['loginType']})	
