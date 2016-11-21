@@ -29,6 +29,16 @@ def home(request):
 
 	# if request.method == 'POST':
 
+
+def chooseExtras(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	# if request.method == 'GET':
+	    
+	return render(request, "chooseExtras.html",{"loginType" : request.session['loginType']})
+
 def profile(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
