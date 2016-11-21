@@ -86,9 +86,10 @@
 				    <input type="text" value="{{record.ldap}}" id="ldap" name="ldap" readonly/>
 
 
-			 		{% if canRegisterHostelAndAccount %}
+			 		{% if canRegisterHostelAndAccount and not hostelNo %}
 					    <label for="hostelNo">Hostel Number</label>
-					    <input type="number" value="{{hostelNo}}" id="hostelNo" name="hostelNo" required="true" />
+					    <input type="number" value="{{hostelNo}}" id="hostelNo" name="hostelNo" required="true"/>
+
 				    {% else %}
 					    <label for="hostelNo">Hostel Number</label>
 					    <input type="number" value="{{hostelNo}}" id="hostelNo" name="hostelNo" readonly/>
@@ -98,11 +99,11 @@
 				    <input type="number" value="{{record.roomNo}}" id="roomNo" name="roomNo"/>
 
 
-			 		{% if canRegisterHostelAndAccount %}
-					    <label for="messAccountNo">Mess Account Number</label>
+			 		{% if canRegisterHostelAndAccount and not messAccountNo %}
+					    <label for="messAccountNo">Mess Account true</label>
 					    <input type="text" value="{{messAccountNo}}" id="messAccountNo" name="messAccountNo" required="true" />
 				    {% else %}
-					    <label for="messAccountNo">Mess Account Number</label>
+					    <label for="messAccountNo">Mess Account Number false</label>
 					    <input type="text" value="{{messAccountNo}}" id="messAccountNo" name="messAccountNo" readonly/>
 				    {% endif %}
 
@@ -119,13 +120,13 @@
 				    <input type="text" value="{{ID}}" id="id" name="id" readonly />
 
 				    <label for="name">Name</label>
-				    <input type="text" value="{{name}}" id="name" name="name"/>
+				    <input type="text" value="{{record.name}}" id="name" name="name"/>
 
 				    <label for="hostelID">Hostel</label>
-				    <input type="number" value="{{hostel}}" id="hostelID" name="hostelID" required="" />
+				    <input type="number" value="{{record.hostel.ID}}" id="hostelID" name="hostelID" required="" />
 
 				    <label for="phoneNo">Contact Number</label>
-				    <input type="text" value="{{phoneNo}}" id="phoneNo" name="phoneNo" required="" />
+				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo" required="" />
 
 				    <input type="hidden" name="type" value="messAuthority">
 				    

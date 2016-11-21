@@ -63,7 +63,7 @@ class BelongsTo(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
 	startDate = models.DateField()
-	endDate = models.DateField()
+	endDate = models.DateField(null=True)
 	class Meta:
 		unique_together = (("student", "startDate"),)
 
