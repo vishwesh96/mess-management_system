@@ -1,13 +1,50 @@
- {% extends "base.html" %}
+{% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
 {% block style %}
 <style>
 	th,td{
-		text-align:left;
+		text-align:center;
 		border: 1px solid #dddddd;
 	}
 </style>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$(document).ready( function() {
+
+	$('#deleteOpt').click(function() {
+		var tr = $(this).parent().parent();
+		alert(tr.find("#startMealType").html());
+	    $.get("/deleteOpt/",
+			{
+				hostelID : tr.find("#hostelID").html(),
+				startDate : tr.find("#startDate").html(),
+				startMealType : tr.find("#startMealType").html(),
+				endDate : tr.find("#endDate").html(),
+				endMealType : tr.find("#endMealType").html(),
+			
+			},
+	    	function(data, status){
+	    		if(status==="success"){
+					if(data['message']){
+	    				$('#errorMessage').text(data['message']);
+	    				$('#errorMessage').show();
+	    			}
+	    			else{
+	    				$('#studentTempOpt').replaceWith(data);
+	    			}	    				    		
+	    		}
+	    		else{
+    				$('#errorMessage').text("Couldn't add entry");
+    				$('#errorMessage').show();
+	    		}
+	    });
+ 	});
+});
+</script>
 {% endblock %}
 
 {% block body %}
@@ -15,6 +52,10 @@
 <br>
 <div class="container">
   	<div class="w3-container table">
+
+  				<div class="alert alert-danger" id ="errorMessage" style="display: none">
+			</div>	
+
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -28,11 +69,19 @@
 			<tbody>
 			{% for record in records %}
 				<tr> 
-				    <td>{{record.hostel.ID}}</td>
-				    <td>{{record.startDate}}</td>
-				    <td>{{record.startMealType}}</td>
-				    <td>{{record.endDate}}</td>
-				    <td>{{record.endMealType}}</td>
+				    <td id="hostelID">
+					{% if record.hostel.ID %}
+			    		{{ record.hostel.ID }}
+			    	{% else %}
+			    		No hostel opted
+				    {% endif %}
+				    </td>
+				    
+				    <td id="startDate">{{record.startDate}}</td>
+				    <td id="startMealType">{{record.startMealType}}</td>
+				    <td id="endMealDate">{{record.endDate}}</td>
+				    <td id="endMealType">{{record.endMealType}}</td>
+				    <td><button id = "deleteOpt">Delete</button></td>
 				</tr>
 			{% endfor %}
 			</tbody>
