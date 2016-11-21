@@ -21,11 +21,34 @@ MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 def home(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
-	# if request.method == 'GET':
-	    
-	return render(request, "home.html",{"loginType" : request.session['loginType']})	
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
+
+	record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
+	notifs = []
+	if not record:
+		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifs" : notifs})	
+		# No hostel yet, so no notifs
+
+	else:
+		temp = Announcement.objects.filter(hostel = record[0].hostel).order_by('-ID')		
+		
+		if temp:
+			id = temp[0].ID+1
+		else:
+			id = 1
+
+		a = Announcement(ID = id, dateTime = datetime.datetime.now(),hostel = record[0].hostel, text = "jscnjwndjcnwdjncjdcjndj")
+		a.save()
+
+		announcements = Announcement.objects.filter(hostel = record[0].hostel).order_by('-dateTime')
+		for entry in announcements:
+			notifs.append((entry.dateTime, entry.text))
+
+	return render(request, "home.html",{"loginType" : request.session['loginType'], "notifs" : notifs})	
 
 	# if request.method == 'POST':
 
@@ -42,7 +65,7 @@ def chooseExtras(request):
 def profile(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	loginType = request.GET.get('type')
 
@@ -216,7 +239,7 @@ def dispStats(request):
 
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
@@ -248,7 +271,7 @@ def dispStats(request):
 def showDaysMenu(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
@@ -292,7 +315,7 @@ def showDaysMenu(request):
 def showWeeksMenu(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
@@ -339,50 +362,47 @@ def showWeeksMenu(request):
 def reviewAndRate(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
-	loginType = request.GET.get('type')
-
-	# If else is needed when user directly types url corresponding to profile
-	
-	if request.session['loginType'] == "Student":
-		loginType = "student"
-
-	else:
-		loginType = "messAuthority"
-
+	studentRecord = Student.objects.filter(ldap=request.session['id'])
+	if not studentRecord : 
+		return HttpResponseRedirect("/profile/?type=student")
 
 	if request.method == 'GET':	
-		if loginType == "student" :
-			return render(request,"reviewAndRate.html",{ "loginType" : request.session['loginType'] })
+		return render(request,"reviewAndRate.html",{ "loginType" : request.session['loginType'] })
 
-	elif request.method == 'POST':  
-		if loginType == "student" :
-			record = Student.objects.filter(ldap=request.session['id'])
-			if record :
-				tempRecord  = record[0]  
-				record.delete()
-			record = Student.objects.filter(rollNo=request.POST.get('rollNo'))	
-			
-			if record : 
-				message = "Roll No already present"
-				tempRecord.save()
-				return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
-
-			s = Student(rollNo = request.POST.get('rollNo'), name = request.POST.get('name'), ldap = request.POST.get('ldap'), roomNo = request.POST.get('roomNo'), phoneNo = request.POST.get('phoneNo'))
-			s.save()
-			return HttpResponseRedirect("/profile/?type=student")
+	elif request.method == 'POST': 
+		rateType = request.POST.get('type')
+		data = request.POST.get('data')
 		
-		elif loginType == "messAuthority" :
-			record = MessAuthority.objects.filter(ID=request.session['id'])
-			print record
-			if record :
-				record.delete()
+		hostel= BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo)[0].hostel
+		rating  = Rated.objects.filter(student__rollNo=studentRecord[0].rollNo,hostel__ID=hostel.ID)
+		if rating : 		
+			record = rating[0]
+		else  :
+			record = Rated(student=studentRecord[0],hostel=hostel)
+		if rateType == "taste" : 
+			record.taste =  data
+			record.save()
+		elif rateType == "costEffective" :
+			record.costEffective = data
+			record.save()
+		elif rateType == "cleanliness" :
+			record.cleanliness = data
+			record.save()
+		elif rateType == "overall" :
+			record.overall = data
+			record.save()
+		elif rateType == "review" :
+			reviewRecord = Reviewed(student=studentRecord[0],hostel=hostel)
+			reviewRecord.review = data
+			reviewRecord.dateTime = datetime.datetime.now()
+			if data :
+				reviewRecord.save()
 
-			h  =  Hostel.objects.get(ID=request.POST.get('hostelID'))
-			m = MessAuthority(ID = request.session['id'], name = request.POST.get('name'), hostel= h , phoneNo = request.POST.get('phoneNo'))
-			m.save()
-			return HttpResponseRedirect("/profile/?type=messAuthority")
+		message = "Review Recorded"
+		return render(request,"errorPost.html",{"message": message})
+
 
 def compare(s,sm,e,em):
 	mealTypes = ["breakfast","lunch","tiffin","dinner"] 
@@ -398,7 +418,7 @@ def compare(s,sm,e,em):
 def tempOpt(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
@@ -454,7 +474,7 @@ def tempOpt(request):
 def holiday(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
@@ -497,7 +517,7 @@ def holiday(request):
 def account(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 	ldapID = request.session['id']
 	studentRecord = Student.objects.filter(ldap = ldapID)
 	if not studentRecord : 
@@ -521,7 +541,7 @@ def reg(request):
 
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
@@ -532,7 +552,7 @@ def reg(request):
 def viewOpt(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
@@ -547,7 +567,7 @@ def viewOpt(request):
 def deleteOpt(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 

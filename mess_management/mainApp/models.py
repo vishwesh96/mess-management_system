@@ -43,7 +43,7 @@ class DaySlot(models.Model):
 	mealType  = models.CharField(max_length = 20)
 
 class Announcement(models.Model):
-	ID = models.CharField(max_length = 20, primary_key = True)
+	ID = models.IntegerField(primary_key = True)
 	dateTime = models.DateTimeField()
 	text = models.CharField(max_length = 1000)
 	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
@@ -71,10 +71,10 @@ class BelongsTo(models.Model):
 class Rated(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.SET_NULL, blank=True, null=True) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
-	taste = models.IntegerField() 
-	costEffective = models.IntegerField()
-	cleanliness = models.IntegerField()
-	overall = models.DecimalField(max_digits=4,decimal_places=2)
+	taste = models.IntegerField(null=True) 
+	costEffective = models.IntegerField(null=True)
+	cleanliness = models.IntegerField(null=True)
+	overall = models.IntegerField(null=True)
 	class Meta:
 		unique_together = (("student","hostel"),)
 	
