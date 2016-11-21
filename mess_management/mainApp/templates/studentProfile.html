@@ -36,8 +36,14 @@
 			    <label for="ldap">LDAP ID</label>
 			    <input type="text" value="{{ldap}}" id="ldap" name="ldap" readonly/>
 
+				<label for="hostelNo">Hostel Number</label>
+				<input type="number" value="" id="hostelNo" name="hostelNo" required="" />
+
 			    <label for="roomNo">Room Number</label>
 			    <input type="number" value="" id="roomNo" name="roomNo" required="" />
+
+				<label for="messAccountNo">Mess Account Number</label>
+				<input type="text" value="" id="messAccountNo" name="messAccountNo" required="" />
 
 			    <label for="phoneNo">Contact Number</label>
 			    <input type="text" value="" id="phoneNo" name="phoneNo" required="" />
@@ -79,8 +85,26 @@
 				    <label for="ldap">LDAP ID</label>
 				    <input type="text" value="{{record.ldap}}" id="ldap" name="ldap" readonly/>
 
+
+			 		{% if canRegisterHostelAndAccount %}
+					    <label for="hostelNo">Hostel Number</label>
+					    <input type="number" value="{{hostelNo}}" id="hostelNo" name="hostelNo" required="true" />
+				    {% else %}
+					    <label for="hostelNo">Hostel Number</label>
+					    <input type="number" value="{{hostelNo}}" id="hostelNo" name="hostelNo" readonly/>
+				    {% endif %}
+
 				    <label for="roomNo">Room Number</label>
 				    <input type="number" value="{{record.roomNo}}" id="roomNo" name="roomNo"/>
+
+
+			 		{% if canRegisterHostelAndAccount %}
+					    <label for="messAccountNo">Mess Account Number</label>
+					    <input type="text" value="{{messAccountNo}}" id="messAccountNo" name="messAccountNo" required="true" />
+				    {% else %}
+					    <label for="messAccountNo">Mess Account Number</label>
+					    <input type="text" value="{{messAccountNo}}" id="messAccountNo" name="messAccountNo" readonly/>
+				    {% endif %}
 
 				    <label for="phoneNo">Contact Number</label>
 				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo"/>
@@ -125,8 +149,14 @@
 				    <label for="ldap">LDAP ID</label>
 				    <input type="text" value="{{record.ldap}}" id="ldap" name="ldap" readonly/>
 
+				    <label for="hostelNo">Hostel Number</label>
+				    <input type="number" value="{{hostelNo}}" id="hostelNo" name="hostelNo" readonly/>
+					    
 				    <label for="roomNo">Room Number</label>
 				    <input type="number" value="{{record.roomNo}}" id="roomNo" name="roomNo" readonly />
+
+				    <label for="messAccountNo">Mess Account Number</label>
+				    <input type="text" value="{{messAccountNo}}" id="messAccountNo" name="messAccountNo" readonly/>
 
 				    <label for="phoneNo">Contact Number</label>
 				    <input type="text" value="{{record.phoneNo}}" id="phoneNo" name="phoneNo" readonly />

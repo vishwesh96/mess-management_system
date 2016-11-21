@@ -100,7 +100,7 @@ def loginMessAuthority(request):
 	    userLDAP = request.POST.get("messAuthorityid")
 	    userPASS = request.POST.get("messAuthoritypass")
 
-	    auth = True
+	    auth = True   # need to change this to authnticate mess authority
 	    if auth:
 	    	request.session['id'] = userLDAP
 	    	request.session['loginType'] = "MessAuthority"
