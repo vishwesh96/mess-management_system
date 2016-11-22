@@ -41,7 +41,7 @@ def home(request):
 		else:
 			id = 1
 
-		a = Announcement(ID = id, dateTime = datetime.datetime.now(),hostel = record[0].hostel, text = "jscnjwndjcnwdjncjdcjndj")
+		a = Announcement(ID = id, subject = "dsf", dateTime = datetime.datetime.now(),hostel = record[0].hostel, text = "jscnjwndjcnwdjncjdcjndj")
 		a.save()
 
 		announcements = Announcement.objects.filter(hostel = record[0].hostel).order_by('-dateTime')
@@ -224,7 +224,6 @@ def profile(request):
 
 
 # Function to display stats
-
 def dispStats(request):
 
 	loggedIn = login.views.validate(request)
@@ -235,26 +234,27 @@ def dispStats(request):
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
-	# handcraft dictionary
-	wastage = {'Monday': 5, 'Tuesday': 6, 'Wedesday': 0, 'Thursday': 4, 'Friday': 4.5, 'Saturday': 3.4, 'Sunday': 9.6}
-	# wastage = {'Monday': 5, 'Tuesday': 6}
+	if request.method == 'GET':
+		belongsTo = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull =True)
 
-	return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage.items()})
+		if belongsTo:
+			w = Wastage.objects.filter(hostel = belongsTo[0].hostel).order_by('day')
+			wastage=[]
+			for entry in w:
+				if entry.day <= 6:
+					wastage.append((DAYS[entry.day] ,entry.wasted))
+
+			return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
+		else:
+			message = "You Belong to no hostel"
+			return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
 
 
-	# if request.method == 'GET':
-	# 	record = Student.objects.filter(ldap=request.session['id'])
-	# 	if record :
-	# 		return render(request,"dispStats.html")
-
-	# 	else:
-	# 		isEmpty = True
-	# 		return render(request,"profile.html",{"isEmpty": isEmpty,"record": record})
-
-	# elif request.method == 'POST':
-	# 	# get hostel id
-	# 	# Display wastage stats in the same html
-	# 	return render(request,"dispStats.html")		
+	# todo after ajax post
+	elif request.method == 'POST':
+		# get hostel id
+		# Display wastage stats in the same html
+		return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
 
 
 
