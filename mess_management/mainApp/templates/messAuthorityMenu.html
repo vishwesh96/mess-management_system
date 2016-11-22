@@ -95,7 +95,6 @@ $(document).ready(function(){
             url  : "/messAuthorityMenu/",
 
             success : function(data){
-                alert(1);
                 $('#messMenu').replaceWith(data); 
                 $('#closeOverlay').trigger('click'); 
             },
@@ -125,7 +124,6 @@ $(document).ready(function(){
 
         mealType = $(this).attr('id');
         day  = ($(this).closest('table').find('th').eq($(this).index())).text();
-        alert(day);
         $('#currItems').empty(); 
 
         availableTags = [

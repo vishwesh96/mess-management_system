@@ -44,8 +44,9 @@ class DaySlot(models.Model):
 	mealType  = models.CharField(max_length = 20)
 
 class Announcement(models.Model):
-	ID = models.CharField(max_length = 20, primary_key = True)
+	ID = models.IntegerField(primary_key = True)
 	dateTime = models.DateTimeField()
+	subject = models.CharField(max_length = 50, default = "Notification" )
 	text = models.CharField(max_length = 1000)
 	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
 
@@ -137,14 +138,22 @@ class TimeCost(models.Model):
 	endTime = models.DateTimeField()
 	class Meta:
 		unique_together = (("hostel", "daySlot"),)
-
+# Quantity divided into wastage
 class Quantity(models.Model):
 	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
 	quantityRequired = models.IntegerField()
-	wasted = models.DecimalField(max_digits=4,decimal_places=2)
 	class Meta:
 		unique_together = (("hostel", "daySlot"),)
+
+class Wastage(models.Model):
+	day  = models.IntegerField()
+	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
+	wasted = models.DecimalField(max_digits=4,decimal_places=2)
+	class Meta:
+		unique_together = (("hostel", "day"),)
+
+
 
 class Menu(models.Model):
 	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 

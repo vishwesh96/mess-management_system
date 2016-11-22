@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^loginStudent/', login.views.loginStudent, name='loginStudent'),
     url(r'^loginMessAuthority/', login.views.loginMessAuthority, name='loginMessAuthority'),
     url(r'^messAuthorityMenu/', mainApp.views.messAuthorityMenu, name='messAuthorityMenu'),
+    url(r'^chooseExtras/',mainApp.views.chooseExtras, name='chooseExtras'),
     url(r'^logout/', login.views.logout, name='logout'),
     url(r'^home/', mainApp.views.home, name='home'),
     url(r'^profile/', mainApp.views.profile, name='profile'),
