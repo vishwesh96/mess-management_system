@@ -22,40 +22,32 @@
 {% block body %}
 <div class="container">
     <div class="row">
-        <div class="col-xs-6" style="width: 45%; height: 300px;display: inline-block">
-        <form>
-          <label for="mealType" style="float:left;color:#000000">Meal Type:</label>
-          <select id="mealType" name="mealType">
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="tiffin">Evening Snacks</option>
-        <option value="dinner">Dinner</option>
-          </select> 
-        <label for="wastage">Wastage:</label>
-        <input type="text"  id="wastage" name="wastage"/>
-    </form>
+        <div class="col-xs-6">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-6" style="width:20%;height:20%;margin-right:-20">
+                    <img src="../static/images/extras/fullFry.jpg" alt="Full Fry" ></img>
+                    <img src="../static/images/extras/halfFry.jpg" alt="Half Fry" ></img>
+                    <img src="../static/images/extras/chickenCurry.jpg" alt="Chicken Curry" ></img>
+                    <img src="../static/images/extras/chickenFry.jpg" alt="Chicken Fry" ></img> 
+                </div>
+                <div class="col-sm-6" style="width:20%;height:20%">
+                    <img src="../static/images/extras/omelette.jpg" alt="Omelette" ></img>
+                    <img src="../static/images/extras/curd.jpg" alt="Curd" ></img>  
+                    <img src="../static/images/extras/boiledEgg.jpg" alt="Boiled Egg" ></img>         
+                    <img src="../static/images/extras/eggBhurji.jpg" alt="Egg Bhurji" ></img>       
+                </div>
+              </div>
+            </div>
         </div>
-        <div class="col-xs-6" id="chartContainer1" style="width: 45%; height: 300px;display: inline-block">
-            
+        <div class="col-xs-6">
+            TWO
         </div>
     </div>
 </div>
-<script>
-    function addItem(){
-        var li = document.createElement("LI");  
-        var input = document.getElementById("add");
-        li.innerHTML = input.value;
-        input.value = "";
 
-        document.getElementById("faves").appendChild(li);
-    }
-</script>
 
-<input type="button" id="btnAdd" value="Add" onclick="addItem()">
-
-        <ul id="faves">
-            <li>Video Games</li>
-            <li>Food</li>
-            <li>Sleeping</li>
-        </ul>
 {% endblock %}
+
+
+
