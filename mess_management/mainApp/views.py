@@ -133,15 +133,45 @@ def editCost(request):
 	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
 	if not authorityRecord : 
 		return HttpResponseRedirect("/profile/?type=messAuthority")
+	else:
+		hostel = authorityRecord[0].hostel
+
+	mealCosts = {}
+
+	# If all entries in dictionary needed then use thsi dictionary
+	# mealCosts = {'breakfast': 0, 'lunch' : 0, 'tiffin' : 0, 'dinner': 0 }
 
 	if request.method == 'GET':
-		
-		return render(request, "editCost.html",{"loginType" : request.session['loginType']})
+		record = Cost.objects.filter(hostel = hostel)
+		if record:
+			entries = record[0]
+			for entry in entries:
+				mealCosts[entry.mealType] = entry.cost
+
+
+		return render(request, "editCost.html",{"mealCosts" : mealCosts "loginType" : request.session['loginType']})
 
 	elif request.method == 'POST':
+		for entry in MEAL_TYPE:
+			record = Cost.objects.filter(hostel = hostel, mealType = entry.lower())
+			if record:
+				c = record[0]
+				c.cost = request.POST.get(c.mealType)
+			else:
+				c = Cost(hostel = hostel, mealType = entry.lower(), cost = request.POST.get(entry.lower()))
+
+			c.save()
 
 
-		return render(request, "editCost.html",{"loginType" : request.session['loginType']})		
+		record = Cost.objects.filter(hostel = hostel)
+		
+		if record:
+			entries = record[0]
+			for entry in entries:
+				mealCosts[entry.mealType] = entry.cost
+
+
+		return render(request, "editCost.html",{"mealCosts" : mealCosts, "loginType" : request.session['loginType']})		
 
 
 
@@ -783,6 +813,8 @@ def messAuthorityMenu(request):
 			hostel_food.append((MEAL_TYPE[j],l))
 		all_items = FoodItem.objects.all()
 		return render(request,"messAuthorityMenu.html",{"hostel_food":hostel_food,"loginType" : request.session['loginType']})
+
+
 
 
 

@@ -129,15 +129,13 @@ class Holidays(models.Model):
 	class Meta:
 		unique_together = (("hostel", "daySlot", "date"),)
 
-class TimeCost(models.Model):
-	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
+
+class Cost(models.Model):
+	mealType = models.CharField(max_length = 20) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
-	originalCost = models.IntegerField()
-	subsidisedCost = models.IntegerField()
-	startTime = models.DateTimeField()
-	endTime = models.DateTimeField()
+	cost = models.IntegerField()
 	class Meta:
-		unique_together = (("hostel", "daySlot"),)
+		unique_together = (("hostel", "mealType"),)
 # Quantity divided into wastage
 class Quantity(models.Model):
 	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
