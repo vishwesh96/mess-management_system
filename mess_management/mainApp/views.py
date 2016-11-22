@@ -573,7 +573,7 @@ def showDaysMenu(request):
 				hostel_food[entry.myhostel] = [entry.food.name]
 			# print "screwed 2", hostel_food
 		hostel_food = sorted(hostel_food.items())
-
+		# print hostel_food
 		return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
 	
 	elif request.method == 'POST':
@@ -590,6 +590,7 @@ def showDaysMenu(request):
 				hostel_food[entry.myhostel] = [entry.food.name]
 
 		hostel_food = sorted(hostel_food.items())
+		# print hostel_food
 		return render(request,"showDaysMenuPost.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
 
 def showWeeksMenu(request):
@@ -885,7 +886,7 @@ def deleteOpt(request):
 def messAuthorityMenu(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
 	if authorityRecord:
