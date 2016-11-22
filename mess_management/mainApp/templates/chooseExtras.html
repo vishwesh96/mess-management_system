@@ -20,6 +20,26 @@
 {% endblock %}
 
 {% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-6" style="width: 45%; height: 300px;display: inline-block">
+        <form>
+          <label for="mealType" style="float:left;color:#000000">Meal Type:</label>
+          <select id="mealType" name="mealType">
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="tiffin">Evening Snacks</option>
+        <option value="dinner">Dinner</option>
+          </select> 
+        <label for="wastage">Wastage:</label>
+        <input type="text"  id="wastage" name="wastage"/>
+    </form>
+        </div>
+        <div class="col-xs-6" id="chartContainer1" style="width: 45%; height: 300px;display: inline-block">
+            
+        </div>
+    </div>
+</div>
 <script>
     function addItem(){
         var li = document.createElement("LI");  

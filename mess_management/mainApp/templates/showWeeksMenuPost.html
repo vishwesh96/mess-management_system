@@ -1,6 +1,6 @@
 <div id="menuTable">
 {% if chosen_hostel %}
-	<h1>Menu For Hostel: {{ chosen_hostel }}</h1>
+	<h1><font color="white">Menu For Hostel: {{ chosen_hostel }}</font></h1>
 	{% if hostel_food %}
 	  	<div id="Today's Table" class="w3-container table">
 			<table class="table table-striped">
@@ -33,9 +33,9 @@
 			</table>
 		</div>
 	{% else %}
-	   There are no records yet in Weeks's menu
+	   <font size="5" color="white">There are no records yet in the Weeks's menu</font>
 	{% endif %}
 {% else %}
-	Please choose a Hostel
+	<font size="5" color="white">Please choose a Hostel...</font>
 {% endif %}
 </div>
