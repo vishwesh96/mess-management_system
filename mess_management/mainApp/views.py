@@ -564,6 +564,48 @@ def messAuthorityMenu(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
-	# if request.method == 'GET':
-	    	
-	return render(request, "messAuthorityMenu.html",{"loginType" : request.session['loginType']})	
+	hostel_food = None
+		    
+	if request.method == 'GET':
+		hostel_food=[]
+		record = MessAuthority.objects.filter(ID=request.session['id'])
+		chosen_hostel =  record[0].hostel.ID
+
+	        # print "in week",request.POST
+	        weeklyMenu = Menu.objects.filter(hostel_id=chosen_hostel)
+	        for j in range(4):
+			l = []
+			for i in range(7*j,7*(j+1)):
+				l1 = []
+				for entry in weeklyMenu:
+					if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
+						l1.append(entry.food.name)
+						# print "l1    ",l1
+				l.append(l1)
+			hostel_food.append((MEAL_TYPE[j],l))
+		all_items = FoodItem.objects.all()
+		return render(request,"messAuthorityMenu.html",{"all_items": all_items, "hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
+
+	if request.method == 'POST':
+		items =  json.loads(request.POST.get('items'))
+		print items
+		print request.POST.get('day')
+		print request.POST.get('mealType')
+		hostel_food=[]
+		record = MessAuthority.objects.filter(ID=request.session['id'])
+		chosen_hostel =  record[0].hostel.ID
+
+	        # print "in week",request.POST
+	        weeklyMenu = Menu.objects.filter(hostel_id=chosen_hostel)
+	        for j in range(4):
+			l = []
+			for i in range(7*j,7*(j+1)):
+				l1 = []
+				for entry in weeklyMenu:
+					if (int(entry.daySlot.ID) == (i+1)):#as dayslot id's in Database start from 1
+						l1.append(entry.food.name)
+						# print "l1    ",l1
+				l.append(l1)
+			hostel_food.append((MEAL_TYPE[j],l))
+		all_items = FoodItem.objects.all()
+		return render(request,"messAuthorityMenu.html",{"all_items": all_items, "hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
