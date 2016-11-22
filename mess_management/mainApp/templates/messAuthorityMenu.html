@@ -102,7 +102,7 @@ $(document).ready(function(){
             url  : "/messAuthorityMenu/",
 
             success : function(data){
-                $('#messMenuTable').replaceWith(data); 
+                $('#messMenu').replaceWith(data); 
                 $('#closeOverlay').trigger('click'); 
                 $('#errorMessage').hide();                                  
             },

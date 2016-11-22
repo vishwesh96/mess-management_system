@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^account/', mainApp.views.account, name='account'),
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
     url(r'^editCost/', mainApp.views.editCost, name='editCost'),
+    url(r'^addFood/', mainApp.views.addFood, name='addFood'),
     url(r'^', login.views.welcome),
     url(r'^reg/', mainApp.views.reg, name='reg'),
 
