@@ -19,6 +19,27 @@ canRegisterHostelAndAccount = True
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
 MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
+
+
+# def validate(request,hostel):
+# 	loggedIn = login.views.validate(request)
+# 	if not loggedIn:
+# 		return HttpResponseRedirect("/welcome/")
+
+# 	if request.session['loginType'] == "Student":
+# 		studentRecord = Student.objects.filter(ldap=request.session['id'])
+# 		if studentRecord : 
+# 			hostel = 
+# 		else:
+# 			return HttpResponseRedirect("/profile/?type=student")
+# 	else:
+# 		authorityRecord = MessAuthority.objects.filter(id = request.session['id'])
+# 		if authorityRecord:
+
+
+
+
+
 def home(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
@@ -397,6 +418,7 @@ def showWeeksMenu(request):
 						# print "l1    ",l1
 				l.append(l1)
 			hostel_food.append((MEAL_TYPE[j],l))
+			
 		return render(request,"showWeeksMenu.html",{"hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
 
 	elif request.method == 'POST':
@@ -414,6 +436,7 @@ def showWeeksMenu(request):
 						# print "l1    ",l1
 				l.append(l1)
 			hostel_food.append((MEAL_TYPE[j],l))
+			
 		return render(request,"showWeeksMenuPost.html",{"hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
 
 
@@ -655,15 +678,19 @@ def messAuthorityMenu(request):
 	if not loggedIn:
 		return HttpResponseRedirect("/login/")
 
+	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+	if authorityRecord:
+		chosen_hostel =  authorityRecord[0].hostel
+	else:
+		return HttpResponseRedirect("/profile/?type=messAuthority")
+
 	hostel_food = None
 		    
 	if request.method == 'GET':
 		hostel_food=[]
-		record = MessAuthority.objects.filter(ID=request.session['id'])
-		chosen_hostel =  record[0].hostel.ID
 
 	        # print "in week",request.POST
-	        weeklyMenu = Menu.objects.filter(hostel_id=chosen_hostel)
+	        weeklyMenu = Menu.objects.filter(hostel=chosen_hostel)
 	        for j in range(4):
 			l = []
 			for i in range(7*j,7*(j+1)):
@@ -675,19 +702,33 @@ def messAuthorityMenu(request):
 				l.append(l1)
 			hostel_food.append((MEAL_TYPE[j],l))
 		all_items = FoodItem.objects.all()
-		return render(request,"messAuthorityMenu.html",{"all_items": all_items, "hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
+		return render(request,"messAuthorityMenu.html",{"all_items": all_items, "hostel_food":hostel_food,"chosen_hostel":chosen_hostel.ID, "loginType" : request.session['loginType']})
 
 	if request.method == 'POST':
 		items =  json.loads(request.POST.get('items'))
 		print items
 		print request.POST.get('day')
-		print request.POST.get('mealType')
-		hostel_food=[]
-		record = MessAuthority.objects.filter(ID=request.session['id'])
-		chosen_hostel =  record[0].hostel.ID
+		print request.POST.get('mealType').lower()
+
+		dayslot = DaySlot.objects.get(day = request.POST.get('day').strip(), mealType = request.POST.get('mealType').strip().lower())
+
+		for item in items:
+			food = FoodItem.objects.get(name = item)
+			print food.name
+			foodPresent = Menu.objects.filter(daySlot = dayslot, hostel = chosen_hostel, food = food)
+
+			if not foodPresent:
+				print "..................................."
+				print food.name
+				print "................................"
+				m = Menu(daySlot = dayslot, hostel = chosen_hostel, food = food)
+				m.save()
+
+				
+
 
 	        # print "in week",request.POST
-	        weeklyMenu = Menu.objects.filter(hostel_id=chosen_hostel)
+	        weeklyMenu = Menu.objects.filter(hostel=chosen_hostel)
 	        for j in range(4):
 			l = []
 			for i in range(7*j,7*(j+1)):
@@ -699,4 +740,7 @@ def messAuthorityMenu(request):
 				l.append(l1)
 			hostel_food.append((MEAL_TYPE[j],l))
 		all_items = FoodItem.objects.all()
-		return render(request,"messAuthorityMenu.html",{"all_items": all_items, "hostel_food":hostel_food,"chosen_hostel":chosen_hostel, "loginType" : request.session['loginType']})
+		return render(request,"messAuthorityMenu.html",{"hostel_food":hostel_food,"loginType" : request.session['loginType']})
+
+
+
