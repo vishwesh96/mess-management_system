@@ -63,6 +63,28 @@
 	</script>
 	<script src="../static/js/canvasjs.min.js"></script>
 
+<script>
+$(document).ready(function(){
+	$('#wastage').keydown(function(e){
+		if(e.which==13){
+			alert($(this).val());
+			$.post("/stats/",
+			{
+				wastage : $(this).val();
+			},
+			function(data,status){
+		    	if(status==="success"){	
+		    		$('#wastageDisplay').replaceWith(data);		    		
+		    	}
+		    	else{
+	            	$('#errorMessage').text("Wastage couldn't be updated");
+	            	$('#errorMessage').show();		    		
+		    	}			
+			});				
+		}
+	});
+});
+</script>
 {% endblock %}
 
 
@@ -89,17 +111,22 @@
 {% elif loginType == "MessAuthority" %}
 
 <div class="container">
-    <div class="row">
-        <div class="col-xs-6" style="width: 45%; height: 500px;display: inline-block; margin-top:170px">
-        <form>
-		    <label for="wastage">Today's Wastage:</label>
-		    <input type="text"  id="wastage" name="wastage"/>
-		</form>
-        </div>
-        <div class="col-xs-6" id="chartContainer1" style="width: 45%; height: 500px;display: inline-block">
-            
-        </div>
-    </div>
+	<div id="wastageDisplay">
+	    <div class="row">
+	        <div class="col-xs-6" style="width: 45%; height: 500px;display: inline-block; margin-top:170px">
+	            <div class="alert alert-danger" id ="errorMessage" style="display: none">
+				</div>  
+		        <form>
+				    <label for="wastage">Today's Wastage:</label>
+				    <input type="text"  id="hidden" name="wastage" style="display:none"/>
+				    <input type="text"  id="wastage" name="wastage"/>
+				</form>
+	        </div>
+	        <div class="col-xs-6" id="chartContainer1" style="width: 45%; height: 500px;display: inline-block">
+	            
+	        </div>
+	    </div>
+	</div>
 </div>
 
 

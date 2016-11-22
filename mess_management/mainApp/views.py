@@ -271,10 +271,15 @@ def dispStats(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
 		return HttpResponseRedirect("/welcome/")
+	if request.session['loginType'] == "Student":
+		studentRecord = Student.objects.filter(ldap=request.session['id'])
+		if not studentRecord : 
+			return HttpResponseRedirect("/profile/?type=student")
+	else:
+		authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+		if not authorityRecord : 
+			return HttpResponseRedirect("/profile/?type=messAuthority")
 
-	studentRecord = Student.objects.filter(ldap=request.session['id'])
-	if not studentRecord : 
-		return HttpResponseRedirect("/profile/?type=student")
 
 	if request.method == 'GET':
 		belongsTo = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull =True)
@@ -296,7 +301,9 @@ def dispStats(request):
 	elif request.method == 'POST':
 		# get hostel id
 		# Display wastage stats in the same html
-		return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
+		currWastage =  request.POST.get('wastage');
+
+		return render(request,"dispStatsPost.html", {"currWastage": currWastage ,"loginType" : request.session['loginType'], "wastage": wastage})
 
 
 
