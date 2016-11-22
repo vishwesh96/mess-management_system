@@ -50,7 +50,7 @@
 </div>
 <div class="container" id="menuTable">
 		{% if chosen_mealType %}
-			<h1>Menu For Today's {{ chosen_mealType }}</h1>
+			<h1><font color="white">Menu For Today's {{ chosen_mealType }}</font></h1>
 			{% if hostel_food %}
 			  	<div id="Today's Table" class="w3-container table">
 					<table class="table table-striped">
@@ -75,10 +75,10 @@
 					</table>
 				</div>
 			{% else %}
-			   There are no records yet in menu
+			   <font size="5" color="white">There are no records yet in the menu...</font>
 			{% endif %}
 		{% else %}
-		   Please Choose a Meal Type
+		   <font size="5" color="white">Please Choose a Meal Type...</font>
 		{% endif %}	
 </div>
 

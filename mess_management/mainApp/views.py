@@ -8,6 +8,7 @@ import datetime
 from dateutil.parser import parse as parse_date
 import time
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 #global variable decided by Mess authority to allow students to Register towards the begining of every semester
@@ -29,28 +30,42 @@ def home(request):
 
 	record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
 	notifs = []
+	notifications=[]
 	if not record:
-		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifs" : notifs})	
+		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : notifications})	
 		# No hostel yet, so no notifs
 
 	else:
-		temp = Announcement.objects.filter(hostel = record[0].hostel).order_by('-ID')		
-		
-		if temp:
-			id = temp[0].ID+1
-		else:
-			id = 1
-
-		a = Announcement(ID = id, subject = "dsf", dateTime = datetime.datetime.now(),hostel = record[0].hostel, text = "jscnjwndjcnwdjncjdcjndj")
-		a.save()
-
 		announcements = Announcement.objects.filter(hostel = record[0].hostel).order_by('-dateTime')
 		for entry in announcements:
 			notifs.append((entry.dateTime, entry.text))
 
-	return render(request, "home.html",{"loginType" : request.session['loginType'], "notifs" : notifs})	
+
+		#code for pagenation
+		paginator = Paginator(notifs, 10) # Show 10 contacts per page
+		page = request.GET.get('page')
+		try:
+        		notifications = paginator.page(page)
+    		except PageNotAnInteger:
+        		# If page is not an integer, deliver first page.
+        		notifications = paginator.page(1)
+    		except EmptyPage:
+        		# If page is out of range (e.g. 9999), deliver last page of results.
+        		notifications = paginator.page(paginator.num_pages)
+
+		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : notifications})	
 
 	# if request.method == 'POST':
+
+
+def chooseExtras(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/login/")
+
+	# if request.method == 'GET':
+	    
+	return render(request, "chooseExtras.html",{"loginType" : request.session['loginType']})
 
 def profile(request):
 	loggedIn = login.views.validate(request)
