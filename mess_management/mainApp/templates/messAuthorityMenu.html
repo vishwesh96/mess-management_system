@@ -44,9 +44,9 @@
     left: 400px;
     top: -100px;
     width: 700px;
-    height: 400px;
+    height: 500px;
     color: #000000;
-    border:5px solid #4E93A2;
+    /*border:5px solid #4E93A2;*/
     -moz-border-radius:8px;
     -webkit-border-radius:8px;
     background-color:#FFFFFF;
@@ -89,20 +89,41 @@ $(document).ready(function(){
         });
 
         var itemsJSON  = JSON.stringify(arrayItems, null, 2);
-        $.ajax({
-            type : "POST",
-            data : {day: day, mealType: mealType, items: itemsJSON, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value},
-            url  : "/messAuthorityMenu/",
 
-            success : function(data){
+        // $.ajax({
+        //     type : "POST",
+        //     data : {day: day, mealType: mealType, items: itemsJSON, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value},
+        //     url  : "/messAuthorityMenu/",
+
+        //     success : function(data){
+        //         $('#messMenu').replaceWith(data); 
+        //         $('#closeOverlay').trigger('click'); 
+        //     },
+        //     error : function(data){
+        //       $('#errorMessage').text("Menu couldn't be updated");
+        //       $('#errorMessage').show();
+        //     }
+        // });
+
+        $.post("/messAuthorityMenu/",
+        {
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
+            day : day,
+            mealType : mealType,
+            items : itemsJSON
+        },
+        function(data,status){
+            if(status==="success"){
                 $('#messMenu').replaceWith(data); 
                 $('#closeOverlay').trigger('click'); 
-            },
-            error : function(data){
+            }
+            else{
               $('#errorMessage').text("Menu couldn't be updated");
               $('#errorMessage').show();
-            }
+            }   
         });
+
+
     });
 
     var availableTags;
@@ -110,7 +131,7 @@ $(document).ready(function(){
     $('#closeOverlay').click(function () {
       $('#overlay').fadeOut('slow');
       $('#popupContent').fadeOut('slow'); 
-      $('body').css('position','relative');           
+      $('body').css('position','initial');           
     });
 
 
@@ -141,6 +162,8 @@ $(document).ready(function(){
         $('#overlay').fadeIn('slow');
         $('#popupContent').fadeIn('slow');  
         $('body').css('position','fixed');
+        $('#popupContent').css('overflow-y','scroll');        
+
 
         $('#tags').val('');
         $( "#tags" ).autocomplete({
