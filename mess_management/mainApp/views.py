@@ -211,45 +211,48 @@ def addFood(request):
 
 
 
-# def checkStudent(request, rollNo, message, hostel):
-# 	record = Student.objects.filter(rollNo = rollNo)
+# Function to check the student can be allowed to eat in this hostel
+
+def checkStudent(request, rollNo, message, hostel):
+	record = Student.objects.filter(rollNo = rollNo)
 	
-# 	if not record:
-# 		message = "Wrong Roll Number"
-# 		return False
+	if not record:
+		message = "Wrong Roll Number"
+		return False
 
-# 	student = record[0]
-# 	record = BelongsTo.objects.filter(student = student, endDate__isnull = True)
-# 	if not record:
-# 		message = "Student Not registered in any hostel"
-# 		return False
+	student = record[0]
+	record = BelongsTo.objects.filter(student = student, endDate__isnull = True)
+	if not record:
+		message = "Student Not registered in any hostel"
+		return False
 
-# 	# If student in this hostel and opted out to some other hostel, then deny service
-# 	studentHostel = record[0]
+	# If student in this hostel and opted out to some other hostel, then deny service
+	studentHostel = record[0]
 	
-# 	if studentHostel == hostel:
-# 		record = Tempopt.objects.filter(student = student)
-# 		if not record:
-# 			return True
-
-# 		for entry in record:
-# 			if datetime.datetime.now()
+	if studentHostel == hostel:
+		record = TempOpt.objects.filter(student = student)
+		if not record:
+			return True
 
 
+		for entry in record:
+			if datetime.datetime.now().date()>entry.startDate and datetime.datetime.now().date()<entry.endDate:
+				message = "Belongs tothis hostel but opted out"
+				return False
+
+	else:
+		record = TempOpt.objects.filter(student = student, hostel = hostel)
+		if not record:
+			message = "Student does not belong to and not opted to this hostel today"
+			return False
 
 
+		for entry in record:
+			if datetime.datetime.now().date() > entry.startDate and datetime.datetime.now().date()<entry.endDate:
+				return True
 
-
-
-
-
-
-
-
-
-
-
-
+		message = "Student has not opted to this hostel"
+		return False
 
 
 
@@ -289,24 +292,23 @@ def chooseExtras(request):
 			cost = request.POST.get('data')
 			rollNo = request.POST.get('rollNo')
 
-			# if checkStudent(rollNo = rollNo, message= message, hostel = hostel):
-			# 	student = Student.objects.get(rollNo = rollNo)				
-			# 	student = record[0]
-			# 	account = MessAccounts.objects.filter(student = student)
-			# 	if account:
-			# 		account[0].balance = account[0].balance - cost
-			# 		account[0].save()
-			# 		data['valid'] = True
-			# 	else:
-			# 		data['valid'] = False
-			# 		message = "No account Corresponding to student"
-			# 		data['message'] = message
-			# 		# render 
+			if checkStudent(rollNo = rollNo, message= message, hostel = hostel):
+				student = Student.objects.get(rollNo = rollNo)				
+				student = record[0]
+				account = MessAccounts.objects.filter(student = student)
+				if account:
+					account[0].balance = account[0].balance - cost
+					account[0].save()
+					data['valid'] = True
+				else:
+					data['valid'] = False
+					message = "No account Corresponding to student"
+					data['message'] = message
+					# render 
 
-			# else:
-			# 	data['valid'] = False
-			# 	data['message'] = message
- 	 # 			# roll number wrong
+			else:
+				data['valid'] = False
+				data['message'] = message
 
 
 		return HttpResponse(json.dumps(data), content_type = "application/json")
