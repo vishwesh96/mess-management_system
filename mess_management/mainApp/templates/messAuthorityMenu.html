@@ -44,9 +44,9 @@
     left: 400px;
     top: -100px;
     width: 700px;
-    height: 400px;
+    height: 500px;
     color: #000000;
-    border:5px solid #4E93A2;
+    /*border:5px solid #4E93A2;*/
     -moz-border-radius:8px;
     -webkit-border-radius:8px;
     background-color:#FFFFFF;
@@ -55,6 +55,11 @@
 </style>   
 
 <style>
+.ui-autocomplete {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;        
+}
 #closeOverlay {
     position: absolute;
     top: 20px;
@@ -81,7 +86,8 @@ $(document).ready(function(){
     var mealType;
     var day;
 
-    $('#submitItems').click(function(){
+    $('#submitItems').click(function(e){
+        e.preventDefault();
         var arrayItems = [];
         $('#currItems').find('text').each(function(i){
             var item = $.trim($(this).text());
@@ -89,6 +95,7 @@ $(document).ready(function(){
         });
 
         var itemsJSON  = JSON.stringify(arrayItems, null, 2);
+
         $.ajax({
             type : "POST",
             data : {day: day, mealType: mealType, items: itemsJSON, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value},
@@ -103,25 +110,44 @@ $(document).ready(function(){
               $('#errorMessage').show();
             }
         });
+
+        // $.post("/messAuthorityMenu/",
+        // {
+        //     csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
+        //     day : day,
+        //     mealType : mealType,
+        //     items : itemsJSON
+        // },
+        // function(data,status){
+        //     if(status==="success"){
+        //         $('#messMenu').replaceWith(data); 
+        //         $('#closeOverlay').trigger('click'); 
+        //     }
+        //     else{
+        //       $('#errorMessage').text("Menu couldn't be updated");
+        //       $('#errorMessage').show();
+        //     }   
+        // });
+
+
     });
 
     var availableTags;
     
-    $('#closeOverlay').click(function () {
+    $('#closeOverlay').click(function (e) {
       $('#overlay').fadeOut('slow');
       $('#popupContent').fadeOut('slow'); 
-      $('body').css('position','relative');           
+      $('body').css('position','initial');           
     });
 
 
-    $('#currItems').on('click','#closeItem',function () {
+    $('#currItems').on('click','#closeItem',function (e) {
         var item = $.trim($(this).parent().find('text').text());
         availableTags.push(item);
         $(this).parent().remove();
     });
 
-    $('#messMenuTable').on('dblclick','.outerTd',function () {
-
+    $('#messMenuTable').on('dblclick','.outerTd',function (e) {
         mealType = $(this).attr('id');
         day  = ($(this).closest('table').find('th').eq($(this).index())).attr('id');
         $('#currItems').empty(); 
@@ -141,6 +167,8 @@ $(document).ready(function(){
         $('#overlay').fadeIn('slow');
         $('#popupContent').fadeIn('slow');  
         $('body').css('position','fixed');
+        $('#popupContent').css('overflow-y','scroll');        
+
 
         $('#tags').val('');
         $( "#tags" ).autocomplete({
@@ -165,8 +193,8 @@ $(document).ready(function(){
     <span style="text-align:center;color:black;font-size:20px">Choose Food Items</span>
     <a href="javascript:void(0)" id="closeOverlay">&times;</a>
     <br/>
-        <div class="ui-widget">
-            <label for="tags">Food Item: </label>
+        <div class="ui-widget" style="margin-right:150px;margin-left:80px">
+            <label for="tags" >Food Item:</label>
             <input id="tags">
         </div>
  
@@ -175,9 +203,9 @@ $(document).ready(function(){
           </ul>
         </div>
 
-        <div class="btn btn-primary">
+        <div>
             <form> {% csrf_token %}
-                <button id="submitItems">Update</button>
+                <button id="submitItems" style="background-color:#DE4700;width:50%">Update</button>
             </form>
         </div>        
 </div> 
@@ -191,26 +219,26 @@ $(document).ready(function(){
         <table class="editableTable table table-striped">
                 <thead>
                     <tr>
-                        <th style="border: 1px solid #dddddd"> Meal Type </th>
-                        <th style="border: 1px solid #dddddd" id="monday">Monday </th>
-                        <th style="border: 1px solid #dddddd" id="tuesday">Tuesday </th>
-                        <th style="border: 1px solid #dddddd" id="wednesday">Wednesday</th>
-                        <th style="border: 1px solid #dddddd" id="thursday">Thursday</th>
-                        <th style="border: 1px solid #dddddd" id="friday"> Friday </th>
-                        <th style="border: 1px solid #dddddd" id="saturday"> Saturday </th>
-                        <th style="border: 1px solid #dddddd" id="sunday"> Sunday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" > Meal Type </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="monday">Monday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="tuesday">Tuesday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="wednesday">Wednesday</th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="thursday">Thursday</th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="friday"> Friday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="saturday"> Saturday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center" id="sunday"> Sunday </th>
                     </tr>
                 </thead>
                 <tbody id="messMenu">
                 {% for key, values in hostel_food %}
                     <tr> 
-                        <td>{{ key }}</td>
+                        <td style="vertical-align:middle;text-align:center">{{ key }}</td>
                         {% for list in values %}
                             <td  class="outerTd" id="{{ key }}">
                                 <table>
                                     {% for v in list %}                                
                                         <tr>
-                                            <td>
+                                            <td style="border: 0px">
                                                 {{v}}
                                             </td>
                                         </tr>

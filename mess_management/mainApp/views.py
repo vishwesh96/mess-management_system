@@ -55,7 +55,9 @@ def home(request):
 		else:
 			record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
 			if record:
-				hostel = record[0].hostel			
+				hostel = record[0].hostel
+				record = TempOpt.objects.all()		
+				date = record[0].startDate
 			else:
 				return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : []})		
 
@@ -68,7 +70,7 @@ def home(request):
 			hostel = authorityRecord[0].hostel
 
 #########################################################################
-
+	
 	notifs = []
 	notifications=[]
 	if request.method == 'GET':
@@ -98,29 +100,35 @@ def home(request):
 			id = record[0].ID+1
 		else:
 			id = 1
-		
-		a = Announcement(subject = request.POST.get('subject'), text= request.POST.get('text'), hostel = hostel, ID = id, dateTime = dateTime.dateTime.now())
+
+		dateTime = dateTime.dateTime.now()
+		a = Announcement(subject = request.POST.get('subject'), text= request.POST.get('text'), hostel = hostel, ID = id, dateTime = dateTime)
 		a.save()
 
-		announcements = Announcement.objects.filter(hostel = hostel).order_by('-dateTime')
-		for entry in announcements:
-			notifs.append([entry.dateTime, entry.subject, entry.text])
+
+		data = {}
+		data['time'] = dateTime
+		
 
 
-		#code for pagenation
-		paginator = Paginator(notifs, 10) # Show 10 contacts per page
-		page = request.GET.get('page')
-		try:
-        		notifications = paginator.page(page)
-    		except PageNotAnInteger:
-        		# If page is not an integer, deliver first page.
-        		notifications = paginator.page(1)
-    		except EmptyPage:
-        		# If page is out of range (e.g. 9999), deliver last page of results.
-        		notifications = paginator.page(paginator.num_pages)
+		# announcements = Announcement.objects.filter(hostel = hostel).order_by('-dateTime')
+		# for entry in announcements:
+		# 	notifs.append([entry.dateTime, entry.subject, entry.text])
 
-		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : notifications})	
 
+		# #code for pagenation
+		# paginator = Paginator(notifs, 10) # Show 10 contacts per page
+		# page = request.GET.get('page')
+		# try:
+  #       		notifications = paginator.page(page)
+  #   		except PageNotAnInteger:
+  #       		# If page is not an integer, deliver first page.
+  #       		notifications = paginator.page(1)
+  #   		except EmptyPage:
+  #       		# If page is out of range (e.g. 9999), deliver last page of results.
+  #       		notifications = paginator.page(paginator.num_pages)
+
+		return HttpResponse(json.dumps(data), content_type = "application/json")
 
 
 
@@ -149,7 +157,7 @@ def editCost(request):
 				mealCosts[entry.mealType] = entry.cost
 
 
-		return render(request, "editCost.html",{"mealCosts" : mealCosts "loginType" : request.session['loginType']})
+		return render(request, "editCost.html",{"mealCosts" : mealCosts , "loginType" : request.session['loginType']})
 
 	elif request.method == 'POST':
 		for entry in MEAL_TYPE:
@@ -175,20 +183,136 @@ def editCost(request):
 
 
 
+def addFood(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/welcome/")
+
+
+	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+	if not authorityRecord : 
+		return HttpResponseRedirect("/profile/?type=messAuthority")
+	else:
+		hostel = authorityRecord[0].hostel
+
+	if request.method == 'GET':
+
+		return render(request, "addFood.html",{ "loginType" : request.session['loginType']})
+
+	elif request.method == 'POST':
+		record = Fooditem.objects.all().order_by('-ID')
+		if record:
+			id = record[0].ID+1
+		else:
+			id =1
+
+		f = FoodItem(ID = id ,name = request.POST.get('name'), type = request.POST.get('type'),quantity = request.POST.get('quantity'),calories = request.POST.get('calories'))
+		f.save()
+
+		return render(request, "addFood.html",{"loginType" : request.session['loginType']})		
+
+
+
+# def checkStudent(request, rollNo, message, hostel):
+# 	record = Student.objects.filter(rollNo = rollNo)
+	
+# 	if not record:
+# 		message = "Wrong Roll Number"
+# 		return False
+
+# 	student = record[0]
+# 	record = BelongsTo.objects.filter(student = student, endDate__isnull = True)
+# 	if not record:
+# 		message = "Student Not registered in any hostel"
+# 		return False
+
+# 	# If student in this hostel and opted out to some other hostel, then deny service
+# 	studentHostel = record[0]
+	
+# 	if studentHostel == hostel:
+# 		record = Tempopt.objects.filter(student = student)
+# 		if not record:
+# 			return True
+
+# 		for entry in record:
+# 			if datetime.datetime.now()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def chooseExtras(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
 		return HttpResponseRedirect("/welcome/")
 
+
 	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
 	if not authorityRecord : 
 		return HttpResponseRedirect("/profile/?type=messAuthority")
+	else:
+		hostel = authorityRecord[0].hostel
 
 
-	# if request.method == 'GET':
-	    
-	return render(request, "chooseExtras.html",{"loginType" : request.session['loginType']})
+	if request.method == 'GET':
+
+		return render(request, "chooseExtras.html",{"loginType" : request.session['loginType']})
+
+	elif request.method == 'POST':
+		data = {}
+		if request.POST.get('submit') == 'false':
+			name = request.POST.get('data')
+			records = FoodItem.objects.filter(name = name)
+			if records:
+				food = records[0]
+			# No else necessary since a case wont occur. If statement just for safety
+			e = Extras.objects.filter(hostel = hostel, food = food)
+
+			if e:
+				cost = e[0].cost
+			# No else necessary since a case wont occur. If statement just for safety
+			data['cost'] = cost
+
+		elif request.POST.get('submit') == 'true':
+			cost = request.POST.get('data')
+			rollNo = request.POST.get('rollNo')
+
+			# if checkStudent(rollNo = rollNo, message= message, hostel = hostel):
+			# 	student = Student.objects.get(rollNo = rollNo)				
+			# 	student = record[0]
+			# 	account = MessAccounts.objects.filter(student = student)
+			# 	if account:
+			# 		account[0].balance = account[0].balance - cost
+			# 		account[0].save()
+			# 		data['valid'] = True
+			# 	else:
+			# 		data['valid'] = False
+			# 		message = "No account Corresponding to student"
+			# 		data['message'] = message
+			# 		# render 
+
+			# else:
+			# 	data['valid'] = False
+			# 	data['message'] = message
+ 	 # 			# roll number wrong
+
+
+		return HttpResponse(json.dumps(data), content_type = "application/json")
+	
 
 def profile(request):
 	loggedIn = login.views.validate(request)
@@ -393,6 +517,7 @@ def dispStats(request):
 		wastage=[]
 		for entry in w:
 			if entry.day <= datetime.datetime.today().weekday():
+				print DAYS[entry.day]
 				wastage.append((DAYS[entry.day] ,entry.wasted))
 
 		return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
@@ -416,6 +541,7 @@ def dispStats(request):
 		wastage=[]
 		for entry in w:
 			if entry.day <= datetime.datetime.today().weekday():
+				print entry.day
 				wastage.append((DAYS[entry.day] ,entry.wasted))
 
 		return render(request,"dispStatsPost.html", {"currWastage": currWastage ,"loginType" : request.session['loginType'], "wastage": wastage})
@@ -580,9 +706,15 @@ def tempOpt(request):
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 
-	else : 
+	else:
+		record = BelongsTo.objects.filter(student = studentRecord[0])
+		if not record:
+			return HttpResponseRedirect("/profile/?type=student")
+		else:
+			hostel = record[0].hostel									
+
 		if request.method == 'GET':	
-			records = Hostel.objects.all()
+			records = Hostel.objects.filter(~Q(ID = hostel.ID))
 			return render(request,"tempOpt.html",{"records" : records,"loginType" : request.session['loginType']})
 
 		elif request.method == 'POST':
@@ -781,22 +913,17 @@ def messAuthorityMenu(request):
 
 	if request.method == 'POST':
 		items =  json.loads(request.POST.get('items'))
-		print items
-		print request.POST.get('day')
-		print request.POST.get('mealType').lower()
 
 		dayslot = DaySlot.objects.get(day = request.POST.get('day').strip(), mealType = request.POST.get('mealType').strip().lower())
+		foodItems = Menu.objects.filter(daySlot = dayslot, hostel = chosen_hostel)
+		
+		for foodItem in foodItems:
+			foodItem.delete()
 
 		for item in items:
 			food = FoodItem.objects.get(name = item)
-			print food.name
-			foodPresent = Menu.objects.filter(daySlot = dayslot, hostel = chosen_hostel, food = food)
-
-			if not foodPresent:
-				m = Menu(daySlot = dayslot, hostel = chosen_hostel, food = food)
-				m.save()
-
-				
+			m = Menu(daySlot = dayslot, hostel = chosen_hostel, food = food)
+			m.save()
 
 
 	        # print "in week",request.POST
@@ -812,7 +939,7 @@ def messAuthorityMenu(request):
 				l.append(l1)
 			hostel_food.append((MEAL_TYPE[j],l))
 		all_items = FoodItem.objects.all()
-		return render(request,"messAuthorityMenu.html",{"hostel_food":hostel_food,"loginType" : request.session['loginType']})
+		return render(request,"messAuthorityMenuPost.html",{"hostel_food":hostel_food,"loginType" : request.session['loginType']})
 
 
 

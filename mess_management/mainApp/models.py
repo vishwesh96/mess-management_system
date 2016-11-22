@@ -38,6 +38,7 @@ class FoodItem(models.Model):
 	calories = models.IntegerField()
 	def __str__(self):
 		return self.name
+		
 class DaySlot(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
 	day  = models.CharField(max_length = 20)
@@ -156,7 +157,7 @@ class Wastage(models.Model):
 class Menu(models.Model):
 	daySlot = models.ForeignKey(DaySlot, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
-	food = models.ForeignKey(FoodItem, on_delete=models.SET_NULL, blank=True, null=True) #ask??????????????? both foreign and primary how??
+	food = models.ForeignKey(FoodItem, on_delete=models.SET_NULL, blank=True, null=True)
 	class Meta:
 		unique_together = (("daySlot", "hostel", "food"),)
 
