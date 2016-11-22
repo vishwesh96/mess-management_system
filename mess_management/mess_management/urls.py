@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^reviewAndRate/', mainApp.views.reviewAndRate, name='reviewAndRate'),
     url(r'^account/', mainApp.views.account, name='account'),
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
+    url(r'^editCost/', mainApp.views.editCost, name='editCost'),
     url(r'^', login.views.welcome),
     url(r'^reg/', mainApp.views.reg, name='reg'),
 

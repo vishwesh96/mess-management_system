@@ -129,7 +129,14 @@
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
                       </ul>
                     </li> -->
-                    <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Edit Cost</a></li>
+                    <li>
+                      <a href="#" data-toggle="dropdown" class="menu dropdown-toggle"><b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showDaysMenu" %}?type=student">Edit Cost</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "showWeeksMenu" %}?type=student">Add Food</a></li>
+                      </ul>
+                    </li>
+
                     <li><a class="menu" href="{% url "stats" %}?type=messAuthority">Statistics</a></li>
 
                     <li><a class="menu" href="{% url "logout" %}?type=messAuthority">Logout</a></li>

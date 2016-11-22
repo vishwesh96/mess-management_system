@@ -38,7 +38,7 @@ def home(request):
 	else:
 		announcements = Announcement.objects.filter(hostel = record[0].hostel).order_by('-dateTime')
 		for entry in announcements:
-			notifs.append((entry.dateTime, entry.text))
+			notifs.append([entry.dateTime, entry.subject, entry.text])
 
 
 		#code for pagenation
@@ -58,10 +58,37 @@ def home(request):
 	# if request.method == 'POST':
 
 
+def editCost(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/welcome/")
+
+
+	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+	if not authorityRecord : 
+		return HttpResponseRedirect("/profile/?type=messAuthority")
+
+	if request.method == 'GET':
+		
+		return render(request, "editCost.html",{"loginType" : request.session['loginType']})
+
+	elif request.method == 'POST':
+
+
+		return render(request, "editCost.html",{"loginType" : request.session['loginType']})		
+
+
+
+
 def chooseExtras(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
+
+	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+	if not authorityRecord : 
+		return HttpResponseRedirect("/profile/?type=messAuthority")
+
 
 	# if request.method == 'GET':
 	    
@@ -105,20 +132,20 @@ def profile(request):
 				else:
 					messAccountNo = ""
 				
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit , "loginType" : request.session['loginType'], "canRegisterHostelAndAccount":canRegisterHostelAndAccount, "hostelNo":hostelNo, "messAccountNo":messAccountNo })
+				return render(request,"profile.html",{"isEmpty": isEmpty,"record": record[0], "ldap": request.session['id'],  "edit":edit , "loginType" : request.session['loginType'], "canRegisterHostelAndAccount":canRegisterHostelAndAccount, "hostelNo":hostelNo, "messAccountNo":messAccountNo })
 			else:
 				isEmpty = True
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ldap": request.session['id'], "loginType" : request.session['loginType']})
+				return render(request,"profile.html",{"isEmpty": isEmpty, "ldap": request.session['id'], "loginType" : request.session['loginType']})
 
 		elif loginType == "messAuthority" :
 			record = MessAuthority.objects.filter(ID=request.session['id'])
 			if record : 
 				isEmpty = False
 				edit = request.GET.get('edit',False)
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id'], "edit":edit,  "loginType" : request.session['loginType']})
+				return render(request,"profile.html",{"isEmpty": isEmpty,"record": record[0], "ID": request.session['id'], "edit":edit,  "loginType" : request.session['loginType']})
 			else:
 				isEmpty = True
-				return render(request,"studentProfile.html",{"isEmpty": isEmpty, "ID": request.session['id'], "loginType" : request.session['loginType'] })
+				return render(request,"profile.html",{"isEmpty": isEmpty, "ID": request.session['id'], "loginType" : request.session['loginType'] })
 
 		else :
 			message = "wrong type (student or messAuthority) "
