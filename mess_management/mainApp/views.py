@@ -41,23 +41,38 @@ MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
 
 def home(request):
+
+####################################################################
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
 		return HttpResponseRedirect("/welcome/")
 
-	studentRecord = Student.objects.filter(ldap=request.session['id'])
-	if not studentRecord : 
-		return HttpResponseRedirect("/profile/?type=student")
+	if request.session['loginType'] == "Student":
+		studentRecord = Student.objects.filter(ldap=request.session['id'])
+		if not studentRecord:
+			return HttpResponseRedirect("/profile/?type=student")
+		
+		else:
+			record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
+			if record:
+				hostel = record[0].hostel			
+			else:
+				return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : []})		
 
-	record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
+	
+	elif request.session['loginType'] == "MessAuthority":
+		authorityRecord = MessAuthority.objects.filter(ID = request.session['id'])
+		if not authorityRecord:
+			return HttpResponseRedirect("/profile/?type=messAuthority")
+		else:
+			hostel = authorityRecord[0].hostel
+
+#########################################################################
+
 	notifs = []
 	notifications=[]
-	if not record:
-		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : notifications})	
-		# No hostel yet, so no notifs
-
-	else:
-		announcements = Announcement.objects.filter(hostel = record[0].hostel).order_by('-dateTime')
+	if request.method == 'GET':
+		announcements = Announcement.objects.filter(hostel = hostel).order_by('-dateTime')
 		for entry in announcements:
 			notifs.append([entry.dateTime, entry.subject, entry.text])
 
@@ -76,7 +91,37 @@ def home(request):
 
 		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : notifications})	
 
-	# if request.method == 'POST':
+
+	elif request.method == 'POST':
+		record = Announcement.objects.filter(hostel = hostel).order_by('-ID')
+		if record:
+			id = record[0].ID+1
+		else:
+			id = 1
+		
+		a = Announcement(subject = request.POST.get('subject'), text= request.POST.get('text'), hostel = hostel, ID = id, dateTime = dateTime.dateTime.now())
+		a.save()
+
+		announcements = Announcement.objects.filter(hostel = hostel).order_by('-dateTime')
+		for entry in announcements:
+			notifs.append([entry.dateTime, entry.subject, entry.text])
+
+
+		#code for pagenation
+		paginator = Paginator(notifs, 10) # Show 10 contacts per page
+		page = request.GET.get('page')
+		try:
+        		notifications = paginator.page(page)
+    		except PageNotAnInteger:
+        		# If page is not an integer, deliver first page.
+        		notifications = paginator.page(1)
+    		except EmptyPage:
+        		# If page is out of range (e.g. 9999), deliver last page of results.
+        		notifications = paginator.page(paginator.num_pages)
+
+		return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : notifications})	
+
+
 
 
 def editCost(request):
@@ -673,6 +718,8 @@ def deleteOpt(request):
 
 	return render(request,"responseRecorded.html",{"records": records, "loginType" : request.session['loginType']})
 
+
+
 def messAuthorityMenu(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
@@ -684,11 +731,9 @@ def messAuthorityMenu(request):
 	else:
 		return HttpResponseRedirect("/profile/?type=messAuthority")
 
-	hostel_food = None
+	hostel_food = []
 		    
 	if request.method == 'GET':
-		hostel_food=[]
-
 	        # print "in week",request.POST
 	        weeklyMenu = Menu.objects.filter(hostel=chosen_hostel)
 	        for j in range(4):
@@ -718,9 +763,6 @@ def messAuthorityMenu(request):
 			foodPresent = Menu.objects.filter(daySlot = dayslot, hostel = chosen_hostel, food = food)
 
 			if not foodPresent:
-				print "..................................."
-				print food.name
-				print "................................"
 				m = Menu(daySlot = dayslot, hostel = chosen_hostel, food = food)
 				m.save()
 
