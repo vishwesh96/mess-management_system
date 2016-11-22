@@ -3,7 +3,7 @@
 	        <div class="col-xs-6" style="width: 45%; height: 500px;display: inline-block; margin-top:170px">
 	            <div class="alert alert-danger" id ="errorMessage" style="display: none">
 				</div>  
-		        <form>
+		        <form>{% csrf_token %}
 				    <label for="wastage">Today's Wastage:</label>
 				    <input type="text"  id="hidden" name="wastage" style="display:none"/>
 				    <input type="text"  id="wastage" name="wastage" value="{{currWastage}}"/>
@@ -13,4 +13,26 @@
 	            
 	        </div>
 	    </div>
-	</div>
+</div>
+
+<script>
+				var data = [];
+				{% for entry in wastage %}
+				data.push({y: {{entry.1}}, label: "{{entry.0}}"});
+				{% endfor %}		
+											
+				var chart = new CanvasJS.Chart("chartContainer1", {
+					title: {
+						text: "Daily Wastage"
+					},
+
+
+					data: [{
+						type: "column",
+
+						dataPoints: data
+					}]
+				});
+				chart.render();
+
+</script>

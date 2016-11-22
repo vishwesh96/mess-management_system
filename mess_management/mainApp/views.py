@@ -282,19 +282,24 @@ def dispStats(request):
 
 
 	if request.method == 'GET':
-		belongsTo = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull =True)
-
-		if belongsTo:
-			w = Wastage.objects.filter(hostel = belongsTo[0].hostel).order_by('day')
-			wastage=[]
-			for entry in w:
-				if entry.day <= 6:
-					wastage.append((DAYS[entry.day] ,entry.wasted))
-
-			return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
+	
+		if request.session['loginType'] == "Student":
+			belongsTo = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull =True)
+			if belongsTo:
+				hostel = belongsTo[0].hostel
+			else:
+				message = "You Belong to no hostel"
+				return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
 		else:
-			message = "You Belong to no hostel"
-			return render(request,"error.html",{"message": message, "loginType" : request.session['loginType']})
+			hostel = authorityRecord[0].hostel
+
+		w = Wastage.objects.filter(hostel = hostel).order_by('day')
+		wastage=[]
+		for entry in w:
+			if entry.day <= datetime.datetime.today().weekday():
+				wastage.append((DAYS[entry.day] ,entry.wasted))
+
+		return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
 
 
 	# todo after ajax post
@@ -302,6 +307,20 @@ def dispStats(request):
 		# get hostel id
 		# Display wastage stats in the same html
 		currWastage =  request.POST.get('wastage');
+		print currWastage
+		a = Wastage.objects.filter( hostel = authorityRecord[0].hostel, day = datetime.datetime.today().weekday())
+		if a:
+			w = a[0]
+			w.wasted = currWastage	
+		else:
+			w = Wastage(wasted = currWastage, hostel = authorityRecord[0].hostel, day = datetime.datetime.today().weekday())
+		w.save()
+
+		w = Wastage.objects.filter(hostel = authorityRecord[0].hostel).order_by('day')
+		wastage=[]
+		for entry in w:
+			if entry.day <= datetime.datetime.today().weekday():
+				wastage.append((DAYS[entry.day] ,entry.wasted))
 
 		return render(request,"dispStatsPost.html", {"currWastage": currWastage ,"loginType" : request.session['loginType'], "wastage": wastage})
 
