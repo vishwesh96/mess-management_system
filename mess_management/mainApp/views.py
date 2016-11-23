@@ -56,8 +56,8 @@ def home(request):
 			record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
 			if record:
 				hostel = record[0].hostel
-				record = TempOpt.objects.all()		
-				date = record[0].startDate
+				# record = TempOpt.objects.all()		
+				# date = record[0].startDate
 			else:
 				return render(request, "home.html",{"loginType" : request.session['loginType'], "notifications" : []})		
 
