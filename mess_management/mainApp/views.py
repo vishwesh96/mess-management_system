@@ -150,12 +150,14 @@ def editCost(request):
 	if request.method == 'GET':
 		record = Cost.objects.filter(hostel = hostel)
 		if record:
-			entries = record[0]
-			for entry in entries:
+			for entry in record:
 				mealCosts[entry.mealType] = entry.cost
 
+		retData = {}
+		retData['costs'] = mealCosts
+		# print json.dumps(retData)
+		return HttpResponse(json.dumps(retData), content_type = "application/json")
 
-		return render(request, "editCost.html",{"mealCosts" : mealCosts , "loginType" : request.session['loginType']})
 
 	elif request.method == 'POST':
 		for entry in MEAL_TYPE:
@@ -168,16 +170,10 @@ def editCost(request):
 
 			c.save()
 
+		data = {}
+		data['valid'] = True
+		return HttpResponse(json.dumps(data), content_type = "application/json")
 
-		record = Cost.objects.filter(hostel = hostel)
-		
-		if record:
-			entries = record[0]
-			for entry in entries:
-				mealCosts[entry.mealType] = entry.cost
-
-
-		return render(request, "editCost.html",{"mealCosts" : mealCosts, "loginType" : request.session['loginType']})		
 
 
 
@@ -194,20 +190,21 @@ def addFood(request):
 		hostel = authorityRecord[0].hostel
 
 	if request.method == 'GET':
-
-		return render(request, "addFood.html",{ "loginType" : request.session['loginType']})
+		return HttpResponseRedirect("/home/")
 
 	elif request.method == 'POST':
-		record = Fooditem.objects.all().order_by('-ID')
+		record = FoodItem.objects.all().order_by('-ID')
 		if record:
-			id = record[0].ID+1
+			id = str(int(record[0].ID)+1)	
 		else:
 			id =1
 
 		f = FoodItem(ID = id ,name = request.POST.get('name'), type = request.POST.get('type'),quantity = request.POST.get('quantity'),calories = request.POST.get('calories'))
 		f.save()
 
-		return render(request, "addFood.html",{"loginType" : request.session['loginType']})		
+		data = {}
+		data['valid'] = True
+		return HttpResponse(json.dumps(data), content_type = "application/json")
 
 
 

@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^stats/', mainApp.views.dispStats, name='stats'),
     url(r'^editCost/', mainApp.views.editCost, name='editCost'),
     url(r'^addFood/', mainApp.views.addFood, name='addFood'),
+    url(r'^dispCount/', mainApp.views.dispCount, name='dispCount'),
     url(r'^', login.views.welcome),
     url(r'^reg/', mainApp.views.reg, name='reg'),
 

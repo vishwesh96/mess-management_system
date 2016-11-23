@@ -71,7 +71,7 @@
 <style>
 #overlay {
     display:none;
-    opacity:0.5;
+    opacity:0.8;
     background-color:black;
     position:fixed;
     width:100%;
@@ -101,7 +101,7 @@
 
 #overlayNew {
     display:none;
-    opacity:0.5;
+    opacity:0.8;
     background-color:black;
     position:fixed;
     width:100%;
@@ -252,8 +252,8 @@
   		<h3>Announcement</h3>
     	<a href="javascript:void(0)" id="closeOverlayNew">&times;</a>  		
 		<div class="form-group">
-		    <textarea class="span6" id="annSub" rows="1" placeholder="Subject" required style=""></textarea>
-		    <textarea class="span6" id="annData"rows="4" placeholder="Write Notification" required></textarea>
+		    <textarea class="span6" id="annSub" rows="1" placeholder="Subject" required ="true"></textarea>
+		    <textarea class="span6" id="annData"rows="4" placeholder="Write Notification" required="true"></textarea>
 		</div>
 		<div class="btn-group">
 			<button type="submit" class="btn btn-primary" id="subAnn" style="background-color:#DE4700;margin-top:-50px;margin-right:100px">Submit</button>{% csrf_token %}
