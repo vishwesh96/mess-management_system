@@ -17,9 +17,10 @@ canRegisterHostelAndAccount = True
 # Create your views here.
 
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
+MEAL_TYPE_MAPPING = {1:'breakfast', 2 : 'lunch', 3 :'tiffin', 4:'dinner'}
 MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
-
+TIMINGS = [datetime.time(6), datetime.time(10), datetime.time(15,30), datetime.time(18), datetime.time(22)]
 
 # def validate(request,hostel):
 # 	loggedIn = login.views.validate(request)
@@ -210,6 +211,78 @@ def addFood(request):
 		return render(request, "addFood.html",{"loginType" : request.session['loginType']})		
 
 
+def checkIntersection(currDate, entry):
+	if currDate > entry.startDate and currDate < entry.endDate:
+		return True
+
+	elif currDate == entry.startDate and MEAL_TYPE_MAPPING[mealType] >= MEAL_TYPE_MAPPING[entry.startMealType]:
+		if currDate == entry.endDate and MEAL_TYPE_MAPPING[mealType] <= MEAL_TYPE_MAPPING[entry.endMealType]:
+			return True
+
+	elif currDate == entry.endDate and MEAL_TYPE_MAPPING[mealType] <= MEAL_TYPE_MAPPING[entry.endMealType]:
+		if currDate == entry.startDate and MEAL_TYPE_MAPPING[mealType] >= MEAL_TYPE_MAPPING[entry.startMealType]:
+			return True
+
+
+
+def dispCount(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/welcome/")
+
+
+	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+	if not authorityRecord : 
+		return HttpResponseRedirect("/profile/?type=messAuthority")
+	else:
+		hostel = authorityRecord[0].hostel
+
+	if request.method == 'GET':
+		currTime = datetime.datetime.now().time()
+		currDate = datetime.datetime.now().date()
+
+		if currTime > TIMINGS[0] and currTime < TIMINGS[1]:
+			mealType = 'breakfast'
+		
+		elif currTime > TIMINGS[1] and currTime < TIMINGS[2]:
+			mealType = 'lunch'
+		
+		elif currTime > TIMINGS[2] and currTime < TIMINGS[3]:
+			mealType = 'tiffin'
+		
+		elif currTime > TIMINGS[3] and currTime < TIMINGS[4]:
+			mealType = 'dinner'
+
+		else:
+			mealType = ""
+
+
+		count = 0
+		
+		if mealType:
+			# Other hostel opted here
+			record = TempOpt.objects.filter(hostel = hostel)
+			if record :
+				for entry in record:
+					if checkIntersection(currDate,entry):
+						count = count+1
+
+			# Same hostel not opted out
+			record = BelongsTo.objects.filter(hostel = hostel, endDate__isnull = True)
+			for entry in record:
+				temp = TempOpt.objects.filter(student = entry.student)
+				intersection = False
+				for t in temp:
+					if checkIntersection(currDate, t):
+						intersection = True
+						break
+
+				if not intersection:
+					count = count + 1
+
+		return render(request, "addFood.html",{ "loginType" : request.session['loginType']})
+
+
 
 # Function to check the student can be allowed to eat in this hostel
 
@@ -237,13 +310,13 @@ def checkStudent(request, rollNo, message, hostel):
 
 		for entry in record:
 			if datetime.datetime.now().date()>entry.startDate and datetime.datetime.now().date()<entry.endDate:
-				message = "Belongs tothis hostel but opted out"
+				message = "Belongs to this hostel but opted out"
 				return False
 
 	else:
 		record = TempOpt.objects.filter(student = student, hostel = hostel)
 		if not record:
-			message = "Student does not belong to and not opted to this hostel today"
+			message = "Student does not belong and has not opted this hostel today"
 			return False
 
 
@@ -517,7 +590,7 @@ def dispStats(request):
 		wastage=[]
 		for entry in w:
 			if entry.day <= datetime.datetime.today().weekday():
-				print DAYS[entry.day]
+				print entry.day
 				wastage.append((DAYS[entry.day] ,entry.wasted))
 
 		return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
@@ -555,43 +628,58 @@ def showDaysMenu(request):
 	studentRecord = Student.objects.filter(ldap=request.session['id'])
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
+	else:
+		record = BelongsTo.objects.filter(student = studentRecord[0])
+		if record:
+			hostel = record[0].hostel
+		else:
+			return HttpResponseRedirect("/profile/?type=student")
 	    
-	hostel_food = None
+	hostel_food = {}
 	chosen_mealType = None
 
 	if request.method == 'GET':
-		hostel_food={}
 		chosen_mealType = "breakfast"
-		today = DAYS[datetime.datetime.today().weekday()]
-	
-		daySlot = DaySlot.objects.get(mealType__iexact=chosen_mealType, day__iexact = today)
-		allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
-		for entry in allHostels:
-			if entry.myhostel in hostel_food:
-				hostel_food[entry.myhostel].append(entry.food.name)
-			else:
-				hostel_food[entry.myhostel] = [entry.food.name]
-			# print "screwed 2", hostel_food
-		hostel_food = sorted(hostel_food.items())
-		# print hostel_food
-		return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
+		
 	
 	elif request.method == 'POST':
-		hostel_food={}
 		chosen_mealType = request.POST.get('mealType')
-		today = DAYS[datetime.datetime.today().weekday()]
-	
-		daySlot = DaySlot.objects.get(mealType__iexact=chosen_mealType, day__iexact = today)
-		allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
-		for entry in allHostels:
-			if entry.myhostel in hostel_food:
-				hostel_food[entry.myhostel].append(entry.food.name)
-			else:
-				hostel_food[entry.myhostel] = [entry.food.name]
 
-		hostel_food = sorted(hostel_food.items())
-		# print hostel_food
-		return render(request,"showDaysMenuPost.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
+
+	today = DAYS[datetime.datetime.today().weekday()]
+
+	daySlot = DaySlot.objects.get(mealType__iexact=chosen_mealType, day__iexact = today)
+	allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
+
+	for entry in allHostels:
+		if entry.myhostel in hostel_food:
+			hostel_food[entry.myhostel][0].append(entry.food.name)
+		else:
+			hostel_food[entry.myhostel] = [[entry.food.name]]
+
+		record = Cost.objects.filter(hostel = entry.hostel, mealType = chosen_mealType)
+		if record:
+			cost = record[0].cost
+		else:
+			cost = "--"
+
+		sum = 0
+		count = 0
+
+		record = Rated.objects.filter(hostel = entry.hostel)
+		for e in record:
+			sum+=e.overall
+			count+=1
+		if count == 0:
+			rating = 0
+		else:
+			rating = (float(sum)*100)/count
+
+		hostel_food[entry.myhostel].append(cost)
+		hostel_food[entry.myhostel].append(rating)
+
+	hostel_food = sorted(hostel_food.items())
+	return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
 
 def showWeeksMenu(request):
 	loggedIn = login.views.validate(request)
@@ -606,7 +694,7 @@ def showWeeksMenu(request):
 		    
 	if request.method == 'GET':
 		hostel_food=[]
-		chosen_hostel = BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo)[0].hostel.ID
+		chosen_hostel = BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo, endDate__isnull = True)[0].hostel.ID
 
 	        # print "in week",request.POST
 	        weeklyMenu = Menu.objects.filter(hostel_id=chosen_hostel)
@@ -658,7 +746,7 @@ def reviewAndRate(request):
 		rateType = request.POST.get('type')
 		data = request.POST.get('data')
 		
-		hostel= BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo)[0].hostel
+		hostel= BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo, endDate__isnull = True)[0].hostel
 		rating  = Rated.objects.filter(student__rollNo=studentRecord[0].rollNo,hostel__ID=hostel.ID)
 		if rating : 		
 			record = rating[0]
@@ -708,7 +796,7 @@ def tempOpt(request):
 		return HttpResponseRedirect("/profile/?type=student")
 
 	else:
-		record = BelongsTo.objects.filter(student = studentRecord[0])
+		record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
 		if not record:
 			return HttpResponseRedirect("/profile/?type=student")
 		else:
