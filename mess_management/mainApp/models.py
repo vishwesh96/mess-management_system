@@ -67,10 +67,10 @@ class BelongsTo(models.Model):
 	class Meta:
 		unique_together = (("student", "startDate"),)
 
-class Deduct(models.Model):
-	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
-	completed = models.IntegerField(default = 0)
-	deduct = models.BooleanField(default = False)
+# class Deduct(models.Model):
+# 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
+# 	completed = models.IntegerField(default = 0)
+# 	deduct = models.BooleanField(default = False)
 
 #changed the uniqueness condition on combined attributes
 class Rated(models.Model):

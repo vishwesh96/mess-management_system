@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^welcome/', login.views.welcome, name='welcome'),
     url(r'^loginStudent/', login.views.loginStudent, name='loginStudent'),
+    # url(r'^deductMoney/', mainApp.views.deductMoney, name='deductMoney'),
     url(r'^loginMessAuthority/', login.views.loginMessAuthority, name='loginMessAuthority'),
     url(r'^messAuthorityMenu/', mainApp.views.messAuthorityMenu, name='messAuthorityMenu'),
     url(r'^chooseExtras/',mainApp.views.chooseExtras, name='chooseExtras'),

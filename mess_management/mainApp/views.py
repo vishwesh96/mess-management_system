@@ -272,7 +272,7 @@ def dispCount(request):
 				temp = TempOpt.objects.filter(student = entry.student)
 				intersection = False
 				for t in temp:
-					if checkIntersection(currDate, t):
+					if checkIntersection(currDate, t,mealType):
 						intersection = True
 						break
 
@@ -403,86 +403,86 @@ def chooseExtras(request):
 
 			else:
 				data['valid'] = "false"
-				data['message'] = temp[0]
+				data['message'] = "No account Corresponding to student"
 
 
 		return HttpResponse(json.dumps(data), content_type = "application/json")
 
 
 
-def deductMoney(request):
-	loggedIn = login.views.validate(request)
-	if not loggedIn:
-		return HttpResponseRedirect("/welcome/")
+# def deductMoney(request):
+# 	loggedIn = login.views.validate(request)
+# 	if not loggedIn:
+# 		return HttpResponseRedirect("/welcome/")
 
 
-	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
-	if not authorityRecord : 
-		return HttpResponseRedirect("/profile/?type=messAuthority")
-	else:
-		hostel = authorityRecord[0].hostel
+# 	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+# 	if not authorityRecord : 
+# 		return HttpResponseRedirect("/profile/?type=messAuthority")
+# 	else:
+# 		hostel = authorityRecord[0].hostel
 
-	temp = []
-	currDate = 	datetime.datetime.now().date()
-	currTime =  datetime.datetime.now().time()
-	if currTime > TIMINGS[0] and currTime < TIMINGS[1]:
-		mealType = 'breakfast'
+# 	temp = []
+# 	currDate = 	datetime.datetime.now().date()
+# 	currTime =  datetime.datetime.now().time()
+# 	if currTime > TIMINGS[0] and currTime < TIMINGS[1]:
+# 		mealType = 'breakfast'
 	
-	elif currTime > TIMINGS[1] and currTime < TIMINGS[2]:
-		mealType = 'lunch'
+# 	elif currTime > TIMINGS[1] and currTime < TIMINGS[2]:
+# 		mealType = 'lunch'
 	
-	elif currTime > TIMINGS[2] and currTime < TIMINGS[3]:
-		mealType = 'tiffin'
+# 	elif currTime > TIMINGS[2] and currTime < TIMINGS[3]:
+# 		mealType = 'tiffin'
 	
-	elif currTime > TIMINGS[3] and currTime < TIMINGS[4]:
-		mealType = 'dinner'
+# 	elif currTime > TIMINGS[3] and currTime < TIMINGS[4]:
+# 		mealType = 'dinner'
 
-	else:
-		mealType = ""
-
-
-
-	record = Deduct.objects.filter(hostel = hostel)
-	if not record:
-		final = Deduct(hostel = hostel, deduct = False, completed = 0)
-		final.save()
-	else:
-		final = record[0]
-
-	if (final.completed != MEAL_TYPE_MAPPING[mealType]) and (MEAL_TYPE_MAPPING[mealType] != 0):
-		final.completed = MEAL_TYPE_MAPPING[mealType]
-		final.deduct = True
-		final.save()
-
-	if final.deduct:
-		record = Cost.objects.filter(mealType = mealType, hostel = hostel)
-		if record:
-			cost = record[0].cost
-		else:
-			cost = 0
-
-		# Students of same hostel
-		record = BelongsTo.objects.filter(hostel = hostel, endDate__isnull = True)
-		for entry in record:
-			if checkStudent(rollNo = entry.student.rollNo, hostel = hostel, message = temp):
-				record = MessAccounts.object.filter(student = entry.student)
-				if record:
-					record[0].balance = record[0].balance - cost
-					record[0].save()
+# 	else:
+# 		mealType = ""
 
 
-		record = TempOpt.objects.filter(hostel = hostel)
-		for entry in record:
-			if checkIntersection(entry = entry, mealType = mealType, currDate = currDate):
-				record = MessAccounts.object.filter(student = entry.student)
-				if record:
-					record[0].balance = record[0].balance - cost
-					record[0].save()
 
-		final.deduct = False
-		final.save()
+# 	record = Deduct.objects.filter(hostel = hostel)
+# 	if not record:
+# 		final = Deduct(hostel = hostel, deduct = False, completed = 0)
+# 		final.save()
+# 	else:
+# 		final = record[0]
 
-	return HttpResponseRedirect("/home/")
+# 	if (final.completed != MEAL_TYPE_MAPPING[mealType]) and (MEAL_TYPE_MAPPING[mealType] != 0):
+# 		final.completed = MEAL_TYPE_MAPPING[mealType]
+# 		final.deduct = True
+# 		final.save()
+
+# 	if final.deduct:
+# 		record = Cost.objects.filter(mealType = mealType, hostel = hostel)
+# 		if record:
+# 			cost = record[0].cost
+# 		else:
+# 			cost = 0
+
+# 		# Students of same hostel
+# 		record = BelongsTo.objects.filter(hostel = hostel, endDate__isnull = True)
+# 		for entry in record:
+# 			if checkStudent(rollNo = entry.student.rollNo, hostel = hostel, message = temp):
+# 				record = MessAccounts.object.filter(student = entry.student)
+# 				if record:
+# 					record[0].balance = record[0].balance - cost
+# 					record[0].save()
+
+
+# 		record = TempOpt.objects.filter(hostel = hostel)
+# 		for entry in record:
+# 			if checkIntersection(entry = entry, mealType = mealType, currDate = currDate):
+# 				record = MessAccounts.object.filter(student = entry.student)
+# 				if record:
+# 					record[0].balance = record[0].balance - cost
+# 					record[0].save()
+
+# 		final.deduct = False
+# 		final.save()
+
+# 	return HttpResponseRedirect("/welcome/")
 
 
 

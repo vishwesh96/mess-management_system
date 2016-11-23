@@ -179,7 +179,9 @@
           function(data,status){
               if(status==="success"){
                 // alert(data['count']);
-                $('#QDisplay').text(data['count']);
+                // alert(data['mealType']);
+                // alert(data['count']);
+                $('#QDisplay').text(data['count']+"\n"+data['mealType']);
               }
               else{
                   $('#QErrorMessage').text("Quantity couldn't be displayed");
