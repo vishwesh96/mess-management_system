@@ -4,7 +4,7 @@ from django.db import models
 
 # Create your models here.
 
-#many constraints in "unique together have been changed"
+
 class Student(models.Model):
 	rollNo = models.CharField(max_length = 20, primary_key = True)
 	name = models.CharField(max_length = 50)
@@ -23,7 +23,6 @@ class Hostel(models.Model):
 	name = models.CharField(max_length = 50)
 	costPerDay = models.IntegerField()
 	
-#added new relation
 class MessAuthority(models.Model):
 	ID = models.CharField(max_length = 20, primary_key = True)
 	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
@@ -51,7 +50,6 @@ class Announcement(models.Model):
 	text = models.CharField(max_length = 1000)
 	hostel = models.ForeignKey(Hostel, on_delete = models.CASCADE)
 
-#changed fromER diagram:Roll number if primary key and the relation in one-to-one with student
 class MessAccounts(models.Model):
 	accountNo  = models.CharField(max_length = 30)
 	balance = models.IntegerField(default=0)
@@ -61,7 +59,6 @@ class MessAccounts(models.Model):
 					primary_key=True,
 					)
 
-#changed the uniqueness condition on combined attributes
 class BelongsTo(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
@@ -94,7 +91,6 @@ class Reviewed(models.Model):
 	class Meta:
 		unique_together = (("student","hostel","dateTime"),)	
 
-#endDate is fixed by startDate
 class Catering(models.Model):
 	caterer = models.ForeignKey(Caterer, on_delete=models.CASCADE) 
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
@@ -111,8 +107,7 @@ class TempOpt(models.Model):
 	endDate = models.DateField()
 	startMealType = models.CharField(max_length = 20)
 	endMealType = models.CharField(max_length = 20)
-	class Meta: #might have overlapping intervals, but check this constraint oin application
-		#hostel value can be null and unique togther added hostel as holiday 
+	class Meta: 
 		unique_together = (("student","hostel","startDate","startMealType"),)
 
 # class Voter(models.Model):
