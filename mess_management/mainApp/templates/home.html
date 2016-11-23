@@ -285,7 +285,7 @@
 	{% if not notifications %}
 		<font size="5" color="white">Nothing to notify.... have a good day :)</font>
 	{% else %} 
-		<ul class="list_sbar list-group notifs"> 
+		<ul class="list_sbar list-group notifs" style="margin-left:100px;width:80%"> 
 		{% for note in notifications %}
 			{# Each "notification" is a notification model object. #}
 		    <li onclick="displayNotif('{{note.0}}','{{note.1}}','{{note.2}}')">
