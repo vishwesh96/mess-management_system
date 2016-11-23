@@ -110,11 +110,11 @@ class TempOpt(models.Model):
 		#hostel value can be null and unique togther added hostel as holiday 
 		unique_together = (("student","hostel","startDate","startMealType"),)
 
-class Voter(models.Model):
-	student = models.ForeignKey(Student, on_delete=models.SET_NULL, blank=True, null=True)
-	food = models.ForeignKey(FoodItem, on_delete=models.CASCADE)
-	class Meta:
-		unique_together = (("student", "food"),)	
+# class Voter(models.Model):
+# 	student = models.ForeignKey(Student, on_delete=models.SET_NULL, blank=True, null=True)
+# 	food = models.ForeignKey(FoodItem, on_delete=models.CASCADE)
+# 	class Meta:
+# 		unique_together = (("student", "food"),)	
 
 class Extras(models.Model):
 	hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE) 
