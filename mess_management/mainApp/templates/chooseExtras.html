@@ -79,13 +79,15 @@ $(document).ready(function(){
         e.preventDefault();
         $.post("/chooseExtras/",
         {
-            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,    
+            submit : "true",                
             rollNo : $('#rollNo').val(),
             data : cost
         },
         function(data,status){
+            // alert(data['valid']);
             if(status==="success"){
-                if(data['valid']){
+                if(data['valid']==="true"){
                     alert("Token successfull issued");
                     location.reload();
                 }

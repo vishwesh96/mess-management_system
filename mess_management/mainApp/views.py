@@ -17,7 +17,7 @@ canRegisterHostelAndAccount = True
 # Create your views here.
 
 DAYS = {0:'monday', 1:'tuesday', 2:'wednesday', 3:'thursday', 4:'friday', 5:'saturday', 6:'sunday'}
-MEAL_TYPE_MAPPING = {1:'breakfast', 2 : 'lunch', 3 :'tiffin', 4:'dinner'}
+MEAL_TYPE_MAPPING = {'': 0, 'breakfast' : 1, 'lunch': 2, 'tiffin': 3, 'dinner': 4}
 MEAL_TYPE = ['Breakfast','Lunch','Tiffin','Dinner']
 
 TIMINGS = [datetime.time(6), datetime.time(10), datetime.time(15,30), datetime.time(18), datetime.time(22)]
@@ -194,11 +194,11 @@ def addFood(request):
 		return HttpResponseRedirect("/home/")
 
 	elif request.method == 'POST':
-		record = FoodItem.objects.all().order_by('-ID')
+		record = FoodItem.objects.extra(select={'foodID': 'CAST("ID" AS INTEGER)'}).all().order_by('-foodID')
 		if record:
-			id = str(int(record[0].ID)+1)	
+			id = str(record[0].foodID+1)	
 		else:
-			id =1
+			id = str(1)
 
 		f = FoodItem(ID = id ,name = request.POST.get('name'), type = request.POST.get('type'),quantity = request.POST.get('quantity'),calories = request.POST.get('calories'))
 		f.save()
@@ -208,7 +208,7 @@ def addFood(request):
 		return HttpResponse(json.dumps(data), content_type = "application/json")
 
 
-def checkIntersection(currDate, entry):
+def checkIntersection(currDate, entry,mealType):
 	if currDate > entry.startDate and currDate < entry.endDate:
 		return True
 
@@ -235,6 +235,8 @@ def dispCount(request):
 		hostel = authorityRecord[0].hostel
 
 	if request.method == 'GET':
+
+
 		currTime = datetime.datetime.now().time()
 		currDate = datetime.datetime.now().date()
 
@@ -261,7 +263,7 @@ def dispCount(request):
 			record = TempOpt.objects.filter(hostel = hostel)
 			if record :
 				for entry in record:
-					if checkIntersection(currDate,entry):
+					if checkIntersection(currDate,entry,mealType):
 						count = count+1
 
 			# Same hostel not opted out
@@ -277,13 +279,17 @@ def dispCount(request):
 				if not intersection:
 					count = count + 1
 
-		return render(request, "addFood.html",{ "loginType" : request.session['loginType']})
+		data = {}
+		data['count'] = count
+		data['mealType'] = mealType
+		return HttpResponse(json.dumps(data), content_type = "application/json")
+		# return render(request, "addFood.html",{ "loginType" : request.session['loginType']})
 
 
 
 # Function to check the student can be allowed to eat in this hostel
 
-def checkStudent(request, rollNo, message, hostel):
+def checkStudent(rollNo, message, hostel):
 	record = Student.objects.filter(rollNo = rollNo)
 	
 	if not record:
@@ -293,12 +299,31 @@ def checkStudent(request, rollNo, message, hostel):
 	student = record[0]
 	record = BelongsTo.objects.filter(student = student, endDate__isnull = True)
 	if not record:
-		message = "Student Not registered in any hostel"
+		message.append("Student Not registered in any hostel")
 		return False
 
 	# If student in this hostel and opted out to some other hostel, then deny service
 	studentHostel = record[0]
+	currDate = 	datetime.datetime.now().date()
+	currTime =  datetime.datetime.now().time()
+
+	if currTime > TIMINGS[0] and currTime < TIMINGS[1]:
+		mealType = 'breakfast'
 	
+	elif currTime > TIMINGS[1] and currTime < TIMINGS[2]:
+		mealType = 'lunch'
+	
+	elif currTime > TIMINGS[2] and currTime < TIMINGS[3]:
+		mealType = 'tiffin'
+	
+	elif currTime > TIMINGS[3] and currTime < TIMINGS[4]:
+		mealType = 'dinner'
+
+	else:
+		mealType = ""
+
+
+
 	if studentHostel == hostel:
 		record = TempOpt.objects.filter(student = student)
 		if not record:
@@ -306,24 +331,26 @@ def checkStudent(request, rollNo, message, hostel):
 
 
 		for entry in record:
-			if datetime.datetime.now().date()>entry.startDate and datetime.datetime.now().date()<entry.endDate:
-				message = "Belongs to this hostel but opted out"
+			if checkIntersection(currDate, entry, mealType) :
+				message.append("Belongs to this hostel but opted out")
 				return False
 
 	else:
+		print hostel.ID
+		print student.rollNo
+
 		record = TempOpt.objects.filter(student = student, hostel = hostel)
 		if not record:
-			message = "Student does not belong and has not opted this hostel today"
+			print "jshbch"
+			message.append("Student does not belong and has not opted this hostel today")
 			return False
 
-
 		for entry in record:
-			if datetime.datetime.now().date() > entry.startDate and datetime.datetime.now().date()<entry.endDate:
+			if checkIntersection(currDate, entry, mealType) :
 				return True
 
-		message = "Student has not opted to this hostel"
+		message.append("Student has not opted to this hostel")
 		return False
-
 
 
 def chooseExtras(request):
@@ -337,6 +364,8 @@ def chooseExtras(request):
 		return HttpResponseRedirect("/profile/?type=messAuthority")
 	else:
 		hostel = authorityRecord[0].hostel
+		print "................................"
+		print hostel.ID
 
 
 	if request.method == 'GET':
@@ -359,26 +388,30 @@ def chooseExtras(request):
 			data['cost'] = cost
 
 		elif request.POST.get('submit') == 'true':
+
 			cost = request.POST.get('data')
 			rollNo = request.POST.get('rollNo')
 
-			if checkStudent(rollNo = rollNo, message= message, hostel = hostel):
+			print cost
+			print rollNo
+			temp = []
+			if checkStudent(rollNo = rollNo, message= temp, hostel = hostel, ):
 				student = Student.objects.get(rollNo = rollNo)				
 				student = record[0]
 				account = MessAccounts.objects.filter(student = student)
 				if account:
 					account[0].balance = account[0].balance - cost
 					account[0].save()
-					data['valid'] = True
+					data['valid'] = "true"
 				else:
-					data['valid'] = False
-					message = "No account Corresponding to student"
+					data['valid'] = "false"
+					message = "No account Corresponding to student"					
 					data['message'] = message
 					# render 
 
 			else:
-				data['valid'] = False
-				data['message'] = message
+				data['valid'] = "false"
+				data['message'] = temp[0]
 
 
 		return HttpResponse(json.dumps(data), content_type = "application/json")
