@@ -37,28 +37,6 @@
 					}]
 				});
 				chart.render();
-
-			var chart2 = new CanvasJS.Chart("chartContainer2",
-			{
-				title:{
-					text: "Pie Chart"
-				},
-				data: [
-				{
-					type: "pie",
-					dataPoints: [
-						{ y: 4181563},
-						{ y: 2175498},
-						{ y: 3125844},
-						{ y: 1176121},
-						{ y: 1727161},
-						{ y: 4303364},
-						{ y: 1717786}
-					]
-				}
-				]
-			});
-			chart2.render();
 		}
 
 
@@ -100,8 +78,7 @@ $(document).ready(function(){
 
 <div class="container">
     <div class="row">
-        <div id="chartContainer1" style="width: 45%; height: 500px;display: inline-block;"></div>
-        <div id="chartContainer2" style="width: 45%; height: 500px;display: inline-block;"></div>
+        <div id="chartContainer1" style="margin-left:30px;width: 45%; height: 500px;display: inline-block;"></div>
     </div>
 </div>
 

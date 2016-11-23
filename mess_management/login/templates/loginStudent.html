@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html>
+<html >
 <head>
 <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 <meta charset="UTF-8">
@@ -95,15 +95,37 @@ body {
 }
 
 </style>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-dropdown.js' %}"></script>
+    <script src="{% static 'js/bootstrap-collapse.js' %}"></script>
+    <script src="{% static 'js/bootstrap-tab.js' %}"></script>
+    <script src="{% static 'js/jquery.singlePageNav.js' %}"></script>
+    <script src="{% static 'js/jquery.flexslider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="{% static 'js/jquery.lightbox.js' %}"></script>
+    <script src="{% static 'js/templatemo_custom.js' %}"></script>
+    <script src="{% static 'js/responsiveCarousel.min.js' %}"></script>
 
 <script>
     $(document).ready(function(){
-        
+      $('#studentLoginForm').submit(function(e){
+        e.preventDefault();
+        $.post('',
+            $(this).serialize(),
+        function(data,status){
+            if(data['valid']==="false"){
+              $('#errorMessageStudentLogin').text("Login Failed");
+              $('#errorMessageStudentLogin').show().delay(2000).fadeOut();
+            }
+            else{
+                window.location.replace("/home/");
+            }
+        });
+      });  
     });
-      $('#errorMessage').text("Menu couldn't be updated");
-      $('#errorMessage').show();
-
-
 </script>
 </head>
 
@@ -111,11 +133,12 @@ body {
 
     <div class="logo"></div>
     <div class="login-block">
-        <form action="" method="post" accept-charset="utf-8">
+    <div class="alert alert-danger" id ="errorMessageStudentLogin" style="display: none;align:center">
+</div>  
+
+        <form action="" method="post" accept-charset="utf-8" id="studentLoginForm">
         <h1>Student Login</h1>
 
-<div class="alert alert-danger" id ="errorMessage" style="display: none">
-</div>  
 
         <input type="text" value="" placeholder="Username" id="username" name="ldapid" required="" />
         <input type="password" value="" placeholder="Password" id="password" name="ldappass" required="" />

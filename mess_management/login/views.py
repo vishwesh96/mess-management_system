@@ -1,5 +1,7 @@
 from django.shortcuts import render
 import ldap
+import json
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate
 # Create your views here.
@@ -40,13 +42,16 @@ def loginStudent(request):
 	    # 	return render(request,"bcapp/login.html", {"ldapid":userLDAP,"error":"Both fields must be filled!"})
 
 	    (auth,rollno) = doLogin(userLDAP, userPASS)				
-	    # auth = True													#comment to turn on ldap login
+	    # auth = True	
+	    data = {}												#comment to turn on ldap login
 	    if auth:
 	    	request.session['id'] = userLDAP
 	    	request.session['loginType'] = "Student"
-    		return HttpResponseRedirect("/home/")
+	    	data['valid'] = "true"
+	    	return HttpResponse(json.dumps(data), content_type = "application/json")
 	    else:
-	    	return render(request,"result.html", {"result": "login failed"})
+	    	data['valid'] = "false"
+	    	return HttpResponse(json.dumps(data), content_type = "application/json")
 
 def logout(request):
     try:
@@ -101,12 +106,15 @@ def loginMessAuthority(request):
 	    userPASS = request.POST.get("messAuthoritypass")
 
 	    auth = authenticate(username=userNAME, password=userPASS)
+	    data = {}												#comment to turn on ldap login
 	    if auth is not None:
 	    	request.session['id'] = userNAME
 	    	request.session['loginType'] = "MessAuthority"
-    		return HttpResponseRedirect("/home/")
+	    	data['valid'] = "true"	    	
+	    	return HttpResponse(json.dumps(data), content_type = "application/json")
 	    else:
-	    	return render(request,"result.html", {"result": "login failed"})
+	    	data['valid'] = "false"	    		    	
+	    	return HttpResponse(json.dumps(data), content_type = "application/json")
 
 def logout(request):
     try:
