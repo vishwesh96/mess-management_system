@@ -207,7 +207,7 @@ def addFood(request):
 		data['valid'] = True
 		return HttpResponse(json.dumps(data), content_type = "application/json")
 
-
+# Date and mealType intersection with tempOpt 
 def checkIntersection(currDate, entry,mealType):
 	if currDate > entry.startDate and currDate < entry.endDate:
 		return True
@@ -299,11 +299,11 @@ def checkStudent(rollNo, message, hostel):
 	student = record[0]
 	record = BelongsTo.objects.filter(student = student, endDate__isnull = True)
 	if not record:
-		message.append("Student Not registered in any hostel")
+		message.append("Student Not Registered in any hostel")
 		return False
 
 	# If student in this hostel and opted out to some other hostel, then deny service
-	studentHostel = record[0]
+	studentHostel = record[0].hostel
 	currDate = 	datetime.datetime.now().date()
 	currTime =  datetime.datetime.now().time()
 
@@ -336,12 +336,8 @@ def checkStudent(rollNo, message, hostel):
 				return False
 
 	else:
-		print hostel.ID
-		print student.rollNo
-
 		record = TempOpt.objects.filter(student = student, hostel = hostel)
 		if not record:
-			print "jshbch"
 			message.append("Student does not belong and has not opted this hostel today")
 			return False
 
@@ -364,8 +360,6 @@ def chooseExtras(request):
 		return HttpResponseRedirect("/profile/?type=messAuthority")
 	else:
 		hostel = authorityRecord[0].hostel
-		print "................................"
-		print hostel.ID
 
 
 	if request.method == 'GET':
@@ -392,15 +386,13 @@ def chooseExtras(request):
 			cost = request.POST.get('data')
 			rollNo = request.POST.get('rollNo')
 
-			print cost
-			print rollNo
 			temp = []
-			if checkStudent(rollNo = rollNo, message= temp, hostel = hostel, ):
-				student = Student.objects.get(rollNo = rollNo)				
+			if checkStudent(rollNo = rollNo, message= temp, hostel = hostel):
+				record = Student.objects.filter(rollNo = rollNo)				
 				student = record[0]
 				account = MessAccounts.objects.filter(student = student)
 				if account:
-					account[0].balance = account[0].balance - cost
+					account[0].balance = account[0].balance - int(cost)
 					account[0].save()
 					data['valid'] = "true"
 				else:
@@ -415,7 +407,85 @@ def chooseExtras(request):
 
 
 		return HttpResponse(json.dumps(data), content_type = "application/json")
+
+
+
+def deductMoney(request):
+	loggedIn = login.views.validate(request)
+	if not loggedIn:
+		return HttpResponseRedirect("/welcome/")
+
+
+	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
+	if not authorityRecord : 
+		return HttpResponseRedirect("/profile/?type=messAuthority")
+	else:
+		hostel = authorityRecord[0].hostel
+
+	temp = []
+	currDate = 	datetime.datetime.now().date()
+	currTime =  datetime.datetime.now().time()
+	if currTime > TIMINGS[0] and currTime < TIMINGS[1]:
+		mealType = 'breakfast'
 	
+	elif currTime > TIMINGS[1] and currTime < TIMINGS[2]:
+		mealType = 'lunch'
+	
+	elif currTime > TIMINGS[2] and currTime < TIMINGS[3]:
+		mealType = 'tiffin'
+	
+	elif currTime > TIMINGS[3] and currTime < TIMINGS[4]:
+		mealType = 'dinner'
+
+	else:
+		mealType = ""
+
+
+
+	record = Deduct.objects.filter(hostel = hostel)
+	if not record:
+		final = Deduct(hostel = hostel, deduct = False, completed = 0)
+		final.save()
+	else:
+		final = record[0]
+
+	if (final.completed != MEAL_TYPE_MAPPING[mealType]) and (MEAL_TYPE_MAPPING[mealType] != 0):
+		final.completed = MEAL_TYPE_MAPPING[mealType]
+		final.deduct = True
+		final.save()
+
+	if final.deduct:
+		record = Cost.objects.filter(mealType = mealType, hostel = hostel)
+		if record:
+			cost = record[0].cost
+		else:
+			cost = 0
+
+		# Students of same hostel
+		record = BelongsTo.objects.filter(hostel = hostel, endDate__isnull = True)
+		for entry in record:
+			if checkStudent(rollNo = entry.student.rollNo, hostel = hostel, message = temp):
+				record = MessAccounts.object.filter(student = entry.student)
+				if record:
+					record[0].balance = record[0].balance - cost
+					record[0].save()
+
+
+		record = TempOpt.objects.filter(hostel = hostel)
+		for entry in record:
+			if checkIntersection(entry = entry, mealType = mealType, currDate = currDate):
+				record = MessAccounts.object.filter(student = entry.student)
+				if record:
+					record[0].balance = record[0].balance - cost
+					record[0].save()
+
+		final.deduct = False
+		final.save()
+
+	return HttpResponseRedirect("/home/")
+
+
+
 
 def profile(request):
 	loggedIn = login.views.validate(request)
@@ -659,7 +729,7 @@ def showDaysMenu(request):
 	if not studentRecord : 
 		return HttpResponseRedirect("/profile/?type=student")
 	else:
-		record = BelongsTo.objects.filter(student = studentRecord[0])
+		record = BelongsTo.objects.filter(student = studentRecord[0], endDate__isnull = True)
 		if record:
 			hostel = record[0].hostel
 		else:
@@ -715,6 +785,7 @@ def showDaysMenu(request):
 	elif request.method == 'POST':
 		return render(request,"showDaysMenuPost.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})
 		
+
 
 def showWeeksMenu(request):
 	loggedIn = login.views.validate(request)
