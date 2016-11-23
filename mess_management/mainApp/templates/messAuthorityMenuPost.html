@@ -1,0 +1,23 @@
+<tbody id="messMenu">
+{% for key, values in hostel_food %}
+    <tr> 
+        <td>{{ key }}</td>
+        {% for list in values %}
+            <td  class="outerTd" >
+                <table>
+                    {% for v in list %}                                
+                        <tr>
+                            <td>
+                                {{v}}
+                            </td>
+                        </tr>
+                    {% endfor %}    
+                </table>                            
+            </td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+
+
+

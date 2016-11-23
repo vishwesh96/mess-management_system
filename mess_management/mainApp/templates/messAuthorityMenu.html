@@ -19,324 +19,210 @@
         .editableTable .cellEditing input[type=text]{
             width:100%;
             border:0;
-            background-color:rgb(255,253,210);  
+            background-color:rgb(255,253,210); 
         }
     </style>
+
+<style>
+#overlay {
+    display:none;
+    opacity:0.5;
+    background-color:black;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index: 999;
+}
+#popupContent {
+    display:none;  
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+    left: 400px;
+    top: -100px;
+    width: 700px;
+    height: 400px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+}
+</style>   
+
+<style>
+#closeOverlay {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
+}
+#closeItem {
+    position: absolute;
+    top: 10px;
+    right: 45px;
+    font-size: 30px;
+}
+</style>     
 {% endblock %}
 {% block script %}
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<!--     <script>
-        $(function () {
-            $("td").dblclick(function () {
-                var OriginalContent = $(this).text();
-                 
-                $(this).addClass("cellEditing");
-                $(this).html("<input type='text' value='" + OriginalContent + "' />");
-                $(this).children().first().focus();
-         
-                $(this).children().first().keypress(function (e) {
-                    if (e.which == 13) {
-                        var newContent = $(this).val();
-                        $(this).parent().text(newContent);
-                        $(this).parent().removeClass("cellEditing");
-                    }
-                });
-                 
-            $(this).children().first().blur(function(){
-                $(this).parent().text(OriginalContent);
-                $(this).parent().removeClass("cellEditing");
-            });
-            });
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+$(document).ready(function(){
+
+    var mealType;
+    var day;
+
+    $('#submitItems').click(function(){
+        var arrayItems = [];
+        $('#currItems').find('text').each(function(i){
+            var item = $.trim($(this).text());
+            arrayItems[i] = item;
         });
-    </script> -->
-    <script>
-        $( function() {
-        var availableTags = [
-          "ActionScript",
-          "AppleScript",
-          "Asp",
-          "BASIC",
-          "C",
-          "C++",
-          "Clojure",
-          "COBOL",
-          "ColdFusion",
-          "Erlang",
-          "Fortran",
-          "Groovy",
-          "Haskell",
-          "Java",
-          "JavaScript",
-          "Lisp",
-          "Perl",
-          "PHP",
-          "Python",
-          "Ruby",
-          "Scala",
-          "Scheme"
+
+        var itemsJSON  = JSON.stringify(arrayItems, null, 2);
+        $.ajax({
+            type : "POST",
+            data : {day: day, mealType: mealType, items: itemsJSON, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value},
+            url  : "/messAuthorityMenu/",
+
+            success : function(data){
+                $('#messMenu').replaceWith(data); 
+                $('#closeOverlay').trigger('click'); 
+            },
+            error : function(data){
+              $('#errorMessage').text("Menu couldn't be updated");
+              $('#errorMessage').show();
+            }
+        });
+    });
+
+    var availableTags;
+    
+    $('#closeOverlay').click(function () {
+      $('#overlay').fadeOut('slow');
+      $('#popupContent').fadeOut('slow'); 
+      $('body').css('position','relative');           
+    });
+
+
+    $('#currItems').on('click','#closeItem',function () {
+        var item = $.trim($(this).parent().find('text').text());
+        availableTags.push(item);
+        $(this).parent().remove();
+    });
+
+    $('#messMenuTable').on('dblclick','.outerTd',function () {
+
+        mealType = $(this).attr('id');
+        day  = ($(this).closest('table').find('th').eq($(this).index())).text();
+        $('#currItems').empty(); 
+
+        availableTags = [
+            {% for item in all_items %}
+                "{{item}}",
+             {%endfor%}
         ];
-        $( "#tags" ).autocomplete({
-          source: availableTags
+
+        $(this).find('td').each(function(i){
+            var item = $.trim($(this).text())
+            availableTags.splice($.inArray(item, availableTags),1); 
+            $("#currItems").append('<li class="list-group-item"><text>'+ item +'</text><a href="javascript:void(0)" id="closeItem">&times;</a></li>');                       
         });
-        } );
-    </script>
+
+        $('#overlay').fadeIn('slow');
+        $('#popupContent').fadeIn('slow');  
+        $('body').css('position','fixed');
+
+        $('#tags').val('');
+        $( "#tags" ).autocomplete({
+          source: availableTags,
+          select : function (e, ui) {
+            availableTags.splice($.inArray(ui.item.value, availableTags),1);            
+            $("#currItems").append('<li class="list-group-item"><text>'+ ui.item.label +'</text><a href="javascript:void(0)" id="closeItem">&times;</a></li>');
+            $(this).val('');
+            return false;
+            }
+        });  
+    });
+});
+</script>
 {% endblock %}
 {% block body %}
 
 
-<div class="container">
-    <table class="editableTable table table-striped">
-        <thead>
-            <tr>
-                <th style="border: 1px solid #dddddd">Week Day</th>
-                <th style="border: 1px solid #dddddd">Breakfast</th>
-                <th style="border: 1px solid #dddddd">Lunch</th>
-                <th style="border: 1px solid #dddddd">Tiffin</th>
-                <th style="border: 1px solid #dddddd">Dinner</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td rowspan="2">Monday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Ite: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Pedro Augusto</td>
-                <td>pedro.augusto@myemail.com</td>
-                <td>(21) 9999-8888</td>
-                <td>pedro.augusto@myemail.com</td>
-            </tr>
 
-            <tr>
-                <td rowspan="2">Tuesday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Paula Silva</td>
-                <td>paula.silva@mymail.com</td>
-                <td>(81) 8787-8686</td>
-                <td>paula.silva@mymail.com</td>
-            </tr>
+<div id ="overlay"></div> 
+<div id="popupContent">
+    <span style="text-align:center;color:black;font-size:20px">Choose Food Items</span>
+    <a href="javascript:void(0)" id="closeOverlay">&times;</a>
+    <br/>
+        <div class="ui-widget">
+            <label for="tags">Food Item: </label>
+            <input id="tags">
+        </div>
+ 
+        <div>
+          <ul class="list-group" id = "currItems">
+          </ul>
+        </div>
 
-            <tr>
-                <td rowspan="2">Wednesday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Lucas Costa</td>
-                <td>lucas.costa@myemail.com</td>
-                <td>(84) 3232-3232</td>
-                <td>lucas.costa@myemail.com</td>
-            </tr>
+        <div class="btn btn-primary">
+            <form> {% csrf_token %}
+                <button id="submitItems">Update</button>
+            </form>
+        </div>        
+</div> 
 
-            <tr>
-                <td rowspan="2">Thursday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Pedro Augusto</td>
-                <td>pedro.augusto@myemail.com</td>
-                <td>(21) 9999-8888</td>
-                <td>pedro.augusto@myemail.com</td>
-            </tr>
 
-            <tr>
-                <td rowspan="2">Friday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Paula Silva</td>
-                <td>paula.silva@mymail.com</td>
-                <td>(81) 8787-8686</td>
-                <td>paula.silva@mymail.com</td>
-            </tr>
+<div class="alert alert-danger" id ="errorMessage" style="display: none">
+</div>  
 
-            <tr>
-                <td rowspan="2">Saturday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Lucas Costa</td>
-                <td>lucas.costa@myemail.com</td>
-                <td>(84) 3232-3232</td>
-                <td>lucas.costa@myemail.com</td>
-            </tr>
-
-            <tr>
-                <td rowspan="2">Sunday</td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-                <td>    
-                    <div class="ui-widget">
-                        <label for="tags">Item: </label>
-                        <input id="tags">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Pedro Augusto</td>
-                <td>pedro.augusto@myemail.com</td>
-                <td>(21) 9999-8888</td>
-                <td>pedro.augusto@myemail.com</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="container" id="messMenuTable">
+    <div  class="w3-container table">   
+        <table class="editableTable table table-striped">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #dddddd"> Meal Type </th>
+                        <th style="border: 1px solid #dddddd"> Monday </th>
+                        <th style="border: 1px solid #dddddd"> Tuesday </th>
+                        <th style="border: 1px solid #dddddd"> Wednesday </th>
+                        <th style="border: 1px solid #dddddd"> Thursday </th>
+                        <th style="border: 1px solid #dddddd"> Friday </th>
+                        <th style="border: 1px solid #dddddd"> Saturday </th>
+                        <th style="border: 1px solid #dddddd"> Sunday </th>
+                    </tr>
+                </thead>
+                <tbody id="messMenu">
+                {% for key, values in hostel_food %}
+                    <tr> 
+                        <td>{{ key }}</td>
+                        {% for list in values %}
+                            <td  class="outerTd" id="{{ key }}">
+                                <table>
+                                    {% for v in list %}                                
+                                        <tr>
+                                            <td>
+                                                {{v}}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}    
+                                </table>                            
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+    </div>
 </div>
 
 
