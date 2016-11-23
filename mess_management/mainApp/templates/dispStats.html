@@ -15,6 +15,8 @@
 {% endblock %}
 {% block script %}
 	<script type="text/javascript">
+		// var chart1;
+		// var data1;
 		window.onload = function () {
 
 				data = []
@@ -36,7 +38,7 @@
 				});
 				chart.render();
 
-			var chart = new CanvasJS.Chart("chartContainer2",
+			var chart2 = new CanvasJS.Chart("chartContainer2",
 			{
 				title:{
 					text: "Pie Chart"
@@ -56,13 +58,35 @@
 				}
 				]
 			});
-			chart.render();
+			chart2.render();
 		}
 
 
 	</script>
 	<script src="../static/js/canvasjs.min.js"></script>
 
+<script>
+$(document).ready(function(){
+	$('#waste').on('keydown','#wastage',function(e){
+		if(e.which==13){
+			$.post("/stats/",
+			{
+				csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,    					
+				wastage : $(this).val()
+			},
+			function(data,status){
+		    	if(status==="success"){	
+		    		$('#wastageDisplay').replaceWith(data);	
+		    	}
+		    	else{
+	            	$('#errorMessage').text("Wastage couldn't be updated");
+	            	$('#errorMessage').show();		    		
+		    	}			
+			});				
+		}
+	});
+});
+</script>
 {% endblock %}
 
 
@@ -88,18 +112,23 @@
 
 {% elif loginType == "MessAuthority" %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-xs-6" style="width: 45%; height: 500px;display: inline-block; margin-top:170px">
-        <form>
-		    <label for="wastage">Today's Wastage:</label>
-		    <input type="text"  id="wastage" name="wastage"/>
-		</form>
-        </div>
-        <div class="col-xs-6" id="chartContainer1" style="width: 45%; height: 500px;display: inline-block">
-            
-        </div>
-    </div>
+<div class="container" id = "waste">
+	<div id="wastageDisplay">
+	    <div class="row">
+	        <div class="col-xs-6" style="width: 45%; height: 500px;display: inline-block; margin-top:170px">
+	            <div class="alert alert-danger" id ="errorMessage" style="display: none">
+				</div>  
+		        <form>{% csrf_token %}
+				    <label for="wastage">Today's Wastage:</label>
+				    <input type="text"  id="hidden" name="wastage" style="display:none"/>
+				    <input type="text"  id="wastage" name="wastage"/>
+				</form>
+	        </div>
+	        <div class="col-xs-6" id="chartContainer1" style="width: 45%; height: 500px;display: inline-block">
+	            
+	        </div>
+	    </div>
+	</div>
 </div>
 
 

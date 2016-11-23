@@ -64,54 +64,77 @@
 	    right: 0;
 	    color: #999;
 	}
+
+
 </style>
+
+<style>
+#overlay {
+    display:none;
+    opacity:0.5;
+    background-color:black;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index: 999;
+}
+#popupContent {
+    display:none;  
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+    left: 400px;
+    top: -100px;
+    width: 700px;
+    height: 600px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+}
+
+#data {
+	display:block;
+    width:500px;
+    word-wrap: break-word;
+}
+</style>   
+
 {% endblock %}
+
+{% block script %}
+<script>
+	function displayNotif(timestamp,subject,data){
+		$("#popupContent h2").html(subject);
+		$("#popupContent #time").html(timestamp);
+		$("#popupContent #data").html("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+			
+	}
+	$(document).ready(function(){
+		$('.notifs li').click(function(){
+			$('#overlay').fadeIn('slow');
+			$('#popupContent').fadeIn('slow');    
+	        $('body').css('position','fixed');
+	        $('#popupContent').css('overflow-y','scroll');   
+	       	
+	       	$('#overlay').click(function () {
+				$('#overlay').fadeOut('slow');
+		   	    $('#popupContent').fadeOut('slow');
+		   	   	$('body').css('position','initial');    
+			});
+		});
+	});
+</script>
+{% endblock %}
+
 {% block body %}
 
-
-{% if loginType == "Student" %}
-	{% if not notifications %}
-	<font size="5" color="white">Nothing to notify.... have a good day :)</font>
-	{% else %} 
-	<ul class="list_sbar list-group"> 
-	{% for note in notifications %}
-		{# Each "notification" is a notification model object. #}
-	    <li style="">
-	    	<h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 5px 0; text-align: center; float:left">Time Stamp: {{note.0}} </h4>
-	    	<br>
-	    	<div class="templatemo_hometext">
-	    	{{note.1}}
-	    	</div>
-	    </li>
-	{%endfor%}
-	</ul>
-
-	<div class="container">    
-		<ul class="pagination">
-		    <li>
-		        {% if notifications.has_previous %}
-		            <a href="?page={{ notifications.previous_page_number }}" style="color:#DE4700">&laquo;</a>
-		        {% endif %}
-		    </li>
-		    <li>
-		        <span class="current" style="color:#DE4700">
-		            Page {{ notifications.number }} of {{ notifications.paginator.num_pages }}.
-		        </span>
-		    </li>
-		    <li>
-		        {% if notifications.has_next %}
-		            <a href="?page={{ notifications.next_page_number }}" style="color:#DE4700">&raquo;</a>
-		        {% endif %}
-		    </li>
-		</ul>
-	</div>
-{% endif %}
-
-
-
-
-
-{% elif loginType == "MessAuthority" %}
+{% if loginType == "MessAuthority"%}
 <!-- <div class="container"> -->
   <form class="form-horizontal">
     <div class="form-group">
@@ -127,6 +150,58 @@
   </form>
 <!-- </div> -->
 
-
+<br>
 {% endif %}
+
+
+
+
+
+	<div id ="overlay"></div> 
+	<div id="popupContent">
+	    <h2 style="text-align:center;color:black;font-size:20px">aa</h2>
+	<p id="time"></p>
+
+	<p class="span6" rows="1" id="data"></p>
+	</div> 
+
+
+	{% if not notifications %}
+		<font size="5" color="white">Nothing to notify.... have a good day :)</font>
+	{% else %} 
+		<ul class="list_sbar list-group notifs"> 
+		{% for note in notifications %}
+			{# Each "notification" is a notification model object. #}
+		    <li onclick="displayNotif('{{note.0}}','{{note.1}}','{{note.2}}')">
+		    	<h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 5px 0; text-align: center; float:left">Time Stamp: {{note.0}} </h4>
+		    	<br>
+		    	<div class="templatemo_hometext">
+		    		{{note.1}}
+		    	</div>
+		    </li>
+		{%endfor%}
+		</ul>
+
+		<div class="container">    
+			<ul class="pagination">
+			    <li>
+			        {% if notifications.has_previous %}
+			            <a href="?page={{ notifications.previous_page_number }}" style="color:#DE4700">&laquo;</a>
+			        {% endif %}
+			    </li>
+			    <li>
+			        <span class="current" style="color:#DE4700">
+			            Page {{ notifications.number }} of {{ notifications.paginator.num_pages }}.
+			        </span>
+			    </li>
+			    <li>
+			        {% if notifications.has_next %}
+			            <a href="?page={{ notifications.next_page_number }}" style="color:#DE4700">&raquo;</a>
+			        {% endif %}
+			    </li>
+			</ul>
+	</div>
+	{% endif %}
+
+
 {% endblock %}
