@@ -81,7 +81,8 @@ $(document).ready(function(){
     var mealType;
     var day;
 
-    $('#submitItems').click(function(){
+    $('#submitItems').click(function(e){
+        e.preventDefault();
         var arrayItems = [];
         $('#currItems').find('text').each(function(i){
             var item = $.trim($(this).text());

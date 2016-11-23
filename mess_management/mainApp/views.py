@@ -782,7 +782,7 @@ def messAuthorityMenu(request):
 				l.append(l1)
 			hostel_food.append((MEAL_TYPE[j],l))
 		all_items = FoodItem.objects.all()
-		return render(request,"messAuthorityMenu.html",{"hostel_food":hostel_food,"loginType" : request.session['loginType']})
+		return render(request,"messAuthorityMenuPost.html",{"hostel_food":hostel_food,"loginType" : request.session['loginType']})
 
 
 
