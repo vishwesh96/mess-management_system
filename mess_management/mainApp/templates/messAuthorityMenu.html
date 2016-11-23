@@ -165,8 +165,8 @@ $(document).ready(function(){
     <span style="text-align:center;color:black;font-size:20px">Choose Food Items</span>
     <a href="javascript:void(0)" id="closeOverlay">&times;</a>
     <br/>
-        <div class="ui-widget">
-            <label for="tags">Food Item: </label>
+        <div class="ui-widget" style="margin-right:150px;margin-left:80px">
+            <label for="tags" >Food Item:</label>
             <input id="tags">
         </div>
  
@@ -175,9 +175,9 @@ $(document).ready(function(){
           </ul>
         </div>
 
-        <div class="btn btn-primary">
+        <div>
             <form> {% csrf_token %}
-                <button id="submitItems">Update</button>
+                <button id="submitItems" style="background-color:#DE4700;width:50%">Update</button>
             </form>
         </div>        
 </div> 
@@ -191,26 +191,26 @@ $(document).ready(function(){
         <table class="editableTable table table-striped">
                 <thead>
                     <tr>
-                        <th style="border: 1px solid #dddddd"> Meal Type </th>
-                        <th style="border: 1px solid #dddddd"> Monday </th>
-                        <th style="border: 1px solid #dddddd"> Tuesday </th>
-                        <th style="border: 1px solid #dddddd"> Wednesday </th>
-                        <th style="border: 1px solid #dddddd"> Thursday </th>
-                        <th style="border: 1px solid #dddddd"> Friday </th>
-                        <th style="border: 1px solid #dddddd"> Saturday </th>
-                        <th style="border: 1px solid #dddddd"> Sunday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Meal Type </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Monday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Tuesday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Wednesday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Thursday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Friday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Saturday </th>
+                        <th style="border: 1px solid #dddddd;width:400px;vertical-align:middle;text-align:center"> Sunday </th>
                     </tr>
                 </thead>
                 <tbody id="messMenu">
                 {% for key, values in hostel_food %}
                     <tr> 
-                        <td>{{ key }}</td>
+                        <td style="vertical-align:middle;text-align:center">{{ key }}</td>
                         {% for list in values %}
                             <td  class="outerTd" id="{{ key }}">
                                 <table>
                                     {% for v in list %}                                
                                         <tr>
-                                            <td>
+                                            <td style="border: 0px">
                                                 {{v}}
                                             </td>
                                         </tr>
