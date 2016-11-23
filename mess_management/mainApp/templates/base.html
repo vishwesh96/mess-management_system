@@ -31,7 +31,7 @@
     </style>
 
     <style>
-#overlayEditCost,#overlayAddFood{
+#overlayEditCost,#overlayAddFood,#overlayViewQ{
     display:none;
     opacity:0.9;
     background-color:black;
@@ -42,6 +42,8 @@
     left:0px;
     z-index: 999;
 }
+
+
 #popupContentEditCost{
     display:none;  
     position: absolute;
@@ -80,8 +82,27 @@
     overflow-x: hidden; 
 }
 
+#popupContentViewQ{
+    display:none;  
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:70px;
+    left: 500px;
+    top: -100px;
+    width: 500px;
+    height: 200px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+    overflow-x: hidden; 
+}
 
-#closeOverlayEditCost ,#closeOverlayAddFood{
+
+#closeOverlayEditCost ,#closeOverlayAddFood,#closeOverlayViewQ{
     position: absolute;
     top: 35px;
     right: 35px;
@@ -128,6 +149,12 @@
         $('body').css('position','initial');                 
       });     
 
+     $('#closeOverlayViewQ').click(function (e) {
+        $('#overlayViewQ').fadeOut('slow');
+        $('#popupContentViewQ').fadeOut('slow'); 
+        $('body').css('position','initial');                 
+      });
+
      $('#closeOverlayAddFood').click(function (e) {
         $('#overlayAddFood').fadeOut('slow');
         $('#popupContentAddFood').fadeOut('slow'); 
@@ -141,6 +168,25 @@
         $('#popupContentAddFood').css('overflow-y','scroll');   
       });
 
+
+      $('#viewQuantity').click(function(){
+        $('#overlayViewQ').fadeIn('slow');
+        $('#popupContentViewQ').fadeIn('slow');    
+        $('body').css('position','fixed');
+        $('#popupContentViewQ').css('overflow-y','scroll');  
+
+        $.get("/dispCount/",
+          function(data,status){
+              if(status==="success"){
+                // alert(data['count']);
+                $('#QDisplay').text(data['count']);
+              }
+              else{
+                  $('#QErrorMessage').text("Quantity couldn't be displayed");
+                  $('#QErrorMessage').show(); 
+              }
+          });
+      });
 
       $('#editCost').click(function(){
 
@@ -173,7 +219,7 @@
               if(status==="success"){
                   $('#addErrorMessage').hide();                 
                   $('#closeOverlayAddFood').trigger('click'); 
-                  $('#addSuccessMessage').text("Cost successfully updated");
+                  $('#addSuccessMessage').text("Food successfully Added");
                   $('#addSuccessMessage').show().delay(3000).fadeOut();                   
               }
               else{
@@ -365,11 +411,29 @@
           </div>
 
 
+          <div id ="overlayViewQ"></div> 
+          <div id="popupContentViewQ">
+          <div class="alert alert-danger" id ="QErrorMessage" style="display: none">
+            </div>           
+            <!-- <div class="container"> -->
+            <!-- <form> -->
+                <h3>View Quantity</h3>
+                  <a href="javascript:void(0)" id="closeOverlayViewQ">&times;</a>  
+                  <br>
+                  <h3 id ="QDisplay"></h3>
+
+            <!-- </form> -->
+            <!-- </div> -->
+          </div>
+
+
+
+
+            <div class="alert alert-success" id ="addSuccessMessage" style="display: none">
+            </div>   
       <div id ="overlayAddFood"></div> 
           <div id="popupContentAddFood">
           <div class="alert alert-danger" id ="addErrorMessage" style="display: none">
-            </div>   
-            <div class="alert alert-success" id ="addSuccessMessage" style="display: none">
             </div>       
               <div class="container">
                 <a href="javascript:void(0)" id="closeOverlayAddFood">&times;</a>     
