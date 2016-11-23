@@ -673,13 +673,18 @@ def showDaysMenu(request):
 		if count == 0:
 			rating = 0
 		else:
-			rating = (float(sum)*100)/count
+			rating = ((sum)*20)/count
 
 		hostel_food[entry.myhostel].append(cost)
 		hostel_food[entry.myhostel].append(rating)
 
 	hostel_food = sorted(hostel_food.items())
-	return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
+	if request.method == 'GET':
+		return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})		
+	
+	elif request.method == 'POST':
+		return render(request,"showDaysMenuPost.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})
+		
 
 def showWeeksMenu(request):
 	loggedIn = login.views.validate(request)
