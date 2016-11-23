@@ -11,113 +11,110 @@
 {% block style %}
 <style>
   form{
-    width:50%;
+    width:60%;
   }
-    .hovereffect {
-      width: 100%;
-      height: 100%;
-      float: left;
-      overflow: hidden;
-      position: relative;
-      text-align: center;
-      cursor: default;
-      background: #42b078;
-    }
 
-    .hovereffect .overlay {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      overflow: hidden;
-      top: 0;
-      left: 0;
-      padding: 50px 20px;
-    }
+ #closeItem {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+} 
 
-    .hovereffect img {
-      display: block;
-      position: relative;
-      max-width: none;
-      width: calc(100% + 20px);
-      -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
-      transition: opacity 0.35s, transform 0.35s;
-      -webkit-transform: translate3d(-10px,0,0);
-      transform: translate3d(-10px,0,0);
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-
-    .hovereffect:hover img {
-      opacity: 0.4;
-      filter: alpha(opacity=40);
-      -webkit-transform: translate3d(0,0,0);
-      transform: translate3d(0,0,0);
-    }
-
-    .hovereffect h2 {
-      text-transform: uppercase;
-      color: #fff;
-      text-align: center;
-      position: relative;
-      font-size: 17px;
-      overflow: hidden;
-      padding: 0.5em 0;
-      background-color: transparent;
-    }
-
-    .hovereffect h2:after {
-        display:block;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: #fff;
-      content: '';
-      -webkit-transition: -webkit-transform 0.35s;
-      transition: transform 0.35s;
-      -webkit-transform: translate3d(-100%,0,0);
-      transform: translate3d(-100%,0,0);
-    }
-
-    .hovereffect:hover h2:after {
-      -webkit-transform: translate3d(0,0,0);
-      transform: translate3d(0,0,0);
-    }
-
-    .hovereffect a, .hovereffect p {
-      color: #FFF;
-      opacity: 0;
-      filter: alpha(opacity=0);
-      -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
-      transition: opacity 0.35s, transform 0.35s;
-      -webkit-transform: translate3d(100%,0,0);
-      transform: translate3d(100%,0,0);
-    }
-
-    .hovereffect:hover a, .hovereffect:hover p {
-      opacity: 1;
-      filter: alpha(opacity=100);
-      -webkit-transform: translate3d(0,0,0);
-      transform: translate3d(0,0,0);
-    }
 </style>
 {% endblock %}
 
 {% block script %}
+<script>
+$(document).ready(function(){
+
+    var cost = 0;
+    $('#currItems').on('click','#closeItem',function (e) {
+        var item = $.trim($(this).parent().find('text').text());
+        $.post('/chooseExtras/',
+        {   
+            submit : "false",
+            data : itemName
+        },
+        function(data,status){
+            if(status==="success"){
+                $(this).parent().remove();
+                cost = cost - data['cost'];        
+                $('#costValue').val(cost);
+                $('#errorMessage').hide();                
+            }
+            else{
+                $('#errorMessage').text("The item couldn't be removed");
+                $('#errorMessage').show();
+            }
+        });
+    });
+
+    $('img').on('click',function(){
+        itemName = $(this).attr('name');
+        $.post('/chooseExtras/',
+        {   
+            submit : "false",
+            data : itemName
+        },
+        function(data,status){
+            if(status==="success"){
+                $("#currItems").append('<li class="list-group-item"><text>'+ item +'</text><a href="javascript:void(0)" id="closeItem">&times;</a></li>');    
+                cost = cost + data['cost'];    
+                $('#costValue').val(cost);
+                $('#errorMessage').hide();                
+            }
+            else{
+                $('#errorMessage').text("The item couldn't be added");
+                $('#errorMessage').show();
+            }
+        });
+    });
+
+    $('#submitExtras').submit(function(e) {
+        e.preventDefault();
+        $.post("/chooseExtras/",
+        {
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
+            rollNo : $('#rollNo').val(),
+            data : cost
+        },
+        function(data,status){
+            if(status==="success"){
+                if(data['valid']){
+                    alert("Token successfull issued");
+                    location.reload();
+                }
+                else{
+                    alert("Your Token couldn't be issued \n" + data['message']);
+                }
+            }
+            else{
+                $('#errorMessage').text("Extras couldn't be submitted, Try again");                
+                $('#errorMessage').show();
+            }
+        });
+    });
+
+});   
+</script>
 {% endblock %}
 
 {% block body %}
+
+<div class="alert alert-danger" id ="errorMessage" style="display: none;">
+</div>  
+
 <div class="container">
     <div class="row">
         <div class="col-xs-6">
             <div class="container">
               <div class="row">
                 <div class="col-sm-6" style="width:20%;height:20%;margin-right:-20">
-                    <img src="../static/images/extras/fullFry.jpg" alt="Full Fry" ></img>
-                    <img src="../static/images/extras/halfFry.jpg" alt="Half Fry" ></img>
-                    <img src="../static/images/extras/chickenCurry.jpg" alt="Chicken Curry" ></img>
-                    <img src="../static/images/extras/chickenFry.jpg" alt="Chicken Fry" ></img> 
+                    <img src="../static/images/extras/fullFry.jpg" alt="Full Fry" name="Full Fry"></img>
+                    <img src="../static/images/extras/halfFry.jpg" alt="Half Fry" name="Half Fry"></img>
+                    <img src="../static/images/extras/chickenCurry.jpg" alt="Chicken Curry" name="Chicken Curry"></img>
+                    <img src="../static/images/extras/chickenFry.jpg" alt="Chicken Fry" name="Chicken Fry"></img> 
                 </div>
                 <div class="col-sm-6" style="width:20%;height:20%">
                     <img src="../static/images/extras/omelette.jpg" alt="Omelette" ></img>
@@ -128,17 +125,25 @@
               </div>
             </div>
         </div>
+
+
         <div class="col-xs-6">
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                <div class="hovereffect">
-                    <img src="../static/images/extras/omelette.jpg" alt="" title="Smiley face">
-                        <div class="overlay" style="width: 100%;height: 100%;position: absolute;overflow: hidden;top: 0;left: 0;adding: 50px 20px;">
-                            <h2>Effect 12</h2> 
-                        </div>
+
+                <form accept-charset="utf-8">
+            
+                <label for="rollNo">Roll Number</label>
+                <input type="text" value="" id="rollNo" name="rollNo" required="true" style="text-align:center"/>      
+
+                <div style="height:200px;overflow-y: scroll">
+                    <ul class="list-group" id = "currItems">
+                    </ul>
                 </div>
-            </div>
+                <label>Cost</label>                
+                <input type="text" value="0" readonly style="text-align:center" id="costValue"/>      
+                <button type="submit" style="background-color:#DE4700" id="submitExtras">Submit</button>{% csrf_token %}
+                </form>
         </div>
-    </div>
+
 </div>
 
 

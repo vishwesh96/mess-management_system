@@ -95,6 +95,16 @@ body {
 }
 
 </style>
+
+<script>
+    $(document).ready(function(){
+        
+    });
+      $('#errorMessage').text("Menu couldn't be updated");
+      $('#errorMessage').show();
+
+
+</script>
 </head>
 
 <body>
@@ -103,6 +113,10 @@ body {
     <div class="login-block">
         <form action="" method="post" accept-charset="utf-8">
         <h1>Student Login</h1>
+
+<div class="alert alert-danger" id ="errorMessage" style="display: none">
+</div>  
+
         <input type="text" value="" placeholder="Username" id="username" name="ldapid" required="" />
         <input type="password" value="" placeholder="Password" id="password" name="ldappass" required="" />
         <button type="submit">Login</button>{% csrf_token %}

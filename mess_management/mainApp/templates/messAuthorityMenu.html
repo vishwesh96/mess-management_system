@@ -55,10 +55,15 @@
 </style>   
 
 <style>
+.ui-autocomplete {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;        
+}
 #closeOverlay {
     position: absolute;
     top: 20px;
-    right: 45px;
+    right: 35px;
     font-size: 60px;
 }
 #closeItem {
@@ -91,59 +96,59 @@ $(document).ready(function(){
 
         var itemsJSON  = JSON.stringify(arrayItems, null, 2);
 
-        // $.ajax({
-        //     type : "POST",
-        //     data : {day: day, mealType: mealType, items: itemsJSON, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value},
-        //     url  : "/messAuthorityMenu/",
+        $.ajax({
+            type : "POST",
+            data : {day: day, mealType: mealType, items: itemsJSON, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value},
+            url  : "/messAuthorityMenu/",
 
-        //     success : function(data){
-        //         $('#messMenu').replaceWith(data); 
-        //         $('#closeOverlay').trigger('click'); 
-        //     },
-        //     error : function(data){
-        //       $('#errorMessage').text("Menu couldn't be updated");
-        //       $('#errorMessage').show();
-        //     }
-        // });
-
-        $.post("/messAuthorityMenu/",
-        {
-            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
-            day : day,
-            mealType : mealType,
-            items : itemsJSON
-        },
-        function(data,status){
-            if(status==="success"){
+            success : function(data){
                 $('#messMenu').replaceWith(data); 
                 $('#closeOverlay').trigger('click'); 
-            }
-            else{
+                $('#errorMessage').hide();                                  
+            },
+            error : function(data){
               $('#errorMessage').text("Menu couldn't be updated");
               $('#errorMessage').show();
-            }   
+            }
         });
+
+        // $.post("/messAuthorityMenu/",
+        // {
+        //     csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
+        //     day : day,
+        //     mealType : mealType,
+        //     items : itemsJSON
+        // },
+        // function(data,status){
+        //     if(status==="success"){
+        //         $('#messMenu').replaceWith(data); 
+        //         $('#closeOverlay').trigger('click'); 
+        //     }
+        //     else{
+        //       $('#errorMessage').text("Menu couldn't be updated");
+        //       $('#errorMessage').show();
+        //     }   
+        // });
 
 
     });
 
     var availableTags;
     
-    $('#closeOverlay').click(function () {
+    $('#closeOverlay').click(function (e) {
       $('#overlay').fadeOut('slow');
       $('#popupContent').fadeOut('slow'); 
       $('body').css('position','initial');           
     });
 
 
-    $('#currItems').on('click','#closeItem',function () {
+    $('#currItems').on('click','#closeItem',function (e) {
         var item = $.trim($(this).parent().find('text').text());
         availableTags.push(item);
         $(this).parent().remove();
     });
 
-    $('#messMenuTable').on('dblclick','.outerTd',function () {
-
+    $('#messMenuTable').on('dblclick','.outerTd',function (e) {
         mealType = $(this).attr('id');
         day  = ($(this).closest('table').find('th').eq($(this).index())).attr('id');
         $('#currItems').empty(); 

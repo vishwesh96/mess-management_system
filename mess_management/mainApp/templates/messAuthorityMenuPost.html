@@ -1,13 +1,13 @@
 <tbody id="messMenu">
 {% for key, values in hostel_food %}
     <tr> 
-        <td>{{ key }}</td>
+        <td style="vertical-align:middle;text-align:center">{{ key }}</td>
         {% for list in values %}
-            <td  class="outerTd" >
+            <td  class="outerTd" id="{{ key }}">
                 <table>
                     {% for v in list %}                                
                         <tr>
-                            <td>
+                            <td style="border: 0px">
                                 {{v}}
                             </td>
                         </tr>
@@ -18,6 +18,3 @@
     </tr>
 {% endfor %}
 </tbody>
-
-
-
