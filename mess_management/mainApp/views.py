@@ -126,7 +126,6 @@ def home(request):
   #   		except EmptyPage:
   #       		# If page is out of range (e.g. 9999), deliver last page of results.
   #       		notifications = paginator.page(paginator.num_pages)
-  		print data
 		return HttpResponse(json.dumps(data), content_type = "application/json")
 
 
@@ -690,7 +689,6 @@ def dispStats(request):
 		wastage=[]
 		for entry in w:
 			if entry.day <= datetime.datetime.today().weekday():
-				print entry.day
 				wastage.append((DAYS[entry.day] ,entry.wasted))
 
 		return render(request,"dispStats.html", {"loginType" : request.session['loginType'], "wastage": wastage})
@@ -701,7 +699,6 @@ def dispStats(request):
 		# get hostel id
 		# Display wastage stats in the same html
 		currWastage =  request.POST.get('wastage');
-		print currWastage
 		a = Wastage.objects.filter( hostel = authorityRecord[0].hostel, day = datetime.datetime.today().weekday())
 		if a:
 			w = a[0]
@@ -714,7 +711,6 @@ def dispStats(request):
 		wastage=[]
 		for entry in w:
 			if entry.day <= datetime.datetime.today().weekday():
-				print entry.day
 				wastage.append((DAYS[entry.day] ,entry.wasted))
 
 		return render(request,"dispStatsPost.html", {"currWastage": currWastage ,"loginType" : request.session['loginType'], "wastage": wastage})
@@ -802,7 +798,6 @@ def showWeeksMenu(request):
 		hostel_food=[]
 		chosen_hostel = BelongsTo.objects.filter(student__rollNo=studentRecord[0].rollNo, endDate__isnull = True)[0].hostel.ID
 
-	        # print "in week",request.POST
 	        weeklyMenu = Menu.objects.filter(hostel_id=chosen_hostel)
 	        for j in range(4):
 			l = []
@@ -1068,9 +1063,6 @@ def deleteOpt(request):
 	else :
 		null = False
 
-	print datetime.datetime.now()
-	print startDate
-	print startMealType
 	records =  TempOpt.objects.filter(student__rollNo = studentRecord[0].rollNo)
 
 	return render(request,"responseRecorded.html",{"records": records, "loginType" : request.session['loginType']})
