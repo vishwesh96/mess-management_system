@@ -89,13 +89,68 @@
     left: 400px;
     top: -100px;
     width: 700px;
-    height: 600px;
+    height: 500px;
     color: #000000;
     border:5px solid #4E93A2;
     -moz-border-radius:8px;
     -webkit-border-radius:8px;
     background-color:#FFFFFF;
     z-index: 1000;
+}
+
+
+#overlayNew {
+    display:none;
+    opacity:0.5;
+    background-color:black;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index: 999;
+}
+#popupContentNew {
+    display:none;  
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+    left: 400px;
+    top: -100px;
+    width: 700px;
+    height: 500px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+}
+
+#newAnn{
+	width: 40%;
+}
+
+#annSub{
+	margin-left:20px;
+	width:80%;
+	height:60px;
+	overflow-y: scroll;
+}
+
+#annData{
+	margin-left:20px;
+	width:80%;
+	height:200px;
+	/*overflow-y: scroll;*/
+}
+
+#closeOverlayNew {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    font-size: 60px;
 }
 
 #data {
@@ -116,7 +171,7 @@
 			
 	}
 	$(document).ready(function(){
-		$('.notifs li').click(function(){
+		$('.notifs').on('click','li',function(){
 			$('#overlay').fadeIn('slow');
 			$('#popupContent').fadeIn('slow');    
 	        $('body').css('position','fixed');
@@ -128,6 +183,52 @@
 		   	   	$('body').css('position','initial');    
 			});
 		});
+
+		$('#newAnn').click(function(){
+			$('#overlayNew').fadeIn('slow');
+			$('#popupContentNew').fadeIn('slow');    
+	        $('body').css('position','fixed');
+	        $('#popupContentNew').css('overflow-y','scroll');   
+		});
+
+	   $('#closeOverlayNew').click(function (e) {
+	      $('#overlayNew').fadeOut('slow');
+	      $('#popupContentNew').fadeOut('slow'); 
+	      $('body').css('position','initial');           
+	    });
+
+	   $('#subAnn').click(function(e){
+	   		e.preventDefault();
+	   		var subject = $('#annSub').val();
+	   		var data1 = $('#annData').val();
+	   		$.post("/home/",
+	   		{
+            	csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    	   			
+	   			subject : subject,
+	   			text : data1
+	   		},
+	   		function(data,status){
+	            if(status==="success"){
+	            	var time = data['time'];
+	            	$('.notifs').prepend("<li><h4 style=\"display: block; font-family:'Nunito', sans-serif; color: #384047; margin: 0 0 5px 0; text-align: center; float:left\">Time Stamp: + " + time + "</h4><br><div class=\"templatemo_hometext\">" + subject + " </div></li>"); 
+
+	            	$('.notifs').on('click','li:first-child',function(){
+	            		displayNotif(time,subject,data1);
+	            	});
+
+// onclick=\"displayNotif(" + time + "," + subject + "," + data + ")\"
+
+                	$('#closeOverlayNew').trigger('click'); 
+                	 $('#annSub').val('');
+                	 $('#annData').val('');
+	                $('#errorMessage').hide();                
+	            }
+	            else{
+	                $('#errorMessage').text("The Announcement couldn't be added");
+	                $('#errorMessage').show();
+	            }
+	   		});
+	   });
 	});
 </script>
 {% endblock %}
@@ -138,32 +239,42 @@
 
 {% if loginType == "MessAuthority"%}
 <!-- <div class="container"> -->
+  
+
+  
+
+<div id ="overlayNew"></div> 
+<div id="popupContentNew">
+
   <form class="form-horizontal">
-    <div class="form-group">
-        <textarea class="span6" rows="1" placeholder="Subject" required></textarea>
-        <textarea class="span6" rows="4" placeholder="Write Notification" required></textarea>
-
-    </div>
-
-<div class="btn-group">
-<button type="submit" class="btn btn-primary" style="background-color:#DE4700;margin-top:-50px;margin-right:100px">Submit</button>{% csrf_token %}
-</div>
-
+  	<div class="alert alert-danger" id ="errorMessage" style="display: none">
+	</div>
+  		<h3>Announcement</h3>
+    	<a href="javascript:void(0)" id="closeOverlayNew">&times;</a>  		
+		<div class="form-group">
+		    <textarea class="span6" id="annSub" rows="1" placeholder="Subject" required style=""></textarea>
+		    <textarea class="span6" id="annData"rows="4" placeholder="Write Notification" required></textarea>
+		</div>
+		<div class="btn-group">
+			<button type="submit" class="btn btn-primary" id="subAnn" style="background-color:#DE4700;margin-top:-50px;margin-right:100px">Submit</button>{% csrf_token %}
+		</div>
   </form>
+
+</div> 
+
+
+<button id="newAnn" style="background-color:#DE4700;width:25%">Create Announcement</button>
+
 <!-- </div> -->
 
 <br>
 {% endif %}
 
-
-
-
 	<div id ="overlay"></div> 
 	<div id="popupContent">
 	    <h2 style="text-align:center;color:black;font-size:20px">aa</h2>
-	<p id="time"></p>
-
-	<p class="span6" rows="1" id="data"></p>
+		<p id="time"></p>
+		<p class="span6" rows="1" id="data"></p>
 	</div> 
 
 

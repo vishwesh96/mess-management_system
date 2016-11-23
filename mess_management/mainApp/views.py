@@ -102,16 +102,14 @@ def home(request):
 		else:
 			id = 1
 
-		dateTime = dateTime.dateTime.now()
+		dateTime = datetime.datetime.now()
 		a = Announcement(subject = request.POST.get('subject'), text= request.POST.get('text'), hostel = hostel, ID = id, dateTime = dateTime)
 		a.save()
 
 
 		data = {}
-		data['time'] = dateTime
+		data['time'] = '%s' % dateTime.ctime()
 		
-
-
 		# announcements = Announcement.objects.filter(hostel = hostel).order_by('-dateTime')
 		# for entry in announcements:
 		# 	notifs.append([entry.dateTime, entry.subject, entry.text])
@@ -128,7 +126,7 @@ def home(request):
   #   		except EmptyPage:
   #       		# If page is out of range (e.g. 9999), deliver last page of results.
   #       		notifications = paginator.page(paginator.num_pages)
-
+  		print data
 		return HttpResponse(json.dumps(data), content_type = "application/json")
 
 
@@ -647,13 +645,13 @@ def showDaysMenu(request):
 	elif request.method == 'POST':
 		chosen_mealType = request.POST.get('mealType')
 
+
 	today = DAYS[datetime.datetime.today().weekday()]
 
 	daySlot = DaySlot.objects.get(mealType__iexact=chosen_mealType, day__iexact = today)
 	allHostels = Menu.objects.extra(select={'myhostel': 'CAST(hostel_id AS INTEGER)'}).filter(daySlot=daySlot).order_by('myhostel')	
 
 	for entry in allHostels:
-		hostel_food[entry.myhostel]
 		if entry.myhostel in hostel_food:
 			hostel_food[entry.myhostel][0].append(entry.food.name)
 		else:
@@ -669,18 +667,19 @@ def showDaysMenu(request):
 		count = 0
 
 		record = Rated.objects.filter(hostel = entry.hostel)
-		for entry in record:
-			sum+=entry.overall
+		for e in record:
+			sum+=e.overall
 			count+=1
-		rating = (float(sum)*100)/count
+		if count == 0:
+			rating = 0
+		else:
+			rating = (float(sum)*100)/count
 
 		hostel_food[entry.myhostel].append(cost)
 		hostel_food[entry.myhostel].append(rating)
 
 	hostel_food = sorted(hostel_food.items())
 	return render(request,"showDaysMenu.html",{"hostel_food":hostel_food, "chosen_mealType":chosen_mealType,"loginType" : request.session['loginType']})	
-
-
 
 def showWeeksMenu(request):
 	loggedIn = login.views.validate(request)
@@ -975,7 +974,7 @@ def deleteOpt(request):
 def messAuthorityMenu(request):
 	loggedIn = login.views.validate(request)
 	if not loggedIn:
-		return HttpResponseRedirect("/login/")
+		return HttpResponseRedirect("/welcome/")
 
 	authorityRecord = MessAuthority.objects.filter(ID=request.session['id'])
 	if authorityRecord:

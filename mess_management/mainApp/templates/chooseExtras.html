@@ -11,39 +11,144 @@
 {% block style %}
 <style>
   form{
-    width:50%;
+    width:60%;
   }
+
+ #closeItem {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+} 
+
 </style>
 {% endblock %}
 
 {% block script %}
+<script>
+$(document).ready(function(){
+
+    var cost = 0;
+    $('#currItems').on('click','#closeItem',function (e) {
+        var item = $.trim($(this).parent().find('text').text());
+        var toRemove = $(this).parent();        
+        $.post('/chooseExtras/',
+        {   
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                                            
+            submit : "false",
+            data : item
+        },
+        function(data,status){
+            if(status==="success"){
+                toRemove.remove();
+                cost = cost - data['cost'];        
+                $('#costValue').val(cost);
+                $('#errorMessage').hide();                
+            }
+            else{
+                $('#errorMessage').text("The item couldn't be removed");
+                $('#errorMessage').show();
+            }
+        });
+    });
+
+    $('img').on('click',function(e){
+        itemName = $(this).attr('name');
+        $.post('/chooseExtras/',
+        {   
+
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                                
+            submit : "false",
+            data : itemName
+        },
+        function(data,status){
+            if(status==="success"){
+                $("#currItems").append('<li class="list-group-item"><text>'+ itemName +'</text><a href="javascript:void(0)" id="closeItem">&times;</a></li>');    
+                cost = cost + data['cost'];    
+                $('#costValue').val(cost);
+                $('#errorMessage').hide();                
+            }
+            else{
+                $('#errorMessage').text("The item couldn't be added");
+                $('#errorMessage').show();
+            }
+        });
+    });
+
+    $('#submitExtras').click(function(e) {
+        e.preventDefault();
+        $.post("/chooseExtras/",
+        {
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    
+            rollNo : $('#rollNo').val(),
+            data : cost
+        },
+        function(data,status){
+            if(status==="success"){
+                if(data['valid']){
+                    alert("Token successfull issued");
+                    location.reload();
+                }
+                else{
+                    alert("Your Token couldn't be issued \n" + data['message']);
+                    location.reload();                    
+                }
+            }
+            else{
+                $('#errorMessage').text("Extras couldn't be submitted, Try again");                
+                $('#errorMessage').show();
+            }
+        });
+    });
+
+});   
+</script>
 {% endblock %}
 
 {% block body %}
+
+<div class="alert alert-danger" id ="errorMessage" style="display: none;">
+</div>  
+
 <div class="container">
     <div class="row">
         <div class="col-xs-6">
             <div class="container">
               <div class="row">
                 <div class="col-sm-6" style="width:20%;height:20%;margin-right:-20">
-                    <img src="../static/images/extras/fullFry.jpg" alt="Full Fry" ></img>
-                    <img src="../static/images/extras/halfFry.jpg" alt="Half Fry" ></img>
-                    <img src="../static/images/extras/chickenCurry.jpg" alt="Chicken Curry" ></img>
-                    <img src="../static/images/extras/chickenFry.jpg" alt="Chicken Fry" ></img> 
+                    <img src="../static/images/extras/fullFry.jpg" alt="Full Fry" name="Full Fry"></img>
+                    <img src="../static/images/extras/halfFry.jpg" alt="Half Fry" name="Half Fry"></img>
+                    <img src="../static/images/extras/chickenCurry.jpg" alt="Chicken Curry" name="Chicken Curry"></img>
+                    <img src="../static/images/extras/chickenFry.jpg" alt="Chicken Fry" name="Chicken Fry"></img> 
                 </div>
                 <div class="col-sm-6" style="width:20%;height:20%">
-                    <img src="../static/images/extras/omelette.jpg" alt="Omelette" ></img>
-                    <img src="../static/images/extras/curd.jpg" alt="Curd" ></img>  
-                    <img src="../static/images/extras/boiledEgg.jpg" alt="Boiled Egg" ></img>         
-                    <img src="../static/images/extras/eggBhurji.jpg" alt="Egg Bhurji" ></img>       
+                    <img src="../static/images/extras/omelette.jpg" alt="Omlette" name="Omlette"></img>
+                    <img src="../static/images/extras/curd.jpg" alt="Curd" name="Curd"></img>  
+                    <img src="../static/images/extras/boiledEgg.jpg" alt="Boiled Egg" name="Boiled Egg"></img>         
+                    <img src="../static/images/extras/eggBhurji.jpg" alt="Egg Bhurji" name="Egg Bhurji"></img>       
                 </div>
               </div>
             </div>
         </div>
+
+
         <div class="col-xs-6">
-            TWO
+
+                <form accept-charset="utf-8">
+            
+                <label for="rollNo">Roll Number</label>
+                <input type="text" value="" id="rollNo" name="rollNo" required="true" style="text-align:center"/>      
+
+                <div style="height:200px;overflow-y: scroll">
+                    <ul class="list-group" id = "currItems">
+                    </ul>
+                </div>
+                <label>Aggregated Cost</label>                
+                <input type="text" value="0" readonly style="text-align:center" id="costValue"/>      
+                <button type="submit" style="background-color:#DE4700" id="submitExtras">Submit</button>{% csrf_token %}
+                </form>
         </div>
-    </div>
+
 </div>
 
 
