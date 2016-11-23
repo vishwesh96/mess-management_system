@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import ldap
 from django.http import HttpResponseRedirect
-
+from django.contrib.auth import authenticate
 # Create your views here.
 
 def welcome(request):
@@ -93,16 +93,16 @@ def loginMessAuthority(request):
 
 	if request.method == 'GET':
 	    
-	    return render(request, "loginMessAuthority.html")			##lol
+	    return render(request, "loginMessAuthority.html")			
 
 	if request.method == 'POST':
 	    
-	    userLDAP = request.POST.get("messAuthorityid")
+	    userNAME = request.POST.get("messAuthorityid")
 	    userPASS = request.POST.get("messAuthoritypass")
 
-	    auth = True   # need to change this to authnticate mess authority
-	    if auth:
-	    	request.session['id'] = userLDAP
+	    auth = authenticate(username=userNAME, password=userPASS)
+	    if auth is not None:
+	    	request.session['id'] = userNAME
 	    	request.session['loginType'] = "MessAuthority"
     		return HttpResponseRedirect("/home/")
 	    else:
