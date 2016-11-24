@@ -200,12 +200,12 @@
 	   $('#subAnn').click(function(e){
 	   		e.preventDefault();
 	   		var subject = $('#annSub').val();
-	   		var data = $('#annData').val();
+	   		var data1 = $('#annData').val();
 	   		$.post("/home/",
 	   		{
             	csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    	   			
 	   			subject : subject,
-	   			text : data
+	   			text : data1
 	   		},
 	   		function(data,status){
 	            if(status==="success"){
@@ -213,7 +213,7 @@
 	            	$('.notifs').prepend("<li><h4 style=\"display: block; font-family:'Nunito', sans-serif; color: #384047; margin: 0 0 5px 0; text-align: center; float:left\">Time Stamp: + " + time + "</h4><br><div class=\"templatemo_hometext\">" + subject + " </div></li>"); 
 
 	            	$('.notifs').on('click','li:first-child',function(){
-	            		displayNotif(time,subject,data);
+	            		displayNotif(time,subject,data1);
 	            	});
 
 // onclick=\"displayNotif(" + time + "," + subject + "," + data + ")\"
