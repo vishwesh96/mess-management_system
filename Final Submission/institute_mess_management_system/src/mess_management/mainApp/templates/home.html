@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block body_background %}
+	<li><img src="../static/images/slider/1.jpg" alt="Slide 1"></li>
+	<li><img src="../static/images/slider/2.jpg" alt="Slide 2"></li>
+	<li><img src="../static/images/slider/3.jpg" alt="Slide 3"></li>
+	<li><img src="../static/images/slider/4.jpg" alt="Slide 4"></li>
+	<li><img src="../static/images/slider/5.jpg" alt="Slide 5"></li>
+{% endblock %}
+
+{% block style %}
+<style>
+	ul.list_sbar {
+	    position:relative;
+	    overflow: hidden;
+	}
+	ul.list_sbar li {
+	    clear:both;
+	    border-top: solid 1px #ddd;
+	    min-height:22px;
+	    line-height: 22px;
+	    text-decoration: none;
+	    background: #fff;
+	    outline: 0;
+	    font-weight: normal;
+	    padding: 4px 9px;
+	  	margin-top: px;
+    	border:1px solid grey;
+	}
+
+	ul.list_sbar li:first-child {
+		margin-top:0;
+	}
+
+	ul.list_sbar li:last-child {
+	    border-bottom: solid 1px #ddd;
+	}
+	ul.list_sbar li a {
+	    text-decoration: none;
+	    z-index: 34;
+	    color: #666;
+	    margin-bottom: 0;
+	    display:inline-block;
+	    outline: 0;
+	    float:left;
+	}
+	ul.list_sbar li:hover {
+	    color: #111;
+	    background: #FFF2BE;
+	    -moz-box-shadow: inset 0 0 1px #333;
+	    -webkit-box-shadow: inset 0 0 1px #333;
+	    box-shadow: inset 0 0 1px #333;
+	}
+	ul.list_sbar li a:after {
+	    position: absolute;
+	    line-height: 22px;
+	    font-size: 18px;
+	    text-align: right;
+	    padding-right: 8px;
+	    content:"×";
+	    width: 20px;
+	    height: 100%;
+	    right: 0;
+	    color: #999;
+	}
+
+
+</style>
+
+<style>
+#overlay {
+    display:none;
+    opacity:0.8;
+    background-color:black;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index: 999;
+}
+#popupContent {
+    display:none;  
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+    left: 400px;
+    top: -100px;
+    width: 700px;
+    height: 500px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+}
+
+
+#overlayNew {
+    display:none;
+    opacity:0.8;
+    background-color:black;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index: 999;
+}
+#popupContentNew {
+    display:none;  
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+    left: 400px;
+    top: -100px;
+    width: 700px;
+    height: 500px;
+    color: #000000;
+    border:5px solid #4E93A2;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    background-color:#FFFFFF;
+    z-index: 1000;
+}
+
+#newAnn{
+	width: 40%;
+}
+
+#annSub{
+	margin-left:20px;
+	width:80%;
+	height:60px;
+	overflow-y: scroll;
+}
+
+#annData{
+	margin-left:20px;
+	width:80%;
+	height:200px;
+	/*overflow-y: scroll;*/
+}
+
+#closeOverlayNew {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    font-size: 60px;
+}
+
+#data {
+	display:block;
+    width:500px;
+    word-wrap: break-word;
+}
+</style>   
+
+{% endblock %}
+
+{% block script %}
+<script>
+	function displayNotif(timestamp,subject,data){
+		$("#popupContent h2").html(subject);
+		$("#popupContent #time").html(timestamp);
+		$("#popupContent #data").html(data);
+			
+	}
+	$(document).ready(function(){
+		// $("#deductBalance").click(function(){
+		// 		window.location.replace("/deductMoney/");
+		// });
+		$('.notifs').on('click','li',function(){
+			$('#overlay').fadeIn('slow');
+			$('#popupContent').fadeIn('slow');    
+	        $('body').css('position','fixed');
+	        $('#popupContent').css('overflow-y','scroll');   
+	       	
+	       	$('#overlay').click(function () {
+				$('#overlay').fadeOut('slow');
+		   	    $('#popupContent').fadeOut('slow');
+		   	   	$('body').css('position','initial');    
+			});
+		});
+
+		$('#newAnn').click(function(){
+			$('#overlayNew').fadeIn('slow');
+			$('#popupContentNew').fadeIn('slow');    
+	        $('body').css('position','fixed');
+	        $('#popupContentNew').css('overflow-y','scroll');   
+		});
+
+	   $('#closeOverlayNew').click(function (e) {
+	      $('#overlayNew').fadeOut('slow');
+	      $('#popupContentNew').fadeOut('slow'); 
+	      $('body').css('position','initial');           
+	    });
+
+	   $('#subAnn').click(function(e){
+	   		e.preventDefault();
+	   		var subject = $('#annSub').val();
+	   		var data1 = $('#annData').val();
+	   		$.post("/home/",
+	   		{
+            	csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,                    	   			
+	   			subject : subject,
+	   			text : data1
+	   		},
+	   		function(data,status){
+	            if(status==="success"){
+	            	var time = data['time'];
+	            	$('.notifs').prepend("<li><h4 style=\"display: block; font-family:'Nunito', sans-serif; color: #384047; margin: 0 0 5px 0; text-align: center; float:left\">Time Stamp: + " + time + "</h4><br><div class=\"templatemo_hometext\">" + subject + " </div></li>"); 
+
+	            	$('.notifs').on('click','li:first-child',function(){
+	            		displayNotif(time,subject,data1);
+	            	});
+
+// onclick=\"displayNotif(" + time + "," + subject + "," + data + ")\"
+
+                	$('#closeOverlayNew').trigger('click'); 
+                	 $('#annSub').val('');
+                	 $('#annData').val('');
+	                $('#errorMessage').hide();                
+	            }
+	            else{
+	                $('#errorMessage').text("The Announcement couldn't be added");
+	                $('#errorMessage').show();
+	            }
+	   		});
+	   });
+	});
+</script>
+{% endblock %}
+
+{% block body %}
+
+
+
+{% if loginType == "MessAuthority"%}
+<!-- <div class="container"> -->
+  
+
+  
+
+<div id ="overlayNew"></div> 
+<div id="popupContentNew">
+
+  <form class="form-horizontal">
+  	<div class="alert alert-danger" id ="errorMessage" style="display: none">
+	</div>
+  		<h3>Announcement</h3>
+    	<a href="javascript:void(0)" id="closeOverlayNew">&times;</a>  		
+		<div class="form-group">
+		    <textarea class="span6" id="annSub" rows="1" placeholder="Subject" required ="true"></textarea>
+		    <textarea class="span6" id="annData"rows="4" placeholder="Write Notification" required="true"></textarea>
+		</div>
+		<div class="btn-group">
+			<button type="submit" class="btn btn-primary" id="subAnn" style="background-color:#DE4700;margin-top:-50px;margin-right:100px">Submit</button>{% csrf_token %}
+		</div>
+  </form>
+
+</div> 
+
+
+<button id="newAnn" style="background-color:#DE4700;width:25%">Create Announcement</button>
+<!-- <button id="deductBalance" style="background-color:#DE4700;width:25%">Complete Meal</button> -->
+
+<!-- </div> -->
+
+<br>
+{% endif %}
+
+	<div id ="overlay"></div> 
+	<div id="popupContent">
+	    <h2 style="text-align:center;color:black;font-size:20px">aa</h2>
+		<p id="time"></p>
+		<p class="span6" rows="1" id="data"></p>
+	</div> 
+
+
+	{% if not notifications %}
+		<font size="5" color="white">Nothing to notify.... have a good day :)</font>
+	{% else %} 
+		<ul class="list_sbar list-group notifs" style="margin-left:100px;width:80%"> 
+		{% for note in notifications %}
+			{# Each "notification" is a notification model object. #}
+		    <li onclick="displayNotif('{{note.0}}','{{note.1}}','{{note.2}}')">
+		    	<h4 style="display: block; font-family: 'Nunito', sans-serif; color: #384047; margin: 0 0 5px 0; text-align: center; float:left">Time Stamp: {{note.0}} </h4>
+		    	<br>
+		    	<div class="templatemo_hometext">
+		    		{{note.1}}
+		    	</div>
+		    </li>
+		{%endfor%}
+		</ul>
+
+		<div class="container">    
+			<ul class="pagination">
+			    <li>
+			        {% if notifications.has_previous %}
+			            <a href="?page={{ notifications.previous_page_number }}" style="color:#DE4700">&laquo;</a>
+			        {% endif %}
+			    </li>
+			    <li>
+			        <span class="current" style="color:#DE4700">
+			            Page {{ notifications.number }} of {{ notifications.paginator.num_pages }}.
+			        </span>
+			    </li>
+			    <li>
+			        {% if notifications.has_next %}
+			            <a href="?page={{ notifications.next_page_number }}" style="color:#DE4700">&raquo;</a>
+			        {% endif %}
+			    </li>
+			</ul>
+	</div>
+	{% endif %}
+
+{% endblock %}

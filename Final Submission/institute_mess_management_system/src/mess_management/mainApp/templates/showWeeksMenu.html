@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block style %}
+<style>
+	th,td{
+		text-align:left;
+		border: 1px solid #dddddd;
+	}
+</style>
+{% endblock %}
+
+{% block script %}
+<script>
+	$(document).ready(function(){
+ 		$("#menuSelect")[0].selectedIndex = {{ chosen_hostel }}-1 ;
+ 		$('#menuSelect').on('change', function() {
+		    $.post("/showWeeksMenu/",
+		    {
+				csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,    	
+		    	hostelID : this.value
+		    },
+		    function(data, status){
+		    	if(status==="success"){
+		    		$('#menuTable').replaceWith(data);		    		
+		    	}
+		    	else{
+		    		alert(status);
+		    	}
+		    });
+		});
+	});	
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div id="WeekMenu" class="w3-container">
+	<form action=""  method="post" accept-charset="utf-8" style="float:left">{% csrf_token %} 
+		<input type="hidden" name="action" value = "week" />       
+	        <label for="job" style="float:left;color:#000000">Hostel:</label>
+	        <select id="menuSelect" name="hostelID">
+				<option value="1">Hostel-1</option>
+				<option value="2">Hostel-2</option>
+				<option value="3">Hostel-3</option>
+				<option value="4">Hostel-4</option>
+				<option value="5">Hostel-5</option>
+				<option value="6">Hostel-6</option>
+				<option value="7">Hostel-7</option>
+				<option value="8">Hostel-6</option>
+				<option value="9">Hostel-9</option>
+				<option value="10">Hostel-10</option>
+				<option value="11">Hostel-11</option>
+				<option value="12">Hostel-12</option>
+				<option value="13">Hostel-13</option>
+				<option value="14">Hostel-14</option>
+				<option value="15">Hostel-15</option>
+				<option value="16">Hostel-16</option>
+	        </select> 
+        <!-- <button type="submit" name="action" value = "week" style="background-color:#DE4700">Check</button> -->
+	</form>
+  </div>
+</div>
+<div class="container" id="menuTable">
+{% if chosen_hostel %}
+	<h1><font color="white">Menu For Hostel: {{ chosen_hostel }}</font></h1>
+	{% if hostel_food %}
+	  	<div id="Today's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="border: 1px solid #dddddd"> Meal Type </th>
+						<th style="border: 1px solid #dddddd"> Monday </th>
+						<th style="border: 1px solid #dddddd"> Tuesday </th>
+						<th style="border: 1px solid #dddddd"> Wednesday </th>
+						<th style="border: 1px solid #dddddd"> Thursday </th>
+						<th style="border: 1px solid #dddddd"> Friday </th>
+						<th style="border: 1px solid #dddddd"> Saturday </th>
+						<th style="border: 1px solid #dddddd"> Sunday </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key, values in hostel_food %}
+					<tr> 
+					    <td >{{ key }}</td>
+					    {% for list in values %}
+					    	<td >
+					    	{% for v in list %}
+	        					{{v}}<br>
+	        					{% endfor %}
+	        				</td>
+	        			{% endfor %}
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+	   <font size="5" color="white">There are no records yet in the Weeks's menu...</font>
+	{% endif %}
+{% else %}
+	<font size="5" color="white">Please choose a Hostel...</font>
+{% endif %}
+</div>
+
+{% endblock %}
+

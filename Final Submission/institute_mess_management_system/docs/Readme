@@ -1,0 +1,65 @@
+
+extract institute_mess_management_system.zip and run the following commands
+	 
+	cd institute_mess_management_system/src
+	sudo apt-get update
+	sudo apt-get install python-pip
+	sudo pip install virtualenv
+	virtualenv newenv
+	source newenv/bin/activate
+	sudo pip install django --upgrade
+	sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
+	sudo apt-get install python-ldap
+
+	sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib
+	sudo pip install psycopg2
+	pip install python-dateutil
+	
+	cd ~
+	mkdir postgresql
+	cd postgresql
+	/usr/lib/postgresql/9.5/bin/initdb -D dbis
+
+(If you have an older version of PostgreSQL, your path may be slightly different, such as 9.4 or 9.3 instead of 9.5)
+and then edit dbis/postgresql.conf and change  #port = 5432 to port = 5640
+Also change #unix_socket_directories = '/var/run/postgresql' to unix_socket_directories = '/xxx/postgresql' where xxx is the full path of your home directory
+
+	/usr/lib/postgresql/9.5/bin/pg_ctl -D ~/postgresql/dbis -l logfile start
+
+
+Modify the institute_mess_management_system/src/mess_management/mess_management/settings.py, in DATABASES
+	'NAME': 'postgres',
+        'USER': '<your username>',
+        'HOST': 'localhost',
+        'PORT': '5640',
+
+	cd institute_mess_management_system/src/mess_management
+	python manage.py makemigrations
+	python manage.py migrate 	(type yes if some question comes)
+	
+	
+Run the script	
+
+	cd institute_mess_management_system/scripts
+	psql -h localhost -p 5640 -d postgres -f insert.sql
+
+
+	cd institute_mess_management_system/src/mess_management
+	python manage.py runserver
+
+	Finally open the browser to 'http://localhost:8000/'
+
+
+NOTE : For students use ldap login and select Hostel 3 while filling details
+
+To login as Mess Authority:
+--------------------------
+Create superuser if already not created using command "python manage.py createsuperuser"
+	->fill necessary details to create superuser
+	->run django server using command "python manage.py runserver", and go to "localhost:8000/admin/" 
+	->then click users and add new user.
+	->using the credentials of above created superuser or user you can login as "Mess Authority"
+	->This type of account creation for "Mess Authority" was made to ensure that a mess authority is created only under supervision of admin(superuser)
+
+Also use hostel 3 for the mess authority
+

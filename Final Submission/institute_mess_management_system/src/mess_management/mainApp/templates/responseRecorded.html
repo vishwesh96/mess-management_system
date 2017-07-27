@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block style %}
+<style>
+	th,td{
+		text-align:center;
+		border: 1px solid #dddddd;
+	}
+</style>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$(document).ready( function() {
+
+	$('#deleteOpt').click(function() {
+		var tr = $(this).parent().parent();
+		alert(tr.find("#startMealType").html());
+	    $.get("/deleteOpt/",
+			{
+				hostelID : tr.find("#hostelID").html(),
+				startDate : tr.find("#startDate").html(),
+				startMealType : tr.find("#startMealType").html(),
+				endDate : tr.find("#endDate").html(),
+				endMealType : tr.find("#endMealType").html(),
+			
+			},
+	    	function(data, status){
+	    		if(status==="success"){
+					if(data['message']){
+	    				$('#errorMessage').text(data['message']);
+	    				$('#errorMessage').show();
+	    			}
+	    			else{
+	    				$('#studentTempOpt').replaceWith(data);
+	    			}	    				    		
+	    		}
+	    		else{
+    				$('#errorMessage').text("Couldn't add entry");
+    				$('#errorMessage').show();
+	    		}
+	    });
+ 	});
+});
+</script>
+{% endblock %}
+
+{% block body %}
+<br>
+<br>
+<div class="container">
+  	<div class="w3-container table">
+
+  				<div class="alert alert-danger" id ="errorMessage" style="display: none">
+			</div>	
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th style="border: 1px solid #dddddd">Hostel</th>
+					<th style="border: 1px solid #dddddd">Start Date </th>
+					<th style="border: 1px solid #dddddd">Start Meal Type  </th>
+					<th style="border: 1px solid #dddddd">End Date  </th>
+					<th style="border: 1px solid #dddddd">End Meal Type  </th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for record in records %}
+				<tr> 
+				    <td id="hostelID">
+					{% if record.hostel.ID %}
+			    		{{ record.hostel.ID }}
+			    	{% else %}
+			    		No hostel opted
+				    {% endif %}
+				    </td>
+				    
+				    <td id="startDate">{{record.startDate}}</td>
+				    <td id="startMealType">{{record.startMealType}}</td>
+				    <td id="endMealDate">{{record.endDate}}</td>
+				    <td id="endMealType">{{record.endMealType}}</td>
+				    <!-- <td><button id = "deleteOpt" style="background-color:#DE4700;width:65%;text-align:center">Remove</button></td> -->
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+

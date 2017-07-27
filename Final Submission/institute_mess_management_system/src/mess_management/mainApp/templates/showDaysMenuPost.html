@@ -1,0 +1,45 @@
+<div id="menuTable">
+{% if chosen_mealType %}
+	<h1><font color="white">Menu For Today's {{ chosen_mealType }}</font></h1>
+	{% if hostel_food %}
+	  	<div id="Today's Table" class="w3-container table">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="border: 1px solid #dddddd"> Hostel </th>
+						<th style="border: 1px solid #dddddd"> Dish </th>
+						<th style="border: 1px solid #dddddd"> Rating </th>
+						<th style="border: 1px solid #dddddd"> Cost </th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key, values in hostel_food %}
+					<tr> 
+					    <td>{{ key }}</td>
+					    <td style="width:40%">
+					    {% for v in values.0 %}
+	        			{{v}}<br>
+	        			{% endfor %}
+	        			</td>
+	        			<td>
+	        			  <div class="progress">
+						    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:{{ values.2 }}%">
+						      <strong>{{ values.2 }}</strong>
+						    </div>
+						  </div>
+	        			</td>
+	        			<td>
+	        				{{ values.1 }}
+	        			</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+	   <font size="5" color="white">There are no records yet in the menu...</font>
+	{% endif %}
+{% else %}
+   <font size="5" color="white">Please Choose a Meal Type...</font>
+{% endif %}	
+</div>
